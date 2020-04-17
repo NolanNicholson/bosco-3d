@@ -33,21 +33,69 @@ void main() {
 }
 `;
 
-var vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-var fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
-var program = createProgram(gl, vertexShader, fragmentShader);
+var vertexShaderSource_texture = `#version 300 es
 
-var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
-var colorAttributeLocation = gl.getAttribLocation(program, "a_color");
+in vec4 a_position;
+in vec2 a_texcoord;
+
+uniform mat4 u_matrix_model;
+uniform mat4 u_matrix_viewproj;
+
+out vec2 v_texcoord;
+
+void main() {
+    gl_Position = u_matrix_viewproj * u_matrix_model * a_position;
+    v_texcoord = a_texcoord;
+}
+`;
+
+var fragmentShaderSource_texture = `#version 300 es
+
+precision mediump float;
+
+in vec2 v_texcoord;
+uniform sampler2D u_texture;
+
+out vec4 outColor;
+
+void main() {
+    outColor = texture(u_texture, v_texcoord);
+}
+`;
+
+var vs_color = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+var fs_color = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+var program_color = createProgram(gl, vs_color, fs_color);
+//var program = program_color;
+
+var vs_texture = createShader(
+    gl, gl.VERTEX_SHADER, vertexShaderSource_texture);
+var fs_texture = createShader(
+    gl, gl.FRAGMENT_SHADER, fragmentShaderSource_texture);
+var program_texture = createProgram(gl, vs_texture, fs_texture);
+var program = program_texture;
+
+/*
+var positionAttributeLocation = gl.getAttribLocation(
+    program_color, "a_position");
+var colorAttributeLocation = gl.getAttribLocation(
+    program_color, "a_color");
+*/
+
+var positionAttributeLocation = gl.getAttribLocation(
+    program, "a_position");
+var texCoordAttributeLocation = gl.getAttribLocation(
+    program, "a_texcoord");
 
 var uModelMatrixLoc = gl.getUniformLocation(program, "u_matrix_model");
 var uViewProjMatrixLoc = gl.getUniformLocation(program, "u_matrix_viewproj");
 
 //define test objects
-var obj_floor = new Floor(2, 8, 8);
-var obj_tex = new TexturedObj3D("models/enemy_i.obj");
+//var obj_floor = new Floor(2, 8, 8);
+var obj_tex = new TexturedObj3D("models/enemy_i.obj", "models/enemy_i_tex.png");
 
-var objects = [obj_floor, obj_tex];
+//var objects = [obj_floor, obj_tex];
+var objects = [obj_tex];
 
 var camera = new Camera();
 camera.x = 2;
