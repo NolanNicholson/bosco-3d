@@ -17,8 +17,12 @@ class TexturedObj3D extends Obj3D {
 
             var positions = obj_file.vertices;
             var colors = [];
-            for (var i = 0; i < positions.length / 3; i++) {
-                colors.push(1.0, 0.7, 1.0);
+            for (var i = 0; i < positions.length / 9; i++) {
+                var shade = Math.random() * 0.4 + 0.6;
+                var color = [1.0 * shade, 0.7 * shade, 1.0 * shade];
+                colors.push(color[0], color[1], color[2]);
+                colors.push(color[0], color[1], color[2]);
+                colors.push(color[0], color[1], color[2]);
             }
 
             me.load_data(positions, colors);

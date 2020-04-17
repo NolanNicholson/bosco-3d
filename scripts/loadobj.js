@@ -26,11 +26,23 @@ function loadOBJFromString(string) {
                 // 'f': face indices
                 // (relies on all 'v' being parsed before any 'f')
                 case 'f': {
+                    // Each face has groups of
+                    // v, vt (texture), and vn (normal) indices.
+                    // For now, this only pulls the 'v' ones.
+                    var v_indices = [];
+                    for (var j = 1; j < parts.length; j++) {
+                        var part = parts[j].split('/');
+                        v_indices.push(parseInt(part[0]));
+                    }
+                    // add the first triangle of the face
                     for (var j=0; j<3; j++) {
-                        Array.prototype.push.apply(
-                            vertices, 
-                            positions[parseInt(parts[j+1]) - 1]
-                        );
+                        vertices.push(...positions[v_indices[j] - 1]);
+                    }
+                    // If the face has a fourth index, add a second triangle
+                    if (v_indices.length > 3) {
+                        vertices.push(...positions[v_indices[0] - 1]);
+                        vertices.push(...positions[v_indices[2] - 1]);
+                        vertices.push(...positions[v_indices[3] - 1]);
                     }
                     break;
                 }
