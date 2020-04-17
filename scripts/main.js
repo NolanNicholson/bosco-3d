@@ -5,73 +5,13 @@ if (!gl) {
     console.log("WebGL 2 not supported!");
 }
 
-var vertexShaderSource = `#version 300 es
-
-in vec4 a_position;
-in vec4 a_color;
-
-uniform mat4 u_matrix_model;
-uniform mat4 u_matrix_viewproj;
-
-out vec4 v_color;
-
-void main() {
-    gl_Position = u_matrix_viewproj * u_matrix_model * a_position;
-    v_color = a_color;
-}
-`;
-
-var fragmentShaderSource = `#version 300 es
-
-precision mediump float;
-
-in vec4 v_color;
-out vec4 outColor;
-
-void main() {
-    outColor = v_color;
-}
-`;
-
-var vertexShaderSource_texture = `#version 300 es
-
-in vec4 a_position;
-in vec2 a_texcoord;
-
-uniform mat4 u_matrix_model;
-uniform mat4 u_matrix_viewproj;
-
-out vec2 v_texcoord;
-
-void main() {
-    gl_Position = u_matrix_viewproj * u_matrix_model * a_position;
-    v_texcoord = a_texcoord;
-}
-`;
-
-var fragmentShaderSource_texture = `#version 300 es
-
-precision mediump float;
-
-in vec2 v_texcoord;
-uniform sampler2D u_texture;
-
-out vec4 outColor;
-
-void main() {
-    outColor = texture(u_texture, v_texcoord);
-}
-`;
-
-var vs_color = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
-var fs_color = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+var vs_color = createShader(gl, gl.VERTEX_SHADER, src_vs_color);
+var fs_color = createShader(gl, gl.FRAGMENT_SHADER, src_fs_color);
 var program_color = createProgram(gl, vs_color, fs_color);
 //var program = program_color;
 
-var vs_texture = createShader(
-    gl, gl.VERTEX_SHADER, vertexShaderSource_texture);
-var fs_texture = createShader(
-    gl, gl.FRAGMENT_SHADER, fragmentShaderSource_texture);
+var vs_texture = createShader(gl, gl.VERTEX_SHADER, src_vs_texture);
+var fs_texture = createShader(gl, gl.FRAGMENT_SHADER, src_fs_texture);
 var program_texture = createProgram(gl, vs_texture, fs_texture);
 var program = program_texture;
 
