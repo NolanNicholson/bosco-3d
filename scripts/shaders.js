@@ -56,3 +56,22 @@ void main() {
 }
 `;
 
+class ProgramHolder {
+    constructor(gl, vs_source, fs_source, params) {
+        this.gl = gl;
+        this.vs = createShader(gl, gl.VERTEX_SHADER, vs_source);
+        this.fs = createShader(gl, gl.FRAGMENT_SHADER, fs_source);
+        this.program = createProgram(gl, this.vs, this.fs);
+
+        this.locations = {};
+
+        for (const param in params.attribs) {
+            this.locations[param] = gl.getAttribLocation(
+                this.program, params.attribs[param]);
+        }
+        for (const param in params.uniforms) {
+            this.locations[param] = gl.getUniformLocation(
+                this.program, params.uniforms[param]);
+        }
+    }
+}

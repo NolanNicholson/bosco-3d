@@ -1,4 +1,4 @@
-function setup_object(positions, colors) {
+function setup_object(program_holder, positions, colors) {
     //create and bind a VAO
     var vao = gl.createVertexArray();
     gl.bindVertexArray(vao);
@@ -12,8 +12,8 @@ function setup_object(positions, colors) {
     //tell WebGL which attributes will come
     //from a buffer, not a constant value
     //TODO: this should be per-program?
-    gl.enableVertexAttribArray(positionAttributeLocation);
-    gl.enableVertexAttribArray(colorAttributeLocation);
+    gl.enableVertexAttribArray(program_holder.positionAttributeLocation);
+    gl.enableVertexAttribArray(program_holder.colorAttributeLocation);
 
     var size = 3;          // 3 values per step
     var type = gl.FLOAT;   // data is 32bit floats
@@ -21,7 +21,8 @@ function setup_object(positions, colors) {
     var stride = 0;        // 0 = move forward size * sizeof(type) each step
     var offset = 0;        // start at the beginning of the buffer
     gl.vertexAttribPointer(
-        positionAttributeLocation, size, type, normalize, stride, offset);
+        program_holder.positionAttributeLocation,
+        size, type, normalize, stride, offset);
 
     var colorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
@@ -35,7 +36,7 @@ function setup_object(positions, colors) {
     return vao;
 }
 
-function setup_textured_object(positions, texcoords) {
+function setup_textured_object(program_holder, positions, texcoords) {
     //create and bind a VAO
     var vao = gl.createVertexArray();
     gl.bindVertexArray(vao);
@@ -48,8 +49,10 @@ function setup_textured_object(positions, texcoords) {
 
     //tell WebGL which attributes will come
     //from a buffer, not a constant value
-    gl.enableVertexAttribArray(positionAttributeLocation);
-    gl.enableVertexAttribArray(texCoordAttributeLocation);
+    gl.enableVertexAttribArray(
+        program_holder.locations.positionAttributeLocation);
+    gl.enableVertexAttribArray(
+        program_holder.locations.texCoordAttributeLocation);
 
     var size = 3;          // 3 values per step
     var type = gl.FLOAT;   // data is 32bit floats
@@ -57,7 +60,8 @@ function setup_textured_object(positions, texcoords) {
     var stride = 0;        // 0 = move forward size * sizeof(type) each step
     var offset = 0;        // start at the beginning of the buffer
     gl.vertexAttribPointer(
-        positionAttributeLocation, size, type, normalize, stride, offset);
+        program_holder.locations.positionAttributeLocation,
+        size, type, normalize, stride, offset);
 
     var texCoordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
@@ -67,23 +71,25 @@ function setup_textured_object(positions, texcoords) {
     //we just have to update the size since each vertex has only 2 tex coords
     size = 2;
     gl.vertexAttribPointer(
-        texCoordAttributeLocation, size, type, normalize, stride, offset);
+        program_holder.locations.texCoordAttributeLocation,
+        size, type, normalize, stride, offset);
 
     return vao;
 }
 
 class Obj3D {
-    constructor(positions, colors) {
+    constructor(program_holder, positions, colors) {
+        this.program_holder = program_holder;
         this.x = 0; this.y = 0; this.z = 0;
         this.r_x = 0; this.r_y = 0; this.r_z = 0;
         this.scale = 1;
         this.model_matrix = m4.identity();
 
-        this.load_data(positions, colors);
+        this.load_data(program_holder, positions, colors);
     }
 
     load_data(positions, colors) {
-        this.vao = setup_object(positions, colors);
+        this.vao = setup_object(this.program_holder, positions, colors);
         this.num_vertices = positions.length / 3;
     }
 
@@ -107,6 +113,7 @@ class Obj3D {
             this.scale, this.scale, this.scale);
 
         gl.bindVertexArray(this.vao);
+        var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;
         gl.uniformMatrix4fv(uModelMatrixLoc, false, this.model_matrix);
         gl.drawArrays(gl.TRIANGLES, 0, this.num_vertices);
     }

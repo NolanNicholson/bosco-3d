@@ -1,6 +1,6 @@
 class TexturedObj3D extends Obj3D {
-    constructor(obj_filename, tex_filename) {
-        super([], []);
+    constructor(program_holder, obj_filename, tex_filename) {
+        super(program_holder, [], []);
         var me = this;
 
         //test coords - TODO: remove
@@ -19,7 +19,7 @@ class TexturedObj3D extends Obj3D {
 
             var positions = obj_file.vertices;
             var texcoords = obj_file.tex_vertices;
-            me.load_data(positions, texcoords);
+            me.load_data(me.program_holder, positions, texcoords);
         });
 
         //Initialize the texture with a placeholder
@@ -46,8 +46,8 @@ class TexturedObj3D extends Obj3D {
         });
     }
 
-    load_data(positions, texcoords) {
-        this.vao = setup_textured_object(positions, texcoords);
+    load_data(program_holder, positions, texcoords) {
+        this.vao = setup_textured_object(program_holder, positions, texcoords);
         this.num_vertices = positions.length / 3;
     }
 
