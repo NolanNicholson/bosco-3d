@@ -45,7 +45,9 @@ var uViewProjMatrixLoc = gl.getUniformLocation(program, "u_matrix_viewproj");
 
 //define test objects
 var obj_floor = new Floor(2, 8, 8);
-var objects = [obj_floor];
+var obj_tex = new TexturedObj3D("models/enemy_i.obj");
+
+var objects = [obj_floor, obj_tex];
 
 var camera = new Camera();
 camera.x = 2;

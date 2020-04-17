@@ -37,13 +37,17 @@ function setup_object(positions, colors) {
 
 class Obj3D {
     constructor(positions, colors) {
-        this.vao = setup_object(positions, colors);
-        this.num_vertices = positions.length / 3;
-        this.model_matrix = m4.identity();
-
         this.x = 0; this.y = 0; this.z = 0;
         this.r_x = 0; this.r_y = 0; this.r_z = 0;
         this.scale = 1;
+        this.model_matrix = m4.identity();
+
+        this.load_data(positions, colors);
+    }
+
+    load_data(positions, colors) {
+        this.vao = setup_object(positions, colors);
+        this.num_vertices = positions.length / 3;
     }
 
     reset() {

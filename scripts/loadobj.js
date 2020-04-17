@@ -17,11 +17,11 @@ function loadOBJFromString(string) {
             switch(parts[0]) {
                 // 'v': vertex coordinates
                 case 'v': positions.push(
-                    vec3.fromValues(
+                    [
                         parseFloat(parts[1]),
                         parseFloat(parts[2]),
                         parseFloat(parts[3])
-                    ));
+                    ]);
                     break;
                 // 'f': face indices
                 // (relies on all 'v' being parsed before any 'f')
