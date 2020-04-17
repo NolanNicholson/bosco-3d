@@ -40,9 +40,9 @@ function checkered_floor(tilesize, tiles_x, tiles_z) {
 }
 
 class Floor extends Obj3D {
-    constructor(tilesize, tiles_x, tiles_z) {
+    constructor(program_holder, tilesize, tiles_x, tiles_z) {
         var pos_col = checkered_floor(tilesize, tiles_x, tiles_z);
-        super(pos_col[0], pos_col[1]);
+        super(program_holder, pos_col[0], pos_col[1]);
     }
 
     update(dt) {

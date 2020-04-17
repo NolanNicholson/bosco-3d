@@ -73,7 +73,6 @@ function loadOBJFromString(string) {
             }
         }
     }
-    console.log(tex_vertices);
     return {
         vertices: new Float32Array(vertices),
         tex_vertices: new Float32Array(tex_vertices),
@@ -98,7 +97,6 @@ function getStringFromFetch(url) {
     fetch(url)
     .then(response => response.text())
     .then((data) => {
-        console.log(data)
         return data;
     })
 }

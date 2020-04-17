@@ -32,13 +32,12 @@ var program_holder_texture = new ProgramHolder(
     });
 
 //define test objects
-//var obj_floor = new Floor(2, 8, 8);
+var obj_floor = new Floor(program_holder_color, 2, 8, 8);
 var obj_tex = new TexturedObj3D(
     program_holder_texture,
     "models/enemy_i.obj", "models/enemy_i_tex.png");
 
-//var objects = [obj_floor, obj_tex];
-var objects = [obj_tex];
+var objects = [obj_floor, obj_tex];
 
 var camera = new Camera();
 camera.x = 2;

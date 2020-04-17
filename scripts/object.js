@@ -1,4 +1,7 @@
 function setup_object(program_holder, positions, colors) {
+    //locations within the GL program
+    var locs = program_holder.locations;
+
     //create and bind a VAO
     var vao = gl.createVertexArray();
     gl.bindVertexArray(vao);
@@ -9,29 +12,25 @@ function setup_object(program_holder, positions, colors) {
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
 
-    //tell WebGL which attributes will come
-    //from a buffer, not a constant value
-    //TODO: this should be per-program?
-    gl.enableVertexAttribArray(program_holder.positionAttributeLocation);
-    gl.enableVertexAttribArray(program_holder.colorAttributeLocation);
+    //tell WebGL which attributes will come from buffers
+    gl.enableVertexAttribArray(locs.positionAttributeLocation);
+    gl.enableVertexAttribArray(locs.colorAttributeLocation);
 
     var size = 3;          // 3 values per step
     var type = gl.FLOAT;   // data is 32bit floats
     var normalize = false; // don't normalize the data
     var stride = 0;        // 0 = move forward size * sizeof(type) each step
     var offset = 0;        // start at the beginning of the buffer
-    gl.vertexAttribPointer(
-        program_holder.positionAttributeLocation,
+    gl.vertexAttribPointer(locs.positionAttributeLocation,
         size, type, normalize, stride, offset);
 
     var colorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
-    //All of the previous calls to gl.vertexAttribPointer are still good
-    size = 3;
-    gl.vertexAttribPointer(
-        colorAttributeLocation, size, type, normalize, stride, offset);
+    //All of the previous params for gl.vertexAttribPointer are still correct.
+    gl.vertexAttribPointer(locs.colorAttributeLocation,
+        size, type, normalize, stride, offset);
 
     return vao;
 }
@@ -88,8 +87,8 @@ class Obj3D {
         this.load_data(program_holder, positions, colors);
     }
 
-    load_data(positions, colors) {
-        this.vao = setup_object(this.program_holder, positions, colors);
+    load_data(program_holder, positions, colors) {
+        this.vao = setup_object(program_holder, positions, colors);
         this.num_vertices = positions.length / 3;
     }
 

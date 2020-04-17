@@ -15,7 +15,6 @@ class TexturedObj3D extends Obj3D {
         .then(response => response.text())
         .then((obj_string) => {
             var obj_file = loadOBJFromString(obj_string);
-            console.log(obj_file);
 
             var positions = obj_file.vertices;
             var texcoords = obj_file.tex_vertices;
