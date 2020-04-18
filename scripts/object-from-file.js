@@ -22,8 +22,8 @@ class TexturedObj3D extends Obj3D {
         });
 
         //Initialize the texture with a placeholder
-        var texture = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, texture);
+        this.texture = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, this.texture);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA,
             gl.UNSIGNED_BYTE,
             new Uint8Array([0, 0, 255, 255]));
@@ -31,8 +31,9 @@ class TexturedObj3D extends Obj3D {
         //Asynchronously load the real texture
         var image = new Image();
         image.src = tex_filename;
+        var me = this;
         image.addEventListener('load', function() {
-            gl.bindTexture(gl.TEXTURE_2D, texture);
+            gl.bindTexture(gl.TEXTURE_2D, me.texture);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE,
                 image);
             //set texture parameters

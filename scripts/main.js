@@ -33,11 +33,24 @@ var program_holder_texture = new ProgramHolder(
 
 //define test objects
 var obj_floor = new Floor(program_holder_color, 2, 8, 8);
-var obj_tex = new TexturedObj3D(
-    program_holder_texture,
+var obj_player = new TexturedObj3D(program_holder_texture,
+    "models/player.obj", "models/player_tex.png");
+obj_player.x = 8;
+obj_player.z = 8;
+var obj_enemy_i = new TexturedObj3D(program_holder_texture,
     "models/enemy_i.obj", "models/enemy_i_tex.png");
+var obj_enemy_p = new TexturedObj3D(program_holder_texture,
+    "models/enemy_boomerang.obj", "models/enemy_boomerang_tex.png");
+obj_enemy_p.x = 6;
+var obj_enemy_e = new TexturedObj3D(program_holder_texture,
+    "models/enemy_e.obj", "models/enemy_e_tex.png");
+obj_enemy_e.x = 10;
+var obj_enemy_spy = new TexturedObj3D(program_holder_texture,
+    "models/enemy_spy.obj", "models/enemy_spy_tex.png");
+obj_enemy_spy.x = 14;
 
-var objects = [obj_floor, obj_tex];
+var objects = [obj_floor, obj_player,
+    obj_enemy_i, obj_enemy_p, obj_enemy_e, obj_enemy_spy];
 
 var camera = new Camera();
 camera.x = 2;
