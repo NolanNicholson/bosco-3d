@@ -34,7 +34,7 @@ var program_holder_texture = new ProgramHolder(
 //define test objects
 var obj_floor = new Floor(program_holder_color, 2, 10, 2);
 var obj_starfield = new Starfield(program_holder_color);
-var obj_player = new Player(program_holder_texture);
+var player = new Player(program_holder_texture);
 var obj_enemy_i = new TexturedObj3D(program_holder_texture,
     "models/enemy_i.obj", "models/enemy_i_tex.png");
 obj_enemy_i.x = 6;
@@ -48,7 +48,7 @@ var obj_enemy_spy = new TexturedObj3D(program_holder_texture,
     "models/enemy_spy.obj", "models/enemy_spy_tex.png");
 obj_enemy_spy.x = 18;
 
-var objects = [obj_floor, obj_player, obj_starfield,
+var objects = [obj_floor, player, obj_starfield,
     obj_enemy_i, obj_enemy_p, obj_enemy_e, obj_enemy_spy];
 
 var camera = new Camera();
@@ -60,11 +60,13 @@ gl.enable(gl.CULL_FACE);
 gl.enable(gl.DEPTH_TEST);
 
 function handle_keydown(e) {
-    camera.handle_keydown(e);
+    player.handle_keydown(e);
+    //camera.handle_keydown(e);
 }
 
 function handle_keyup(e) {
-    camera.handle_keyup(e);
+    player.handle_keyup(e);
+    //camera.handle_keyup(e);
 }
 
 window.addEventListener("keydown", handle_keydown);

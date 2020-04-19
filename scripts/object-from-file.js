@@ -8,7 +8,8 @@ class TexturedObj3D extends Obj3D {
         this.x = 2;
         this.y = 2;
         this.z = 2;
-        this.r_vy = 1;
+        this.r_vy = 0;
+        this.r_y = Math.PI * 3 / 2;
 
         //fetch the object file
         fetch(obj_filename)

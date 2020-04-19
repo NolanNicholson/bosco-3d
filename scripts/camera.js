@@ -23,22 +23,22 @@ class Camera {
 
     handle_keydown(e) {
         switch(e.keyCode) {
-            case 65:
+            case 65: // A
                 this.moving_left = true;
                 break;
-            case 68:
+            case 68: // D
                 this.moving_right = true;
                 break;
-            case 87:
+            case 87: // W
                 this.moving_forward = true;
                 break;
-            case 83:
+            case 83: // S
                 this.moving_back = true;
                 break;
-            case 69:
+            case 69: // Q
                 this.moving_up = true;
                 break;
-            case 81:
+            case 81: // E
                 this.moving_down = true;
                 break;
             case 37: // left arrow
