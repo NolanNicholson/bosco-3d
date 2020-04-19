@@ -32,7 +32,8 @@ var program_holder_texture = new ProgramHolder(
     });
 
 //define test objects
-var obj_floor = new Floor(program_holder_color, 2, 8, 8);
+var obj_floor = new Floor(program_holder_color, 2, 8, 2);
+var obj_starfield = new Starfield(program_holder_color);
 var obj_player = new TexturedObj3D(program_holder_texture,
     "models/player.obj", "models/player_tex.png");
 obj_player.x = 8;
@@ -49,7 +50,7 @@ var obj_enemy_spy = new TexturedObj3D(program_holder_texture,
     "models/enemy_spy.obj", "models/enemy_spy_tex.png");
 obj_enemy_spy.x = 14;
 
-var objects = [obj_floor, obj_player,
+var objects = [obj_floor, obj_player, obj_starfield,
     obj_enemy_i, obj_enemy_p, obj_enemy_e, obj_enemy_spy];
 
 var camera = new Camera();
@@ -92,7 +93,7 @@ function drawScene(now) {
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
     //clear the canvas
-    gl.clearColor(0, 0, 0, 0);
+    gl.clearColor(0, 0, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     //Perspective projection matrix
@@ -106,6 +107,10 @@ function drawScene(now) {
     //Camera view matrix
     camera.update(dt);
     var view_matrix = camera.get_view_matrix();
+
+    obj_starfield.x = camera.x;
+    obj_starfield.y = camera.y;
+    obj_starfield.z = camera.z;
 
     var viewproj = m4.multiply(proj_matrix, view_matrix);
 
