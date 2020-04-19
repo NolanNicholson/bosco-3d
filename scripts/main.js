@@ -61,12 +61,6 @@ camera.z = 9;
 gl.enable(gl.CULL_FACE);
 gl.enable(gl.DEPTH_TEST);
 
-function reset() {
-    objects.forEach(obj => {
-        obj.reset();
-    });
-}
-
 function handle_keydown(e) {
     camera.handle_keydown(e);
 }
@@ -75,8 +69,6 @@ function handle_keyup(e) {
     camera.handle_keyup(e);
 }
 
-reset(); // set the initial position and velocity
-canvas.addEventListener("click", reset);
 window.addEventListener("keydown", handle_keydown);
 window.addEventListener("keyup", handle_keyup);
 

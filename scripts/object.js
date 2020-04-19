@@ -92,9 +92,6 @@ class Obj3D {
         this.num_vertices = positions.length / 3;
     }
 
-    reset() {
-    }
-
     update(dt) {
         this.r_x += this.r_vx * dt;
         this.r_y += this.r_vy * dt;
