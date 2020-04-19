@@ -9,12 +9,17 @@ class Player {
         this.pitching_up = false;         this.pitching_down = false;
 
         //"base" transformation matrix:
-        //the model's .obj-file as-is needs to be rotated and scaled
+        //the model's .obj file as-is needs to be rotated and scaled
         this.ship_transform_base = m4.identity();
         this.ship_transform_base = m4.scale(this.ship_transform_base,
             0.2, 0.2, 0.2);
         this.ship_transform_base = m4.rotate_y(this.ship_transform_base,
             Math.PI * 3 / 2);
+
+        //direction and adjustment speed
+        this.pitch = 0; this.yaw = 0;
+        this.pitch_target = 0; this.yaw_target = 0;
+        this.tack_speed = 0.2;
     }
 
     handle_keydown(e) {
@@ -58,8 +63,23 @@ class Player {
     update(dt) {
         // Update ship coordinates
 
-        this.yaw = (this.yawing_left - this.yawing_right) * Math.PI / 6;
-        this.pitch = (this.pitching_up - this.pitching_down) * Math.PI / 6;
+        this.yaw_target = (this.yawing_left - this.yawing_right) * Math.PI / 6;
+        this.pitch_target = (this.pitching_up - this.pitching_down)
+            * Math.PI / 6;
+
+        //this.yaw = this.yaw_target;
+        //this.pitch = this.pitch_target;
+
+        if (this.yaw > this.yaw_target) {
+            this.yaw -= Math.min(this.yaw - this.yaw_target, this.tack_speed);
+        } else if (this.yaw < this.yaw_target) {
+            this.yaw += Math.min(this.yaw_target - this.yaw, this.tack_speed);
+        }
+        if (this.pitch > this.pitch_target) {
+            this.pitch -= Math.min(this.pitch - this.pitch_target, this.tack_speed);
+        } else if (this.pitch < this.pitch_target) {
+            this.pitch += Math.min(this.pitch_target - this.pitch, this.tack_speed);
+        }
 
         var transform = m4.identity();
         transform = m4.rotate_y(transform, Math.PI / 2);
