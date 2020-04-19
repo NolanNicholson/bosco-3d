@@ -97,8 +97,9 @@ function drawScene(now) {
     );
 
     //Camera view matrix
-    camera.update(dt);
-    var view_matrix = camera.get_view_matrix();
+    //camera.update(dt);
+    camera.follow_player(dt, player);
+    var view_matrix = camera.get_view_matrix_player(player);
 
     obj_starfield.x = camera.x;
     obj_starfield.y = camera.y;

@@ -130,11 +130,27 @@ class Camera {
         this.z = movement_matrix[14];
     }
 
+    follow_player(dt, player) {
+        this.x = player.ship_obj.x;
+        this.y = player.ship_obj.y;
+        this.z = player.ship_obj.z + 10;
+    }
+
     get_view_matrix() {
         var camera_matrix = m4.identity();
         camera_matrix = m4.translate(camera_matrix, this.x, this.y, this.z);
         camera_matrix = m4.rotate_y(camera_matrix, this.ry);
         camera_matrix = m4.rotate_x(camera_matrix, this.rx);
+        var view_matrix = m4.inverse(camera_matrix);
+        return view_matrix;
+    }
+
+    get_view_matrix_player(player) {
+        var camera_matrix = m4.lookAt(
+            [this.x, this.y, this.z],
+            [player.ship_obj.x, player.ship_obj.y, player.ship_obj.z],
+            [0, 1, 0]
+        );
         var view_matrix = m4.inverse(camera_matrix);
         return view_matrix;
     }

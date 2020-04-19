@@ -16,10 +16,20 @@ class Player {
         this.ship_transform_base = m4.rotate_y(this.ship_transform_base,
             Math.PI * 3 / 2);
 
+        //ship speed
+        this.drive_speed = 3;
+
         //direction and adjustment speed
         this.pitch = 0; this.yaw = 0;
         this.pitch_target = 0; this.yaw_target = 0;
-        this.tack_speed = 0.2;
+        this.tack_anim_speed = 0.2;
+        this.pitch_speed = 2;
+        this.yaw_speed = 2;
+
+        //current rotation
+        this.ship_obj.r_x = 0;
+        this.ship_obj.r_y = 0;
+        this.ship_obj.r_z = 0;
     }
 
     handle_keydown(e) {
@@ -71,22 +81,38 @@ class Player {
         //this.pitch = this.pitch_target;
 
         if (this.yaw > this.yaw_target) {
-            this.yaw -= Math.min(this.yaw - this.yaw_target, this.tack_speed);
+            this.yaw -= Math.min(
+                this.yaw - this.yaw_target, this.tack_anim_speed);
         } else if (this.yaw < this.yaw_target) {
-            this.yaw += Math.min(this.yaw_target - this.yaw, this.tack_speed);
+            this.yaw += Math.min(
+                this.yaw_target - this.yaw, this.tack_anim_speed);
         }
         if (this.pitch > this.pitch_target) {
-            this.pitch -= Math.min(this.pitch - this.pitch_target, this.tack_speed);
+            this.pitch -= Math.min(
+                this.pitch - this.pitch_target, this.tack_anim_speed);
         } else if (this.pitch < this.pitch_target) {
-            this.pitch += Math.min(this.pitch_target - this.pitch, this.tack_speed);
+            this.pitch += Math.min(
+                this.pitch_target - this.pitch, this.tack_anim_speed);
         }
 
-        var transform = m4.identity();
-        transform = m4.rotate_y(transform, Math.PI / 2);
+        this.ship_obj.r_x += this.pitch * this.pitch_speed * dt;
+        this.ship_obj.r_y += this.yaw * this.yaw_speed * dt;
 
-        this.ship_obj.r_x = this.pitch;
-        this.ship_obj.r_y = 0;
-        this.ship_obj.r_z = this.yaw;
+        var movement_matrix = m4.identity();
+
+        movement_matrix = m4.translate(movement_matrix,
+            this.ship_obj.x, this.ship_obj.y, this.ship_obj.z);
+
+        movement_matrix = m4.rotate_x(movement_matrix, this.ship_obj.r_x);
+        movement_matrix = m4.rotate_y(movement_matrix, this.ship_obj.r_y);
+        movement_matrix = m4.rotate_z(movement_matrix, this.ship_obj.r_z);
+
+        movement_matrix = m4.translate(movement_matrix,
+            0, 0, -this.drive_speed * dt);
+
+        this.ship_obj.x = movement_matrix[12];
+        this.ship_obj.y = movement_matrix[13];
+        this.ship_obj.z = movement_matrix[14];
 
     }
 
@@ -97,7 +123,14 @@ class Player {
         model_matrix = m4.rotate_x(model_matrix, this.ship_obj.r_x);
         model_matrix = m4.rotate_y(model_matrix, this.ship_obj.r_y);
         model_matrix = m4.rotate_z(model_matrix, this.ship_obj.r_z);
+
+        //(purely cosmetic) pitch/yaw rotations
+        model_matrix = m4.rotate_x(model_matrix, this.pitch);
+        model_matrix = m4.rotate_z(model_matrix, this.yaw);
+
+        //base model transformation
         model_matrix = m4.multiply(model_matrix, this.ship_transform_base);
+
         this.ship_obj.model_matrix = this.model_matrix;
 
         gl.bindTexture(gl.TEXTURE_2D, this.ship_obj.texture);
