@@ -27,9 +27,7 @@ class Player {
         this.yaw_speed = 2;
 
         //current rotation
-        this.ship_obj.r_x = 0;
-        this.ship_obj.r_y = 0;
-        this.ship_obj.r_z = 0;
+        this.rotation_matrix = m4.identity();
     }
 
     handle_keydown(e) {
@@ -71,14 +69,9 @@ class Player {
     }
 
     update(dt) {
-        // Update ship coordinates
-
         this.yaw_target = (this.yawing_left - this.yawing_right) * Math.PI / 6;
         this.pitch_target = (this.pitching_up - this.pitching_down)
             * Math.PI / 6;
-
-        //this.yaw = this.yaw_target;
-        //this.pitch = this.pitch_target;
 
         if (this.yaw > this.yaw_target) {
             this.yaw -= Math.min(
@@ -95,17 +88,19 @@ class Player {
                 this.pitch_target - this.pitch, this.tack_anim_speed);
         }
 
-        this.ship_obj.r_x += this.pitch * this.pitch_speed * dt;
-        this.ship_obj.r_y += this.yaw * this.yaw_speed * dt;
+        //update rotation matrix using pitch and yaw
+        this.rotation_matrix = m4.rotate_x(this.rotation_matrix,
+            this.pitch * this.pitch_speed * dt);
+        this.rotation_matrix = m4.rotate_y(this.rotation_matrix,
+            this.yaw * this.yaw_speed * dt);
 
+        //use a movement matrix to get new ship coordinates
         var movement_matrix = m4.identity();
 
         movement_matrix = m4.translate(movement_matrix,
             this.ship_obj.x, this.ship_obj.y, this.ship_obj.z);
 
-        movement_matrix = m4.rotate_x(movement_matrix, this.ship_obj.r_x);
-        movement_matrix = m4.rotate_y(movement_matrix, this.ship_obj.r_y);
-        movement_matrix = m4.rotate_z(movement_matrix, this.ship_obj.r_z);
+        movement_matrix = m4.multiply(movement_matrix, this.rotation_matrix);
 
         movement_matrix = m4.translate(movement_matrix,
             0, 0, -this.drive_speed * dt);
@@ -120,9 +115,9 @@ class Player {
         var model_matrix = m4.identity();
         model_matrix = m4.translate(model_matrix,
             this.ship_obj.x, this.ship_obj.y, this.ship_obj.z);
-        model_matrix = m4.rotate_x(model_matrix, this.ship_obj.r_x);
-        model_matrix = m4.rotate_y(model_matrix, this.ship_obj.r_y);
-        model_matrix = m4.rotate_z(model_matrix, this.ship_obj.r_z);
+
+        //ship's actual rotation
+        model_matrix = m4.multiply(model_matrix, this.rotation_matrix);
 
         //(purely cosmetic) pitch/yaw rotations
         model_matrix = m4.rotate_x(model_matrix, this.pitch);
