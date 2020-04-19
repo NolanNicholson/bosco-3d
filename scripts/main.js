@@ -34,8 +34,7 @@ var program_holder_texture = new ProgramHolder(
 //define test objects
 var obj_floor = new Floor(program_holder_color, 2, 10, 2);
 var obj_starfield = new Starfield(program_holder_color);
-var obj_player = new TexturedObj3D(program_holder_texture,
-    "models/player.obj", "models/player_tex.png");
+var obj_player = new Player(program_holder_texture);
 var obj_enemy_i = new TexturedObj3D(program_holder_texture,
     "models/enemy_i.obj", "models/enemy_i_tex.png");
 obj_enemy_i.x = 6;
