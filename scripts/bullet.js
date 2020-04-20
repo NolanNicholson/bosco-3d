@@ -37,8 +37,8 @@ function prism(w, h, d) {
 }
 
 class PlayerBullet extends ObjColor {
-    constructor() {
-        var positions = prism(1, 2, 1);
+    constructor(player) {
+        var positions = prism(0.2, 0.2, 0.8);
 
         var colors = [];
         for (var i = 0; i < 36; i++) {
@@ -46,7 +46,53 @@ class PlayerBullet extends ObjColor {
         }
         super(positions, colors);
 
+        this.player = player;
+        this.life_distance = 40;
+        this.bullet_speed = 60;
+
+        this.reset();
+    }
+
+    activate() {
+        this.active = true;
+        this.x = this.player.ship_obj.x;
+        this.y = this.player.ship_obj.y;
+        this.z = this.player.ship_obj.z;
+
+        this.rotation_matrix = m4.identity();
+        this.rotation_matrix = m4.multiply(this.rotation_matrix,
+            this.player.rotation_matrix);
+        this.rotation_matrix = m4.rotate_x(this.rotation_matrix,
+            this.player.pitch);
+    }
+
+    reset() {
+        this.active = false;
+        this.distance = 0;
+    }
+
+    update(dt) {
+        var dz = this.bullet_speed * dt;
+
+        //use a movement matrix to get new coordinates
+        var movement_matrix = m4.identity();
+        movement_matrix = m4.translate(movement_matrix,this.x, this.y, this.z);
+        movement_matrix = m4.multiply(movement_matrix, this.rotation_matrix);
+        movement_matrix = m4.translate(movement_matrix,
+            0, 0, -dz);
+        this.x = movement_matrix[12];
+        this.y = movement_matrix[13];
+        this.z = movement_matrix[14];
+
+        //update lifetime
+        this.distance += Math.abs(dz);
+        if (this.distance >= this.life_distance) {
+            this.reset();
+        }
+
+    }
+
+    expire() {
         this.active = false;
     }
 }
-

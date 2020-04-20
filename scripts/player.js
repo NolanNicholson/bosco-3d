@@ -1,7 +1,6 @@
 class Player {
     constructor(ship_model_asset, ship_texture_asset) {
         this.program_holder = program_holder_texture;
-        this.bullets = [new PlayerBullet(), new PlayerBullet()];
         this.ship_obj = new ObjTexture(ship_model_asset, ship_texture_asset);
 
         //movement flags
@@ -24,14 +23,26 @@ class Player {
         //assets
         this.ship_model_asset = ship_model_asset;
         this.ship_texture_asset = ship_texture_asset;
+
+        //bullet info
+        this.max_bullets = 8;
+        this.bullets = [];
+        for (var i = 0; i < this.max_bullets; i++) {
+            this.bullets.push(new PlayerBullet(this));
+        }
     }
 
     fire() {
-        var first_bullet = this.bullets[0];
-        first_bullet.active = true;
-        first_bullet.x = this.ship_obj.x;
-        first_bullet.y = this.ship_obj.y;
-        first_bullet.z = this.ship_obj.z;
+        if (!this.bullets[0].active && !this.bullets[1].active) {
+            var first_bullet = this.bullets.shift();
+            first_bullet.activate();
+
+            var second_bullet = this.bullets.shift();
+            second_bullet.activate();
+            second_bullet.bullet_speed *= -1;
+
+            this.bullets.push(first_bullet, second_bullet);
+        }
     }
 
     handle_keydown(e) {
@@ -118,6 +129,12 @@ class Player {
         this.ship_obj.y = movement_matrix[13];
         this.ship_obj.z = movement_matrix[14];
 
+        //update active bullets
+        this.bullets.forEach(b => {
+            if (b.active) {
+                b.update(dt);
+            }
+        });
     }
 
     render() {
@@ -145,8 +162,11 @@ class Player {
         gl.uniformMatrix4fv(uModelMatrixLoc, false, model_matrix);
         gl.drawArrays(gl.TRIANGLES, 0, this.ship_model_asset.num_vertices);
 
-        if (this.bullets[0].active) {
-            this.bullets[0].render();
-        }
+        //update active bullets
+        this.bullets.forEach(b => {
+            if (b.active) {
+                b.render();
+            }
+        });
     }
 }
