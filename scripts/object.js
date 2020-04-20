@@ -108,8 +108,6 @@ class Obj3D {
         this.model_matrix = m4.scale(this.model_matrix,
             this.scale, this.scale, this.scale);
 
-        gl.bindTexture(gl.TEXTURE_2D, this.texture);
-
         gl.bindVertexArray(this.vao);
         var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;
         gl.uniformMatrix4fv(uModelMatrixLoc, false, this.model_matrix);

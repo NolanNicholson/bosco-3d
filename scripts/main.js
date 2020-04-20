@@ -31,24 +31,41 @@ var program_holder_texture = new ProgramHolder(
         }
     });
 
+var textures = {
+    player:     new Texture("models/player_tex.png"),
+    enemy_i:    new Texture("models/enemy_i_tex.png"),
+    enemy_p:    new Texture("models/enemy_boomerang_tex.png"),
+    enemy_e:    new Texture("models/enemy_e_tex.png"),
+    enemy_spy:  new Texture("models/enemy_spy_tex.png"),
+}
+
+var models = {
+    player:     new Model("models/player.obj"),
+    enemy_i:    new Model("models/enemy_i.obj"),
+    enemy_p:    new Model("models/enemy_p.obj"),
+    enemy_e:    new Model("models/enemy_e.obj"),
+    enemy_spy:  new Model("models/enemy_spy.obj"),
+}
+
 //define test objects
 var obj_floor = new Floor(program_holder_color, 2, 10, 2);
 var obj_starfield = new Starfield(program_holder_color);
-var player = new Player(program_holder_texture);
+var player = new Player(program_holder_texture,
+    "models/player.obj", textures.player);
 player.ship_obj.x = 12;
 player.ship_obj.y = 4;
 player.ship_obj.z = 50;
 var obj_enemy_i = new TexturedObj3D(program_holder_texture,
-    "models/enemy_i.obj", "models/enemy_i_tex.png");
+    "models/enemy_i.obj", textures.enemy_i);
 obj_enemy_i.x = 6;
 var obj_enemy_p = new TexturedObj3D(program_holder_texture,
-    "models/enemy_boomerang.obj", "models/enemy_boomerang_tex.png");
+    "models/enemy_boomerang.obj", textures.enemy_p);
 obj_enemy_p.x = 10;
 var obj_enemy_e = new TexturedObj3D(program_holder_texture,
-    "models/enemy_e.obj", "models/enemy_e_tex.png");
+    "models/enemy_e.obj", textures.enemy_e);
 obj_enemy_e.x = 14;
 var obj_enemy_spy = new TexturedObj3D(program_holder_texture,
-    "models/enemy_spy.obj", "models/enemy_spy_tex.png");
+    "models/enemy_spy.obj", textures.enemy_spy);
 obj_enemy_spy.x = 18;
 
 var objects = [obj_floor, player, obj_starfield,

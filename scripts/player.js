@@ -1,5 +1,5 @@
 class Player {
-    constructor(program_holder) {
+    constructor(program_holder, ship_model_asset, ship_texture_asset) {
         this.program_holder = program_holder;
         this.ship_obj = new TexturedObj3D(program_holder,
             "models/player.obj", "models/player_tex.png");
@@ -30,6 +30,10 @@ class Player {
 
         //current rotation
         this.rotation_matrix = m4.identity();
+
+        //assets
+        this.ship_model_asset = ship_model_asset;
+        this.ship_texture_asset = ship_texture_asset;
     }
 
     handle_keydown(e) {
@@ -130,7 +134,7 @@ class Player {
 
         this.ship_obj.model_matrix = model_matrix;
 
-        gl.bindTexture(gl.TEXTURE_2D, this.ship_obj.texture);
+        gl.bindTexture(gl.TEXTURE_2D, this.ship_texture_asset.texture);
 
         gl.bindVertexArray(this.ship_obj.vao);
         var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;
