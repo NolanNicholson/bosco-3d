@@ -1,8 +1,7 @@
 class Player {
-    constructor(program_holder, ship_model_asset, ship_texture_asset) {
-        this.program_holder = program_holder;
-        this.ship_obj = new TexturedObj3D(program_holder,
-            ship_model_asset, ship_texture_asset);
+    constructor(ship_model_asset, ship_texture_asset) {
+        this.program_holder = program_holder_texture;
+        this.ship_obj = new TexturedObj3D(ship_model_asset, ship_texture_asset);
 
         //movement flags
         this.yawing_left = false;       this.yawing_right = false;

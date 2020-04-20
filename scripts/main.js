@@ -49,37 +49,27 @@ var models = {
 }
 
 //define test objects
-var obj_floor = new Floor(program_holder_color, 2, 10, 2);
-var obj_starfield = new Starfield(program_holder_color);
-var player = new Player(program_holder_texture,
-    models.player, textures.player);
+var obj_floor = new Floor(2, 10, 2);
+var obj_starfield = new Starfield();
+var player = new Player(models.player, textures.player);
 player.ship_obj.x = 12;
 player.ship_obj.y = 4;
 player.ship_obj.z = 50;
-var obj_enemy_i = new TexturedObj3D(program_holder_texture,
-    models.enemy_i, textures.enemy_i);
+var obj_enemy_i = new TexturedObj3D(models.enemy_i, textures.enemy_i);
 obj_enemy_i.x = 6;
-var obj_enemy_p = new TexturedObj3D(program_holder_texture,
-    models.enemy_p, textures.enemy_p);
+var obj_enemy_p = new TexturedObj3D(models.enemy_p, textures.enemy_p);
 obj_enemy_p.x = 10;
-var obj_enemy_e = new TexturedObj3D(program_holder_texture,
-    models.enemy_e, textures.enemy_e);
+var obj_enemy_e = new TexturedObj3D(models.enemy_e, textures.enemy_e);
 obj_enemy_e.x = 14;
-var obj_enemy_spy = new TexturedObj3D(program_holder_texture,
-    models.enemy_spy, textures.enemy_spy);
+var obj_enemy_spy = new TexturedObj3D(models.enemy_spy, textures.enemy_spy);
 obj_enemy_spy.x = 18;
 
 var formation = [
-    new TexturedObj3D(program_holder_texture,
-        models.enemy_p, textures.enemy_p_alt),
-    new TexturedObj3D(program_holder_texture,
-        models.enemy_p, textures.enemy_p),
-    new TexturedObj3D(program_holder_texture,
-        models.enemy_p, textures.enemy_p),
-    new TexturedObj3D(program_holder_texture,
-        models.enemy_p, textures.enemy_p),
-    new TexturedObj3D(program_holder_texture,
-        models.enemy_p, textures.enemy_p),
+    new TexturedObj3D(models.enemy_p, textures.enemy_p_alt),
+    new TexturedObj3D(models.enemy_p, textures.enemy_p),
+    new TexturedObj3D(models.enemy_p, textures.enemy_p),
+    new TexturedObj3D(models.enemy_p, textures.enemy_p),
+    new TexturedObj3D(models.enemy_p, textures.enemy_p),
 ]
 formation[0].x = -10; // center
 formation[1].x = -10; // front

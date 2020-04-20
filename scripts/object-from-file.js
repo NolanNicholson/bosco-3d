@@ -1,6 +1,6 @@
 class TexturedObj3D extends Obj3D {
-    constructor(program_holder, model_asset, texture_asset) {
-        super(program_holder, [], []);
+    constructor(model_asset, texture_asset) {
+        super(program_holder_texture, [], []);
         var me = this;
 
         //test coords - TODO: remove
