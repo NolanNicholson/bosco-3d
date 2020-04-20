@@ -92,6 +92,8 @@ class Player {
         this.rotation_matrix = m4.rotate_x(this.rotation_matrix,
             this.pitch * this.pitch_speed * dt);
         this.rotation_matrix = m4.rotate_y(this.rotation_matrix,
+            this.yaw * this.yaw_speed * dt / 2);
+        this.rotation_matrix = m4.rotate_z(this.rotation_matrix,
             this.yaw * this.yaw_speed * dt);
 
         //use a movement matrix to get new ship coordinates

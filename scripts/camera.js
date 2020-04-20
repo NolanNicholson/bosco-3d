@@ -101,58 +101,21 @@ class Camera {
         }
     }
 
-    update(dt) {
-        var speed = this.speeding ? 7 : 3;
-
-        // update velocity and position
-        this.vx = (this.moving_right - this.moving_left) * speed;
-        this.vy = (this.moving_up - this.moving_down) * speed;
-        this.vz = (this.moving_back - this.moving_forward) * speed;
-
-        // update rotational velocity and rotation
-        this.rvx = (this.rotating_up - this.rotating_down);
-        this.rvy = (this.rotating_left - this.rotating_right);
-
-        this.rx += this.rvx * dt;
-        this.ry += this.rvy * dt;
-
-        var movement_matrix = m4.identity();
-        movement_matrix = m4.translate(movement_matrix,
-            this.x, this.y, this.z);
-        movement_matrix = m4.rotate_y(movement_matrix, this.ry);
-        movement_matrix = m4.rotate_x(movement_matrix, this.rx);
-
-        movement_matrix = m4.translate(movement_matrix,
-            this.vx * dt, this.vy * dt, this.vz * dt);
-
-        this.x = movement_matrix[12];
-        this.y = movement_matrix[13];
-        this.z = movement_matrix[14];
-    }
-
     follow_player(dt, player) {
         this.x = player.ship_obj.x;
         this.y = player.ship_obj.y;
         this.z = player.ship_obj.z + 10;
     }
 
-    get_view_matrix() {
-        var camera_matrix = m4.identity();
-        camera_matrix = m4.translate(camera_matrix, this.x, this.y, this.z);
-        camera_matrix = m4.rotate_y(camera_matrix, this.ry);
-        camera_matrix = m4.rotate_x(camera_matrix, this.rx);
-        var view_matrix = m4.inverse(camera_matrix);
-        return view_matrix;
-    }
-
     get_view_matrix_player(player) {
+        // The camera follows behind (and slightly above) the player
         var camera_pos= m4.identity();
         camera_pos= m4.translate(camera_pos,
             player.ship_obj.x, player.ship_obj.y, player.ship_obj.z);
         camera_pos= m4.multiply(camera_pos,
             player.rotation_matrix);
         camera_pos= m4.translate(camera_pos,
-            0, 2, 10);
+            0, 4, 12);
 
         var up = m4.identity();
         up = m4.multiply(up, player.rotation_matrix);
