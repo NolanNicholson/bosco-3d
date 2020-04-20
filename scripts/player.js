@@ -122,8 +122,8 @@ class Player {
         model_matrix = m4.multiply(model_matrix, this.rotation_matrix);
 
         //(purely cosmetic) pitch/yaw rotations
-        model_matrix = m4.rotate_z(model_matrix, this.yaw);
         model_matrix = m4.rotate_x(model_matrix, this.pitch);
+        model_matrix = m4.rotate_z(model_matrix, this.yaw);
 
         //base model transformation
         model_matrix = m4.multiply(model_matrix, this.ship_transform_base);
