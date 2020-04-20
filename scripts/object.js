@@ -82,6 +82,7 @@ class ObjColor {
         this.program_holder = program_holder_color;
         this.x = 0; this.y = 0; this.z = 0;
         this.r_x = 0; this.r_y = 0; this.r_z = 0;
+        this.r_vx = 0; this.r_vy = 0; this.r_vz = 0;
         this.scale = 1;
         this.model_matrix = m4.identity();
 

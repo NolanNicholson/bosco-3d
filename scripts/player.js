@@ -60,16 +60,6 @@ class Player {
         this.yawing_left = false;       this.yawing_right = false;
         this.pitching_up = false;         this.pitching_down = false;
 
-        //"base" transformation matrix:
-        //the model's .obj file as-is needs to be rotated and scaled
-        this.ship_transform_base = m4.identity();
-        this.ship_transform_base = m4.scale(this.ship_transform_base,
-            0.2, 0.2, 0.2);
-        this.ship_transform_base = m4.translate(this.ship_transform_base,
-            1.5, 0, 0);
-        this.ship_transform_base = m4.rotate_y(this.ship_transform_base,
-            Math.PI * 3 / 2);
-
         //ship speed
         this.drive_speed = 10;
 
@@ -195,7 +185,8 @@ class Player {
         model_matrix = m4.rotate_z(model_matrix, this.yaw);
 
         //base model transformation
-        model_matrix = m4.multiply(model_matrix, this.ship_transform_base);
+        model_matrix = m4.multiply(model_matrix,
+            this.ship_model_asset.base_transform);
 
         this.ship_obj.model_matrix = model_matrix;
 

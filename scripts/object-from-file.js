@@ -4,12 +4,7 @@ class ObjTexture extends ObjColor {
         var me = this;
 
         //test coords - TODO: remove
-        this.scale = 0.2;
-        this.x = 2;
-        this.y = 2;
-        this.z = 2;
-        this.r_vy = 0;
-        this.r_y = Math.PI * 3 / 2;
+        this.x = 2; this.y = 2; this.z = 2;
 
         this.texture_asset = texture_asset;
         this.model_asset = model_asset;
@@ -31,6 +26,8 @@ class ObjTexture extends ObjColor {
         this.model_matrix = m4.rotate_z(this.model_matrix, this.r_z);
         this.model_matrix = m4.scale(this.model_matrix,
             this.scale, this.scale, this.scale);
+        this.model_matrix = m4.multiply(this.model_matrix,
+            this.model_asset.base_transform);
 
         gl.bindVertexArray(this.model_asset.vao);
         var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;

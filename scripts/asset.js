@@ -45,6 +45,16 @@ class Model {
             var texcoords = obj_file.tex_vertices;
             me.load_data(positions, texcoords);
         });
+
+        //"base" transformation matrix:
+        //the models' .obj files as-is need to be rotated and scaled
+        this.base_transform = m4.identity();
+        this.base_transform = m4.scale(this.base_transform,
+            0.2, 0.2, 0.2);
+        this.base_transform = m4.translate(this.base_transform,
+            1.5, 0, 0);
+        this.base_transform = m4.rotate_y(this.base_transform,
+            Math.PI * 3 / 2);
     }
 
     load_data(positions, texcoords) {
