@@ -5,6 +5,13 @@ if (!gl) {
     console.log("WebGL 2 not supported!");
 }
 
+// Enable backface culling and depth testing
+gl.enable(gl.CULL_FACE);
+gl.enable(gl.DEPTH_TEST);
+
+// Define "program holders" which set up both the shaders
+// and hold the location info for the shader variables.
+// color: for objects which use a color buffer
 var program_holder_color = new ProgramHolder(
     gl, src_vs_color, src_fs_color,
     {
@@ -18,6 +25,7 @@ var program_holder_color = new ProgramHolder(
         }
     });
 
+// texture: for objects which use a texture coordinate buffer
 var program_holder_texture = new ProgramHolder(
     gl, src_vs_texture, src_fs_texture,
     {
@@ -31,6 +39,7 @@ var program_holder_texture = new ProgramHolder(
         }
     });
 
+// Load texture assets
 var textures = {
     player:     new Texture("models/player_tex.png"),
     enemy_i:    new Texture("models/enemy_i_tex.png"),
@@ -40,6 +49,7 @@ var textures = {
     enemy_p_alt:    new Texture("models/enemy_p_alt_tex.png"),
 }
 
+// Load model assets
 var models = {
     player:     new Model("models/player.obj"),
     enemy_i:    new Model("models/enemy_i.obj"),
@@ -48,7 +58,7 @@ var models = {
     enemy_spy:  new Model("models/enemy_spy.obj"),
 }
 
-//define test objects
+// Define test objects
 var obj_floor = new Floor(2, 10, 2);
 var obj_starfield = new Starfield();
 var player = new Player(models.player, textures.player);
@@ -64,6 +74,7 @@ obj_enemy_e.x = 14;
 var obj_enemy_spy = new TexturedObj3D(models.enemy_spy, textures.enemy_spy);
 obj_enemy_spy.x = 18;
 
+// Define some more test objects, in the shape of a formation
 var formation = [
     new TexturedObj3D(models.enemy_p, textures.enemy_p_alt),
     new TexturedObj3D(models.enemy_p, textures.enemy_p),
@@ -83,27 +94,20 @@ formation[2].z = -13; // back
 formation[3].z = -10; // left
 formation[4].z = -10; // right
 
+// List of objects to be updated and rendered
 var objects = [obj_floor, player, obj_starfield,
     obj_enemy_i, obj_enemy_p, obj_enemy_e, obj_enemy_spy,
     ...formation
 ];
 
 var camera = new Camera();
-camera.x = 2;
-camera.y = 2;
-camera.z = 9;
-
-gl.enable(gl.CULL_FACE);
-gl.enable(gl.DEPTH_TEST);
 
 function handle_keydown(e) {
     player.handle_keydown(e);
-    //camera.handle_keydown(e);
 }
 
 function handle_keyup(e) {
     player.handle_keyup(e);
-    //camera.handle_keyup(e);
 }
 
 window.addEventListener("keydown", handle_keydown);
@@ -117,15 +121,15 @@ function drawScene(now) {
     var dt = now - then;
     then = now;
 
-    //Resize the canvas and viewport
+    // Resize the canvas and viewport
     resizeCanvasToDisplaySize(gl.canvas, 0.5);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-    //clear the canvas
+    // clear the canvas
     gl.clearColor(0, 0, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    //Perspective projection matrix
+    // Perspective projection matrix
     var proj_matrix = m4.perspective(
         1,
         gl.canvas.clientWidth / gl.canvas.clientHeight,
@@ -137,7 +141,7 @@ function drawScene(now) {
         obj.update(dt);
     });
 
-    //Camera view matrix
+    // Camera view matrix
     var view_matrix = camera.get_view_matrix_player(player);
     camera.follow_player(dt, player);
 
