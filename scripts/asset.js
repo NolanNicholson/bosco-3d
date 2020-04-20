@@ -30,6 +30,26 @@ class Texture {
 }
 
 class Model {
-    constructor(filename) {
+    constructor(obj_filename, program_holder) {
+        this.program_holder = program_holder;
+
+        var me = this;
+
+        //fetch the object file
+        fetch(obj_filename)
+        .then(response => response.text())
+        .then((obj_string) => {
+            var obj_file = loadOBJFromString(obj_string);
+
+            var positions = obj_file.vertices;
+            var texcoords = obj_file.tex_vertices;
+            me.load_data(me.program_holder, positions, texcoords);
+        });
     }
+
+    load_data(program_holder, positions, texcoords) {
+        this.vao = setup_textured_object(program_holder, positions, texcoords);
+        this.num_vertices = positions.length / 3;
+    }
+
 }

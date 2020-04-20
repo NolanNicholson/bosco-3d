@@ -1,5 +1,5 @@
 class TexturedObj3D extends Obj3D {
-    constructor(program_holder, obj_filename, texture_asset) {
+    constructor(program_holder, model_asset, texture_asset) {
         super(program_holder, [], []);
         var me = this;
 
@@ -11,23 +11,8 @@ class TexturedObj3D extends Obj3D {
         this.r_vy = 0;
         this.r_y = Math.PI * 3 / 2;
 
-        //fetch the object file
-        fetch(obj_filename)
-        .then(response => response.text())
-        .then((obj_string) => {
-            var obj_file = loadOBJFromString(obj_string);
-
-            var positions = obj_file.vertices;
-            var texcoords = obj_file.tex_vertices;
-            me.load_data(me.program_holder, positions, texcoords);
-        });
-
         this.texture_asset = texture_asset;
-    }
-
-    load_data(program_holder, positions, texcoords) {
-        this.vao = setup_textured_object(program_holder, positions, texcoords);
-        this.num_vertices = positions.length / 3;
+        this.model_asset = model_asset;
     }
 
     update(dt) {
@@ -36,6 +21,19 @@ class TexturedObj3D extends Obj3D {
 
     render() {
         gl.bindTexture(gl.TEXTURE_2D, this.texture_asset.texture);
-        super.render();
+
+        this.model_matrix = m4.identity();
+        this.model_matrix = m4.translate(this.model_matrix,
+            this.x, this.y, this.z);
+        this.model_matrix = m4.rotate_x(this.model_matrix, this.r_x);
+        this.model_matrix = m4.rotate_y(this.model_matrix, this.r_y);
+        this.model_matrix = m4.rotate_z(this.model_matrix, this.r_z);
+        this.model_matrix = m4.scale(this.model_matrix,
+            this.scale, this.scale, this.scale);
+
+        gl.bindVertexArray(this.model_asset.vao);
+        var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;
+        gl.uniformMatrix4fv(uModelMatrixLoc, false, this.model_matrix);
+        gl.drawArrays(gl.TRIANGLES, 0, this.model_asset.num_vertices);
     }
 }

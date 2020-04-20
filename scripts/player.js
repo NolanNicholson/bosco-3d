@@ -2,7 +2,7 @@ class Player {
     constructor(program_holder, ship_model_asset, ship_texture_asset) {
         this.program_holder = program_holder;
         this.ship_obj = new TexturedObj3D(program_holder,
-            "models/player.obj", "models/player_tex.png");
+            ship_model_asset, ship_texture_asset);
 
         //movement flags
         this.yawing_left = false;       this.yawing_right = false;
@@ -136,9 +136,9 @@ class Player {
 
         gl.bindTexture(gl.TEXTURE_2D, this.ship_texture_asset.texture);
 
-        gl.bindVertexArray(this.ship_obj.vao);
+        gl.bindVertexArray(this.ship_model_asset.vao);
         var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;
         gl.uniformMatrix4fv(uModelMatrixLoc, false, model_matrix);
-        gl.drawArrays(gl.TRIANGLES, 0, this.ship_obj.num_vertices);
+        gl.drawArrays(gl.TRIANGLES, 0, this.ship_model_asset.num_vertices);
     }
 }
