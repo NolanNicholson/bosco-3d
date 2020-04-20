@@ -10,7 +10,7 @@ out vec4 v_color;
 
 void main() {
     gl_Position = u_matrix_viewproj * u_matrix_model * a_position;
-    gl_PointSize = 4.0f;
+    gl_PointSize = 2.0f;
     v_color = a_color;
 }
 `;

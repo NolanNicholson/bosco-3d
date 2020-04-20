@@ -84,7 +84,7 @@ function drawScene(now) {
     then = now;
 
     //Resize the canvas and viewport
-    resizeCanvasToDisplaySize(gl.canvas, 1);
+    resizeCanvasToDisplaySize(gl.canvas, 0.5);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
     //clear the canvas
