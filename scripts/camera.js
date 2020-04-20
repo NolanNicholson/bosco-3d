@@ -146,10 +146,22 @@ class Camera {
     }
 
     get_view_matrix_player(player) {
+        var camera_pos= m4.identity();
+        camera_pos= m4.translate(camera_pos,
+            player.ship_obj.x, player.ship_obj.y, player.ship_obj.z);
+        camera_pos= m4.multiply(camera_pos,
+            player.rotation_matrix);
+        camera_pos= m4.translate(camera_pos,
+            0, 2, 10);
+
+        var up = m4.identity();
+        up = m4.multiply(up, player.rotation_matrix);
+        up = m4.translate(up, 0, 1, 0);
+
         var camera_matrix = m4.lookAt(
-            [this.x, this.y, this.z],
+            [camera_pos[12], camera_pos[13], camera_pos[14]],
             [player.ship_obj.x, player.ship_obj.y, player.ship_obj.z],
-            [0, 1, 0]
+            [up[12], up[13], up[14]]
         );
         var view_matrix = m4.inverse(camera_matrix);
         return view_matrix;

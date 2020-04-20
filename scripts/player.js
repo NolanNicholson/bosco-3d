@@ -17,12 +17,12 @@ class Player {
             Math.PI * 3 / 2);
 
         //ship speed
-        this.drive_speed = 3;
+        this.drive_speed = 10;
 
         //direction and adjustment speed
         this.pitch = 0; this.yaw = 0;
         this.pitch_target = 0; this.yaw_target = 0;
-        this.tack_anim_speed = 0.2;
+        this.tack_anim_speed = 0.1;
         this.pitch_speed = 2;
         this.yaw_speed = 2;
 
@@ -120,8 +120,8 @@ class Player {
         model_matrix = m4.multiply(model_matrix, this.rotation_matrix);
 
         //(purely cosmetic) pitch/yaw rotations
-        model_matrix = m4.rotate_x(model_matrix, this.pitch);
         model_matrix = m4.rotate_z(model_matrix, this.yaw);
+        model_matrix = m4.rotate_x(model_matrix, this.pitch);
 
         //base model transformation
         model_matrix = m4.multiply(model_matrix, this.ship_transform_base);
