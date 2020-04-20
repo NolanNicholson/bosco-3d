@@ -13,6 +13,8 @@ class Player {
         this.ship_transform_base = m4.identity();
         this.ship_transform_base = m4.scale(this.ship_transform_base,
             0.2, 0.2, 0.2);
+        this.ship_transform_base = m4.translate(this.ship_transform_base,
+            1.5, 0, 0);
         this.ship_transform_base = m4.rotate_y(this.ship_transform_base,
             Math.PI * 3 / 2);
 
