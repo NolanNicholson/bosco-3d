@@ -37,6 +37,7 @@ var textures = {
     enemy_p:    new Texture("models/enemy_p_tex.png"),
     enemy_e:    new Texture("models/enemy_e_tex.png"),
     enemy_spy:  new Texture("models/enemy_spy_tex.png"),
+    enemy_p_alt:    new Texture("models/enemy_p_alt_tex.png"),
 }
 
 var models = {
@@ -68,8 +69,34 @@ var obj_enemy_spy = new TexturedObj3D(program_holder_texture,
     models.enemy_spy, textures.enemy_spy);
 obj_enemy_spy.x = 18;
 
+var formation = [
+    new TexturedObj3D(program_holder_texture,
+        models.enemy_p, textures.enemy_p_alt),
+    new TexturedObj3D(program_holder_texture,
+        models.enemy_p, textures.enemy_p),
+    new TexturedObj3D(program_holder_texture,
+        models.enemy_p, textures.enemy_p),
+    new TexturedObj3D(program_holder_texture,
+        models.enemy_p, textures.enemy_p),
+    new TexturedObj3D(program_holder_texture,
+        models.enemy_p, textures.enemy_p),
+]
+formation[0].x = -10; // center
+formation[1].x = -10; // front
+formation[2].x = -10; // back
+formation[3].x = -07; // left
+formation[4].x = -13; // right
+
+formation[0].z = -10; // center
+formation[1].z = -07; // front
+formation[2].z = -13; // back
+formation[3].z = -10; // left
+formation[4].z = -10; // right
+
 var objects = [obj_floor, player, obj_starfield,
-    obj_enemy_i, obj_enemy_p, obj_enemy_e, obj_enemy_spy];
+    obj_enemy_i, obj_enemy_p, obj_enemy_e, obj_enemy_spy,
+    ...formation
+];
 
 var camera = new Camera();
 camera.x = 2;
