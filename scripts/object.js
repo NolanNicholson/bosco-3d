@@ -77,15 +77,35 @@ function setup_textured_object(program_holder, positions, texcoords) {
     return vao;
 }
 
-class ObjColor {
-    constructor(positions, colors) {
-        this.program_holder = program_holder_color;
+class ObjBase {
+    constructor() {
         this.x = 0; this.y = 0; this.z = 0;
-        this.r_x = 0; this.r_y = 0; this.r_z = 0;
         this.r_vx = 0; this.r_vy = 0; this.r_vz = 0;
         this.scale = 1;
         this.model_matrix = m4.identity();
+        this.rotation_matrix = m4.identity();
+    }
 
+    update(dt) {
+        this.rotation_matrix = m4.rotate_x(this.rotation_matrix, this.r_vx * dt);
+        this.rotation_matrix = m4.rotate_y(this.rotation_matrix, this.r_vy * dt);
+        this.rotation_matrix = m4.rotate_z(this.rotation_matrix, this.r_vz * dt);
+    }
+
+    prep_model_matrix() {
+        this.model_matrix = m4.identity();
+        this.model_matrix = m4.translate(this.model_matrix,
+            this.x, this.y, this.z);
+        this.model_matrix = m4.multiply(this.model_matrix, this.rotation_matrix);
+        this.model_matrix = m4.scale(this.model_matrix,
+            this.scale, this.scale, this.scale);
+    }
+}
+
+class ObjColor extends ObjBase {
+    constructor(positions, colors) {
+        super();
+        this.program_holder = program_holder_color;
         this.load_data(positions, colors);
     }
 
@@ -94,22 +114,8 @@ class ObjColor {
         this.num_vertices = positions.length / 3;
     }
 
-    update(dt) {
-        this.r_x += this.r_vx * dt;
-        this.r_y += this.r_vy * dt;
-        this.r_z += this.r_vz * dt;
-    }
-
     render() {
-        this.model_matrix = m4.identity();
-        this.model_matrix = m4.translate(this.model_matrix,
-            this.x, this.y, this.z);
-        this.model_matrix = m4.rotate_x(this.model_matrix, this.r_x);
-        this.model_matrix = m4.rotate_y(this.model_matrix, this.r_y);
-        this.model_matrix = m4.rotate_z(this.model_matrix, this.r_z);
-        this.model_matrix = m4.scale(this.model_matrix,
-            this.scale, this.scale, this.scale);
-
+        super.prep_model_matrix();
         gl.useProgram(this.program_holder.program);
         gl.bindVertexArray(this.vao);
         var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;
@@ -118,9 +124,9 @@ class ObjColor {
     }
 }
 
-class ObjTexture extends ObjColor {
+class ObjTexture extends ObjBase {
     constructor(model_asset, texture_asset) {
-        super([], []);
+        super();
         var me = this;
 
         //test coords - TODO: remove
@@ -129,23 +135,14 @@ class ObjTexture extends ObjColor {
         this.texture_asset = texture_asset;
         this.model_asset = model_asset;
         this.program_holder = program_holder_texture;
-    }
 
-    update(dt) {
-        this.r_y += this.r_vy * dt;
+        this.rotation_matrix = m4.identity();
     }
 
     render() {
         gl.bindTexture(gl.TEXTURE_2D, this.texture_asset.texture);
 
-        this.model_matrix = m4.identity();
-        this.model_matrix = m4.translate(this.model_matrix,
-            this.x, this.y, this.z);
-        this.model_matrix = m4.rotate_x(this.model_matrix, this.r_x);
-        this.model_matrix = m4.rotate_y(this.model_matrix, this.r_y);
-        this.model_matrix = m4.rotate_z(this.model_matrix, this.r_z);
-        this.model_matrix = m4.scale(this.model_matrix,
-            this.scale, this.scale, this.scale);
+        super.prep_model_matrix();
         this.model_matrix = m4.multiply(this.model_matrix,
             this.model_asset.base_transform);
 

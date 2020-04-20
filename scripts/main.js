@@ -57,6 +57,9 @@ var models = {
     enemy_e:    new Model("models/enemy_e.obj"),
     enemy_spy:  new Model("models/enemy_spy.obj"),
 }
+models.enemy_e.base_transform = m4.translate(
+    models.enemy_e.base_transform,
+    0, 1, 0);
 
 // Define test objects
 var obj_floor = new Floor(2, 10, 2);
