@@ -30,8 +30,8 @@ class Texture {
 }
 
 class Model {
-    constructor(obj_filename, program_holder) {
-        this.program_holder = program_holder;
+    constructor(obj_filename) {
+        this.program_holder = program_holder_texture;
 
         var me = this;
 
@@ -43,12 +43,13 @@ class Model {
 
             var positions = obj_file.vertices;
             var texcoords = obj_file.tex_vertices;
-            me.load_data(me.program_holder, positions, texcoords);
+            me.load_data(positions, texcoords);
         });
     }
 
-    load_data(program_holder, positions, texcoords) {
-        this.vao = setup_textured_object(program_holder, positions, texcoords);
+    load_data(positions, texcoords) {
+        this.vao = setup_textured_object(this.program_holder,
+            positions, texcoords);
         this.num_vertices = positions.length / 3;
     }
 

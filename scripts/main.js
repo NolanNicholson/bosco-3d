@@ -41,11 +41,11 @@ var textures = {
 }
 
 var models = {
-    player:     new Model("models/player.obj", program_holder_texture),
-    enemy_i:    new Model("models/enemy_i.obj", program_holder_texture),
-    enemy_p:    new Model("models/enemy_p.obj", program_holder_texture),
-    enemy_e:    new Model("models/enemy_e.obj", program_holder_texture),
-    enemy_spy:  new Model("models/enemy_spy.obj", program_holder_texture),
+    player:     new Model("models/player.obj"),
+    enemy_i:    new Model("models/enemy_i.obj"),
+    enemy_p:    new Model("models/enemy_p.obj"),
+    enemy_e:    new Model("models/enemy_e.obj"),
+    enemy_spy:  new Model("models/enemy_spy.obj"),
 }
 
 //define test objects
