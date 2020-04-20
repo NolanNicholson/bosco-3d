@@ -102,7 +102,7 @@ class Camera {
     }
 
     follow_player(dt, player) {
-        this.x = player.ship_obj.x;
+        this.x = player.ship_obj.x + 0;
         this.y = player.ship_obj.y + 4;
         this.z = player.ship_obj.z + 12;
     }

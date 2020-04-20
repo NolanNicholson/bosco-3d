@@ -128,7 +128,7 @@ class Player {
         //base model transformation
         model_matrix = m4.multiply(model_matrix, this.ship_transform_base);
 
-        this.ship_obj.model_matrix = this.model_matrix;
+        this.ship_obj.model_matrix = model_matrix;
 
         gl.bindTexture(gl.TEXTURE_2D, this.ship_obj.texture);
 

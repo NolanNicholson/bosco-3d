@@ -99,9 +99,13 @@ function drawScene(now) {
         2000,
     );
 
+    objects.forEach(obj => {
+        obj.update(dt);
+    });
+
     //Camera view matrix
-    camera.follow_player(dt, player);
     var view_matrix = camera.get_view_matrix_player(player);
+    camera.follow_player(dt, player);
 
     obj_starfield.x = camera.x;
     obj_starfield.y = camera.y;
@@ -113,7 +117,6 @@ function drawScene(now) {
         gl.useProgram(obj.program_holder.program);
         gl.uniformMatrix4fv(obj.program_holder.locations.uViewProjMatrixLoc,
             false, viewproj);
-        obj.update(dt);
         obj.render();
     });
 
