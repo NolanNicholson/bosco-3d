@@ -34,7 +34,7 @@ var program_holder_texture = new ProgramHolder(
 var textures = {
     player:     new Texture("models/player_tex.png"),
     enemy_i:    new Texture("models/enemy_i_tex.png"),
-    enemy_p:    new Texture("models/enemy_boomerang_tex.png"),
+    enemy_p:    new Texture("models/enemy_p_tex.png"),
     enemy_e:    new Texture("models/enemy_e_tex.png"),
     enemy_spy:  new Texture("models/enemy_spy_tex.png"),
 }
@@ -42,7 +42,7 @@ var textures = {
 var models = {
     player:     new Model("models/player.obj", program_holder_texture),
     enemy_i:    new Model("models/enemy_i.obj", program_holder_texture),
-    enemy_p:    new Model("models/enemy_boomerang.obj", program_holder_texture),
+    enemy_p:    new Model("models/enemy_p.obj", program_holder_texture),
     enemy_e:    new Model("models/enemy_e.obj", program_holder_texture),
     enemy_spy:  new Model("models/enemy_spy.obj", program_holder_texture),
 }
