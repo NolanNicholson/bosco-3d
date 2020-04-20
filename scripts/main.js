@@ -35,6 +35,9 @@ var program_holder_texture = new ProgramHolder(
 var obj_floor = new Floor(program_holder_color, 2, 10, 2);
 var obj_starfield = new Starfield(program_holder_color);
 var player = new Player(program_holder_texture);
+player.ship_obj.x = 12;
+player.ship_obj.y = 4;
+player.ship_obj.z = 50;
 var obj_enemy_i = new TexturedObj3D(program_holder_texture,
     "models/enemy_i.obj", "models/enemy_i_tex.png");
 obj_enemy_i.x = 6;
