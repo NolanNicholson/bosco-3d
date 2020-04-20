@@ -13,13 +13,20 @@
                 display: block;
                 background-color: #333;
                 position: fixed;
+
+                image-rendering: optimizeSpeed;
+                image-rendering: -moz-crisp-edges;
+                image-rendering: -webkit-optimize-contrast;
+                image-rendering: -o-crisp-edges;
+                image-rendering: pixelated;
+                -ms-interpolation-mode: nearest-neighbor;
             }
         </style>
     </head>
     <body>
         <canvas id="c"></canvas>
         <script src="scripts/loadobj.js"></script>
-        <script src="scripts/webgl-utils.js"></script>
+        <!--<script src="scripts/webgl-utils.js"></script>-->
         <script src="scripts/gl-helpers.js"></script>
         <script src="scripts/camera.js"></script>
         <script src="scripts/object.js"></script>

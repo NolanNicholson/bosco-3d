@@ -103,8 +103,8 @@ class Camera {
 
     follow_player(dt, player) {
         this.x = player.ship_obj.x;
-        this.y = player.ship_obj.y;
-        this.z = player.ship_obj.z + 10;
+        this.y = player.ship_obj.y + 4;
+        this.z = player.ship_obj.z + 12;
     }
 
     get_view_matrix_player(player) {

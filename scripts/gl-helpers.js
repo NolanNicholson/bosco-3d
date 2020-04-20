@@ -11,6 +11,21 @@ function createShader(gl, type, source) {
     }
 }
 
+//modified version of same-named function from webgl-utils.js; see:
+//http://webgl2fundamentals.org/webgl/lessons/webgl-boilerplate.html
+function resizeCanvasToDisplaySize(canvas, multiplier) {
+    multiplier = multiplier || 1;
+    const dpr = window.devicePixelRatio;
+    const width  = canvas.clientWidth  * dpr * multiplier | 0;
+    const height = canvas.clientHeight * dpr * multiplier | 0;
+    if (canvas.width !== width ||  canvas.height !== height) {
+        canvas.width  = width;
+        canvas.height = height;
+        return true;
+    }
+    return false;
+}
+
 function createProgram(gl, vertexShader, fragmentShader) {
     var program = gl.createProgram();
     gl.attachShader(program, vertexShader);
