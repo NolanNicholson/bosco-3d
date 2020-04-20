@@ -1,6 +1,59 @@
+function prism(w, h, d) {
+    // w: width (x); h: height (y); d: depth (z)
+    w /= 2; h /= 2; d /= 2;
+
+    // vertex positions
+    var v = [
+        [-w, -h, -d],
+        [+w, -h, -d],
+        [-w, +h, -d],
+        [+w, +h, -d],
+        [-w, -h, +d],
+        [+w, -h, +d],
+        [-w, +h, +d],
+        [+w, +h, +d],
+    ];
+
+    var faces = [
+        [0, 1, 3, 2],
+        [0, 2, 6, 4],
+        [1, 5, 7, 3],
+        [4, 6, 7, 5],
+        [2, 3, 7, 6],
+        [0, 4, 5, 1],
+    ];
+
+    var positions = [];
+    faces.forEach(face => {
+        positions.push(...v[face[0]]);
+        positions.push(...v[face[1]]);
+        positions.push(...v[face[2]]);
+        positions.push(...v[face[0]]);
+        positions.push(...v[face[2]]);
+        positions.push(...v[face[3]]);
+    });
+
+    return positions;
+}
+
+class PlayerBullet extends ObjColor {
+    constructor() {
+        var positions = prism(1, 2, 1);
+
+        var colors = [];
+        for (var i = 0; i < 36; i++) {
+            colors.push(1, 1, 1);
+        }
+        super(positions, colors);
+
+        this.active = false;
+    }
+}
+
 class Player {
     constructor(ship_model_asset, ship_texture_asset) {
         this.program_holder = program_holder_texture;
+        this.bullets = [new PlayerBullet(), new PlayerBullet()];
         this.ship_obj = new ObjTexture(ship_model_asset, ship_texture_asset);
 
         //movement flags
@@ -35,6 +88,14 @@ class Player {
         this.ship_texture_asset = ship_texture_asset;
     }
 
+    fire() {
+        var first_bullet = this.bullets[0];
+        first_bullet.active = true;
+        first_bullet.x = this.ship_obj.x;
+        first_bullet.y = this.ship_obj.y;
+        first_bullet.z = this.ship_obj.z;
+    }
+
     handle_keydown(e) {
         switch(e.keyCode) {
             case 65: // A
@@ -48,6 +109,9 @@ class Player {
                 break;
             case 83: // S
                 this.pitching_up = true;
+                break;
+            case 32: // Spacebar
+                this.fire();
                 break;
             default:
                 console.log("Key Down:", e.keyCode);
@@ -68,8 +132,10 @@ class Player {
             case 83: // S
                 this.pitching_up = false;
                 break;
+            case 32: // Spacebar
+                break;
             default:
-                console.log("Key Down:", e.keyCode);
+                console.log("Key Up:", e.keyCode);
         }
     }
 
@@ -139,5 +205,9 @@ class Player {
         var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;
         gl.uniformMatrix4fv(uModelMatrixLoc, false, model_matrix);
         gl.drawArrays(gl.TRIANGLES, 0, this.ship_model_asset.num_vertices);
+
+        if (this.bullets[0].active) {
+            this.bullets[0].render();
+        }
     }
 }

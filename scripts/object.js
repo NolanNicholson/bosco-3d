@@ -109,6 +109,7 @@ class ObjColor {
         this.model_matrix = m4.scale(this.model_matrix,
             this.scale, this.scale, this.scale);
 
+        gl.useProgram(this.program_holder.program);
         gl.bindVertexArray(this.vao);
         var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;
         gl.uniformMatrix4fv(uModelMatrixLoc, false, this.model_matrix);
