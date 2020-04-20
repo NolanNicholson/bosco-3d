@@ -1,6 +1,7 @@
-function setup_object(program_holder, positions, colors) {
+function setup_color_object(positions, colors) {
+
     //locations within the GL program
-    var locs = program_holder.locations;
+    var locs = program_holder_color.locations;
 
     //create and bind a VAO
     var vao = gl.createVertexArray();
@@ -76,19 +77,19 @@ function setup_textured_object(program_holder, positions, texcoords) {
     return vao;
 }
 
-class Obj3D {
-    constructor(program_holder, positions, colors) {
-        this.program_holder = program_holder;
+class ObjColor {
+    constructor(positions, colors) {
+        this.program_holder = program_holder_color;
         this.x = 0; this.y = 0; this.z = 0;
         this.r_x = 0; this.r_y = 0; this.r_z = 0;
         this.scale = 1;
         this.model_matrix = m4.identity();
 
-        this.load_data(program_holder, positions, colors);
+        this.load_data(positions, colors);
     }
 
-    load_data(program_holder, positions, colors) {
-        this.vao = setup_object(program_holder, positions, colors);
+    load_data(positions, colors) {
+        this.vao = setup_color_object(positions, colors);
         this.num_vertices = positions.length / 3;
     }
 

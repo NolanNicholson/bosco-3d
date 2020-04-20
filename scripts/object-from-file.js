@@ -1,6 +1,6 @@
-class TexturedObj3D extends Obj3D {
+class ObjTexture extends ObjColor {
     constructor(model_asset, texture_asset) {
-        super(program_holder_texture, [], []);
+        super([], []);
         var me = this;
 
         //test coords - TODO: remove
@@ -13,6 +13,7 @@ class TexturedObj3D extends Obj3D {
 
         this.texture_asset = texture_asset;
         this.model_asset = model_asset;
+        this.program_holder = program_holder_texture;
     }
 
     update(dt) {

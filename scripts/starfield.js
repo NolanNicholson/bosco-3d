@@ -48,10 +48,10 @@ function starfield() {
     return [positions, colors]; 
 }
 
-class Starfield extends Obj3D {
+class Starfield extends ObjColor {
     constructor() {
         var pos_col = starfield();
-        super(program_holder_color, pos_col[0], pos_col[1]);
+        super(pos_col[0], pos_col[1]);
     }
 
     update(dt) {

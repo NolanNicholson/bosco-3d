@@ -39,10 +39,10 @@ function checkered_floor(tilesize, tiles_x, tiles_z) {
     return [positions, colors.flat()];
 }
 
-class Floor extends Obj3D {
+class Floor extends ObjColor {
     constructor(tilesize, tiles_x, tiles_z) {
         var pos_col = checkered_floor(tilesize, tiles_x, tiles_z);
-        super(program_holder_color, pos_col[0], pos_col[1]);
+        super(pos_col[0], pos_col[1]);
     }
 
     update(dt) {
