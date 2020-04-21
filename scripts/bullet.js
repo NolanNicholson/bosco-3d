@@ -48,7 +48,6 @@ class PlayerBullet extends ObjColor {
 
         this.player = player;
         this.life_distance = 40;
-        this.bullet_speed = 60;
 
         this.reset();
     }
@@ -69,6 +68,7 @@ class PlayerBullet extends ObjColor {
     reset() {
         this.active = false;
         this.distance = 0;
+        this.bullet_speed = 60;
     }
 
     update(dt) {
