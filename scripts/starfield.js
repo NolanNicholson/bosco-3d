@@ -1,9 +1,8 @@
-function starfield() {
+function starfield(num_stars) {
     var positions = [];
     var colors = [];
 
     var radius = 100
-    var num_stars = 400;
 
     var white = [1, 1, 1];
     var red = [1, 0, 0];
@@ -48,9 +47,9 @@ function starfield() {
     return [positions, colors]; 
 }
 
-class Starfield extends ObjColor {
-    constructor() {
-        var pos_col = starfield();
+class Starfield_Sub extends ObjColor {
+    constructor(num_stars) {
+        var pos_col = starfield(num_stars);
         super(pos_col[0], pos_col[1]);
     }
 
@@ -66,5 +65,34 @@ class Starfield extends ObjColor {
         var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;
         gl.uniformMatrix4fv(uModelMatrixLoc, false, this.model_matrix);
         gl.drawArrays(gl.POINTS, 0, this.num_vertices);
+    }
+}
+
+class Starfield {
+    constructor() {
+        this.program_holder = program_holder_color;
+        this.starfields = [];
+        for (var i = 0; i < 4; i++) {
+            this.starfields.push(new Starfield_Sub(200));
+        }
+        this.timer = 0;
+        this.blink_interval = 0.5;
+    }
+
+    update(dt) {
+        this.timer += dt;
+        if (this.timer > this.blink_interval) {
+            this.timer = this.timer % this.blink_interval;
+            this.starfields.push(this.starfields.shift());
+        }
+    }
+
+    render() {
+        for (var i = 0; i < 2; i++) {
+            this.starfields[i].x = this.x;
+            this.starfields[i].y = this.y;
+            this.starfields[i].z = this.z;
+            this.starfields[i].render();
+        }
     }
 }
