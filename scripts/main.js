@@ -79,8 +79,11 @@ obj_enemy_e.x = 14;
 var obj_enemy_spy = new ObjTexture(models.enemy_spy, textures.enemy_spy);
 obj_enemy_spy.x = 18;
 var obj_base = new ObjTexture(models.base_core_side, textures.base_core_side);
-obj_base.x = 12;
-obj_base.z = -10;
+var obj_base2 = new ObjTexture(models.base_core_side, textures.base_core_side);
+obj_base.x = 6.5; obj_base.y = 10; obj_base.z = -10;
+obj_base2.x = 6; obj_base2.y = 10; obj_base2.z = -10;
+obj_base2.rotation_matrix = m4.rotate_z(obj_base2.rotation_matrix,
+    Math.PI);
 
 // Define some more test objects, in the shape of a formation
 var formation = [
@@ -105,14 +108,27 @@ formation[4].z = -10; // right
 // List of objects to be updated and rendered
 var objects = [obj_floor, player, obj_starfield,
     obj_enemy_i, obj_enemy_p, obj_enemy_e, obj_enemy_spy,
-    obj_base,
+    obj_base, obj_base2,
     ...formation
 ];
 
 var camera = new Camera();
 
+var paused = false;
+function pause_unpause() {
+    paused = !paused;
+    if (paused) {
+        console.log('pause');
+    }
+}
+
 function handle_keydown(e) {
-    player.handle_keydown(e);
+    switch (e.keyCode) {
+        case 80: // P key
+            pause_unpause();
+            break;
+        default: player.handle_keydown(e);
+    }
 }
 
 function handle_keyup(e) {
@@ -130,42 +146,44 @@ function drawScene(now) {
     var dt = now - then;
     then = now;
 
-    // Resize the canvas and viewport
-    resizeCanvasToDisplaySize(gl.canvas, 0.5);
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+    if (!paused) {
+        // Resize the canvas and viewport
+        resizeCanvasToDisplaySize(gl.canvas, 0.5);
+        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-    // clear the canvas
-    gl.clearColor(0, 0, 0, 1);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+        // clear the canvas
+        gl.clearColor(0, 0, 0, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // Perspective projection matrix
-    var proj_matrix = m4.perspective(
-        1,
-        gl.canvas.clientWidth / gl.canvas.clientHeight,
-        0.1,
-        2000,
-    );
+        // Perspective projection matrix
+        var proj_matrix = m4.perspective(
+            1,
+            gl.canvas.clientWidth / gl.canvas.clientHeight,
+            0.1,
+            2000,
+        );
 
-    objects.forEach(obj => {
-        obj.update(dt);
-    });
+        objects.forEach(obj => {
+            obj.update(dt);
+        });
 
-    // Camera view matrix
-    var view_matrix = camera.get_view_matrix_player(player);
-    camera.follow_player(dt, player);
+        // Camera view matrix
+        var view_matrix = camera.get_view_matrix_player(player);
+        camera.follow_player(dt, player);
 
-    obj_starfield.x = camera.x;
-    obj_starfield.y = camera.y;
-    obj_starfield.z = camera.z;
+        obj_starfield.x = camera.x;
+        obj_starfield.y = camera.y;
+        obj_starfield.z = camera.z;
 
-    var viewproj = m4.multiply(proj_matrix, view_matrix);
+        var viewproj = m4.multiply(proj_matrix, view_matrix);
 
-    objects.forEach(obj => {
-        gl.useProgram(obj.program_holder.program);
-        gl.uniformMatrix4fv(obj.program_holder.locations.uViewProjMatrixLoc,
-            false, viewproj);
-        obj.render();
-    });
+        objects.forEach(obj => {
+            gl.useProgram(obj.program_holder.program);
+            gl.uniformMatrix4fv(obj.program_holder.locations.uViewProjMatrixLoc,
+                false, viewproj);
+            obj.render();
+        });
+    }
 
     requestAnimationFrame(drawScene);
 }
