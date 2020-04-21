@@ -47,6 +47,7 @@ var textures = {
     enemy_e:    new Texture("models/enemy_e_tex.png"),
     enemy_spy:  new Texture("models/enemy_spy_tex.png"),
     enemy_p_alt:    new Texture("models/enemy_p_alt_tex.png"),
+    base_core_side: new Texture("models/base_core_side_tex.png"),
 }
 
 // Load model assets
@@ -56,6 +57,7 @@ var models = {
     enemy_p:    new Model("models/enemy_p.obj"),
     enemy_e:    new Model("models/enemy_e.obj"),
     enemy_spy:  new Model("models/enemy_spy.obj"),
+    base_core_side: new Model("models/base_core_side.obj"),
 }
 models.enemy_e.base_transform = m4.translate(
     models.enemy_e.base_transform,
@@ -76,6 +78,9 @@ var obj_enemy_e = new ObjTexture(models.enemy_e, textures.enemy_e);
 obj_enemy_e.x = 14;
 var obj_enemy_spy = new ObjTexture(models.enemy_spy, textures.enemy_spy);
 obj_enemy_spy.x = 18;
+var obj_base = new ObjTexture(models.base_core_side, textures.base_core_side);
+obj_base.x = 12;
+obj_base.z = -10;
 
 // Define some more test objects, in the shape of a formation
 var formation = [
@@ -100,6 +105,7 @@ formation[4].z = -10; // right
 // List of objects to be updated and rendered
 var objects = [obj_floor, player, obj_starfield,
     obj_enemy_i, obj_enemy_p, obj_enemy_e, obj_enemy_spy,
+    obj_base,
     ...formation
 ];
 
