@@ -73,7 +73,7 @@ class Model_ColorOnly {
         fetch(obj_filename)
         .then(response => response.text())
         .then((obj_string) => {
-            var obj_file = loadOBJFromString(obj_string);
+            var obj_file = loadOBJFromString(obj_string, true);
 
             var positions = obj_file.vertices;
             var colors = [];

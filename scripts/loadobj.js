@@ -4,7 +4,8 @@
 // https://dannywoodz.wordpress.com
 //but has been simplified by removing parsing of normals.
 //
-function loadOBJFromString(string) {
+function loadOBJFromString(string, load_as_wireframe) {
+    load_as_wireframe = load_as_wireframe || false;
 
     //Pre-format
     var lines = string.split("\n");
@@ -12,6 +13,8 @@ function loadOBJFromString(string) {
     var tex_positions = [];
     var vertices = [];
     var tex_vertices = [];
+
+    var index_add_order;
 
     for (var i=0; i<lines.length; i++) {
         var parts = lines[i].trimRight().split(' ');
@@ -48,26 +51,35 @@ function loadOBJFromString(string) {
                         if (part.length > 1)
                             vt_indices.push(parseInt(part[1]));
                     }
-                    // add the first triangle of the face
-                    for (var j=0; j<3; j++) {
+
+                    // Determine the indices with which to pull in
+                    // vertices from the 'v' and 'vt' coordinates.
+                    // Depends on the number of vertices in the face, and
+                    // on whether or not the model is loaded as a wireframe
+                    if (load_as_wireframe) {
+                        if (v_indices.length > 3) {
+                            index_add_order = [0, 1, 1, 2, 2, 3, 3, 0];
+                        } else {
+                            index_add_order = [0, 1, 1, 2, 2, 0];
+                        }
+                    } else {
+                        if (v_indices.length > 3) {
+                            // If the face has a fourth index,
+                            // add a second triangle
+                            index_add_order = [0, 1, 2, 0, 2, 3];
+                        } else {
+                            index_add_order = [0, 1, 2];
+                        }
+                    }
+
+                    index_add_order.forEach(function(j) {
                         //push vertex coordinates
                         vertices.push(...positions[v_indices[j] - 1]);
                         //push texture coordinates if they are present
                         if (vt_indices.length)
                             tex_vertices.push(
                                 ...tex_positions[vt_indices[j] - 1]);
-                    }
-                    // If the face has a fourth index, add a second triangle
-                    if (v_indices.length > 3) {
-                        [0, 2, 3].forEach(function(j) {
-                            //push vertex coordinates
-                            vertices.push(...positions[v_indices[j] - 1]);
-                            //push texture coordinates if they are present
-                            if (vt_indices.length)
-                                tex_vertices.push(
-                                    ...tex_positions[vt_indices[j] - 1]);
-                        });
-                    }
+                    });
                     break;
                 }
             }
