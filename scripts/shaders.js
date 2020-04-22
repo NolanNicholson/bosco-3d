@@ -1,10 +1,3 @@
-const canvas = document.getElementById("c");
-
-const gl = canvas.getContext("webgl2", {'antialias': false} );
-if (!gl) {
-    console.log("WebGL 2 not supported!");
-}
-
 // Enable backface culling and depth testing
 gl.enable(gl.CULL_FACE);
 gl.enable(gl.DEPTH_TEST);
