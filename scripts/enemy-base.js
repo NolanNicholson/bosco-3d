@@ -19,6 +19,8 @@ class Part extends ObjTexture {
 
         var movement_matrix = m4.identity();
         movement_matrix = m4.translate(movement_matrix, p.x, p.y, p.z);
+        movement_matrix = m4.scale(movement_matrix,
+            p.scale, p.scale, p.scale);
         movement_matrix = m4.multiply(movement_matrix, p.rotation_matrix);
         movement_matrix = m4.translate(movement_matrix,
             this.rel_position[0], this.rel_position[1], this.rel_position[2]);
@@ -27,6 +29,7 @@ class Part extends ObjTexture {
         this.x = movement_matrix[12];
         this.y = movement_matrix[13];
         this.z = movement_matrix[14];
+        this.scale = p.scale;
     }
 }
 

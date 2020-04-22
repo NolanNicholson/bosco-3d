@@ -86,8 +86,9 @@ var obj_enemy_spy = new ObjTexture(models.enemy_spy, textures.enemy_spy);
 obj_enemy_spy.x = 18;
 
 var obj_base = new EnemyBase(models, textures);
-obj_base.x = 12; obj_base.y = 4; obj_base.z = 10;
-obj_base.rotation_matrix = m4.rotation_x(Math.PI / 2);
+obj_base.x = 12; obj_base.y = -40; obj_base.z = 10;
+obj_base.rotation_matrix = m4.rotation_x(Math.PI / 8);
+obj_base.scale = 4;
 
 // Define some more test objects, in the shape of a formation
 var formation = [
