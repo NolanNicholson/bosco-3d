@@ -49,6 +49,9 @@ class PlayerBullet extends ObjColor {
         this.player = player;
         this.life_distance = 40;
 
+        this.collider = new ColliderPoint(0, 0, 0);
+        this.type = 'player_bullet';
+
         this.reset();
     }
 
@@ -71,6 +74,9 @@ class PlayerBullet extends ObjColor {
         this.bullet_speed = 60;
     }
 
+    collision_event(other) {
+    }
+
     update(dt) {
         var dz = this.bullet_speed * dt;
 
@@ -83,6 +89,9 @@ class PlayerBullet extends ObjColor {
         this.x = movement_matrix[12];
         this.y = movement_matrix[13];
         this.z = movement_matrix[14];
+
+        // update collider position to bullet's new position
+        this.collider.pos = [this.x, this.y, this.z];
 
         //update lifetime
         this.distance += Math.abs(dz);

@@ -30,6 +30,8 @@ class Player {
         for (var i = 0; i < this.max_bullets; i++) {
             this.bullets.push(new PlayerBullet(this));
         }
+
+        all_colliders.push(...this.bullets);
     }
 
     fire() {

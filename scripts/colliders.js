@@ -5,7 +5,11 @@ class ColliderPoint {
     }
 
     collides(other) {
-        return false;
+        switch (other.collider_type) {
+            case 'point':   return false;
+            case 'sphere':  return other.collides_point(this);
+            default:        return false;
+        }
     }
 }
 
@@ -18,17 +22,17 @@ function distance(p1, p2) {
 
 class ColliderSphere {
     constructor(x, y, z, radius) {
-        this.center = [x, y, z];
+        this.pos = [x, y, z];
         this.radius = radius;
         this.collider_type = 'sphere';
     }
 
     collides_point(other) {
-        return distance(this.center, other.pos) <= this.radius;
+        return distance(this.pos, other.pos) <= this.radius;
     }
 
     collides_sphere(other) {
-        return distance(this.center, other.center) <= 
+        return distance(this.pos, other.pos) <=
             (this.radius + other.radius)
     }
 
@@ -55,5 +59,21 @@ class ColliderPlane {
 
     collides_point(other) {
         return v3.dot(this.normal, v3.minus(other.pos, this.p_ref)) >= 0;
+    }
+}
+
+function resolve_collisions(all_colliders) {
+    var i1; var i2;
+    var c1; var c2;
+    //TODO: this is O(n^2) and could probably be optimized)
+    for (i1 = 0; i1 < all_colliders.length; i1++) {
+        for (i2 = i1 + 1; i2 < all_colliders.length; i2++) {
+            c1 = all_colliders[i1];
+            c2 = all_colliders[i2];
+            if (c1.collider.collides(c2.collider)) {
+                c1.collision_event(c2);
+                c2.collision_event(c1);
+            }
+        }
     }
 }

@@ -69,6 +69,9 @@ models.base_ball.base_transform = m4.translate(
     models.enemy_e.base_transform,
     0, 0, 1.5);
 
+// List of all potential colliders
+var all_colliders = [];
+
 // Define test objects
 var obj_floor = new Floor(2, 10, 2);
 var obj_starfield = new Starfield();
@@ -171,6 +174,8 @@ function drawScene(now) {
         objects.forEach(obj => {
             obj.update(dt);
         });
+
+        resolve_collisions(all_colliders);
 
         // Camera view matrix
         var view_matrix = camera.get_view_matrix_player(player);

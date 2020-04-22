@@ -4,6 +4,21 @@ class Part extends ObjTexture {
         this.rel_position = [0, 0, 0];
         this.rel_rotation = m4.identity();
         this.parent_obj = parent_obj;
+        this.type = 'part';
+    }
+
+    collision_event(other) {
+        //TODO: replace
+        switch(other.type) {
+            case 'player_bullet':
+                if (other.active) {
+                    console.log(this.type, other.type);
+                    this.rel_rotation =
+                        m4.rotate_x(this.rel_rotation, Math.PI / 6);
+                    other.active = false;
+                }
+                break;
+        }
     }
 
     sync_with_parent() {
@@ -30,6 +45,10 @@ class Part extends ObjTexture {
         this.y = movement_matrix[13];
         this.z = movement_matrix[14];
         this.scale = p.scale;
+
+        if (this.collider) {
+            this.collider.pos = [this.x, this.y, this.z];
+        }
     }
 }
 
@@ -45,9 +64,11 @@ class EnemyBase {
         this.core_sides[1].rel_position = [ -0.5, 0, 0];
 
         this.balls = []
+        var ball;
         for (var i = 0; i < 6; i++) {
-            this.balls.push(new Part(this,
-                models.base_ball, textures.base_ball));
+            ball = new Part(this, models.base_ball, textures.base_ball);
+            ball.collider = new ColliderSphere(0, 0, 0, 8);
+            this.balls.push(ball);
         }
 
         this.balls[0].rel_position = [-5, 0,  0];
@@ -78,6 +99,8 @@ class EnemyBase {
         this.rotation_matrix = m4.identity();
 
         this.spin_speed = 0.1;
+
+        all_colliders.push(...this.balls);
     }
 
     update(dt) {
