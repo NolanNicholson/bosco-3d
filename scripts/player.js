@@ -62,6 +62,10 @@ class Player {
             case 32: // Spacebar
                 this.fire();
                 break;
+            case 79: // O
+                if (this.drive_speed) this.drive_speed = 0;
+                else this.drive_speed = 10;
+                break;
             default:
                 console.log("Key Down:", e.keyCode);
         }
