@@ -5,3 +5,4 @@ if (!gl) {
     console.log("WebGL 2 not supported!");
 }
 
+var RENDER_COLLIDERS = false;

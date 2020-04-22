@@ -152,6 +152,12 @@ function drawScene(now) {
                 false, viewproj);
             obj.render();
         });
+
+        if (RENDER_COLLIDERS) {
+            all_colliders.forEach(coll => {
+                render_collider(coll.collider);
+            });
+        }
     }
 
     requestAnimationFrame(drawScene);

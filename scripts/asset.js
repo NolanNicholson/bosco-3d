@@ -64,3 +64,35 @@ class Model {
     }
 
 }
+
+class Model_ColorOnly {
+    constructor(obj_filename) {
+        this.program_holder = program_holder_color;
+
+        var me = this;
+
+        //fetch the object file
+        fetch(obj_filename)
+        .then(response => response.text())
+        .then((obj_string) => {
+            var obj_file = loadOBJFromString(obj_string);
+
+            var positions = obj_file.vertices;
+            var colors = [];
+            for (var i = 0; i < positions.length / 3; i++) {
+                colors.push(1, 1, 0.5);
+            }
+            me.load_data(positions, colors);
+        });
+
+        //"base" transformation matrix
+        this.base_transform = m4.identity();
+    }
+
+    load_data(positions, colors) {
+        console.log(positions.length, colors.length);
+        this.vao = setup_color_object(positions, colors);
+        this.num_vertices = positions.length / 3;
+    }
+
+}

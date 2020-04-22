@@ -45,7 +45,7 @@ function loadOBJFromString(string) {
                     for (var j = 1; j < parts.length; j++) {
                         var part = parts[j].split('/');
                         v_indices.push(parseInt(part[0]));
-                        if (part.length > 0)
+                        if (part.length > 1)
                             vt_indices.push(parseInt(part[1]));
                     }
                     // add the first triangle of the face
