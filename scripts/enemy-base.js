@@ -67,7 +67,7 @@ class EnemyBase {
         var ball;
         for (var i = 0; i < 6; i++) {
             ball = new Part(this, models.base_ball, textures.base_ball);
-            ball.collider = new ColliderSphere(0, 0, 0, 8);
+            ball.collider = new ColliderSphere(0, 0, 0, 7);
             this.balls.push(ball);
         }
 
