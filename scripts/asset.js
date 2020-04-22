@@ -51,8 +51,6 @@ class Model {
         this.base_transform = m4.identity();
         this.base_transform = m4.scale(this.base_transform,
             0.2, 0.2, 0.2);
-        this.base_transform = m4.translate(this.base_transform,
-            1.5, 0, 0);
         this.base_transform = m4.rotate_y(this.base_transform,
             Math.PI * 3 / 2);
     }
@@ -90,7 +88,6 @@ class Model_ColorOnly {
     }
 
     load_data(positions, colors) {
-        console.log(positions.length, colors.length);
         this.vao = setup_color_object(positions, colors);
         this.num_vertices = positions.length / 3;
     }

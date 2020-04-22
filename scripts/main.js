@@ -21,12 +21,6 @@ var models = {
     base_ball:      new Model("models/base_ball.obj"),
     base_arm:      new Model("models/base_arm.obj"),
 }
-models.enemy_e.base_transform = m4.translate(
-    models.enemy_e.base_transform,
-    0, 1, 0);
-models.base_ball.base_transform = m4.translate(
-    models.enemy_e.base_transform,
-    0, 0, 1.5);
 
 // List of all potential colliders
 var all_colliders = [];
