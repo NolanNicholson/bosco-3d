@@ -48,7 +48,7 @@ var textures = {
     enemy_spy:  new Texture("models/enemy_spy_tex.png"),
     enemy_p_alt:    new Texture("models/enemy_p_alt_tex.png"),
     base_core_side: new Texture("models/base_core_side_tex.png"),
-    base_ball: new Texture("models/base_ball_tex.png"),
+    base_ball:      new Texture("models/base_ball_tex.png"),
 }
 
 // Load model assets
@@ -59,7 +59,8 @@ var models = {
     enemy_e:    new Model("models/enemy_e.obj"),
     enemy_spy:  new Model("models/enemy_spy.obj"),
     base_core_side: new Model("models/base_core_side.obj"),
-    base_ball: new Model("models/base_ball.obj"),
+    base_ball:      new Model("models/base_ball.obj"),
+    base_arm:      new Model("models/base_arm.obj"),
 }
 models.enemy_e.base_transform = m4.translate(
     models.enemy_e.base_transform,
@@ -86,6 +87,7 @@ obj_enemy_spy.x = 18;
 
 var obj_base = new EnemyBase(models, textures);
 obj_base.x = 12; obj_base.y = 4; obj_base.z = 10;
+obj_base.rotation_matrix = m4.rotation_x(Math.PI / 2);
 
 // Define some more test objects, in the shape of a formation
 var formation = [

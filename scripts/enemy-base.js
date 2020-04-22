@@ -54,9 +54,22 @@ class EnemyBase {
         this.balls[4].rel_position = [-2.5, 0,  4.5];
         this.balls[5].rel_position = [ 2.5, 0,  4.5];
 
+        this.arms = []
+        for (var i = 0; i < 4; i++) {
+            this.arms.push(new Part(this,
+                models.base_arm, textures.base_core_side));
+        }
+        this.arms[0].rel_position = [4, 0, -2];
+        this.arms[1].rel_position = [4, 0, 2];
+        this.arms[2].rel_position = [-4, 0, -2];
+        this.arms[3].rel_position = [-4, 0, 2];
+        this.arms[1].rel_rotation = m4.rotation_x(Math.PI);
+        this.arms[2].rel_rotation = m4.rotation_x(Math.PI);
+
         this.parts = [
             ...this.core_sides,
             ...this.balls,
+            ...this.arms,
         ];
 
         this.rotation_matrix = m4.identity();
