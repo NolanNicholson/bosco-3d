@@ -64,6 +64,9 @@ var models = {
 models.enemy_e.base_transform = m4.translate(
     models.enemy_e.base_transform,
     0, 1, 0);
+models.base_ball.base_transform = m4.translate(
+    models.enemy_e.base_transform,
+    0, 0, 1.5);
 
 // Define test objects
 var obj_floor = new Floor(2, 10, 2);
@@ -82,7 +85,7 @@ var obj_enemy_spy = new ObjTexture(models.enemy_spy, textures.enemy_spy);
 obj_enemy_spy.x = 18;
 
 var obj_base = new EnemyBase(models, textures);
-obj_base.x = 6.5; obj_base.y = 10; obj_base.z = -10;
+obj_base.x = 12; obj_base.y = 4; obj_base.z = 10;
 
 // Define some more test objects, in the shape of a formation
 var formation = [
