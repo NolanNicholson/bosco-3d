@@ -1,10 +1,10 @@
 // Load texture assets
 var textures = {
-    player:     new Texture("models/player_tex.png"),
-    enemy_i:    new Texture("models/enemy_i_tex.png"),
-    enemy_p:    new Texture("models/enemy_p_tex.png"),
-    enemy_e:    new Texture("models/enemy_e_tex.png"),
-    enemy_spy:  new Texture("models/enemy_spy_tex.png"),
+    player:         new Texture("models/player_tex.png"),
+    enemy_i:        new Texture("models/enemy_i_tex.png"),
+    enemy_p:        new Texture("models/enemy_p_tex.png"),
+    enemy_e:        new Texture("models/enemy_e_tex.png"),
+    enemy_spy:      new Texture("models/enemy_spy_tex.png"),
     enemy_p_alt:    new Texture("models/enemy_p_alt_tex.png"),
     base_core_side: new Texture("models/base_core_side_tex.png"),
     base_ball:      new Texture("models/base_ball_tex.png"),
@@ -13,11 +13,11 @@ var textures = {
 
 // Load model assets
 var models = {
-    player:     new Model("models/player.obj"),
-    enemy_i:    new Model("models/enemy_i.obj"),
-    enemy_p:    new Model("models/enemy_p.obj"),
-    enemy_e:    new Model("models/enemy_e.obj"),
-    enemy_spy:  new Model("models/enemy_spy.obj"),
+    player:         new Model("models/player.obj"),
+    enemy_i:        new Model("models/enemy_i.obj"),
+    enemy_p:        new Model("models/enemy_p.obj"),
+    enemy_e:        new Model("models/enemy_e.obj"),
+    enemy_spy:      new Model("models/enemy_spy.obj"),
     base_core_side: new Model("models/base_core_side.obj"),
     base_ball:      new Model("models/base_ball.obj"),
     base_arm:       new Model("models/base_arm.obj"),
