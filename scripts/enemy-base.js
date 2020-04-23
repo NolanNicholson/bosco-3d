@@ -55,7 +55,6 @@ class Part extends ObjTexture {
 
 class EnemyBase {
     constructor(models, textures) {
-        this.program_holder = program_holder_texture;
         this.core_sides = [
             new Part(this, models.base_core_side, textures.base_core_side),
             new Part(this, models.base_core_side, textures.base_core_side),

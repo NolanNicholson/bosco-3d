@@ -1,6 +1,5 @@
 class Player {
     constructor(ship_model_asset, ship_texture_asset) {
-        this.program_holder = program_holder_texture;
         this.ship_obj = new ObjTexture(ship_model_asset, ship_texture_asset);
 
         //movement flags

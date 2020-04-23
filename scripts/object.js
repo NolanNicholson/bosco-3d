@@ -134,8 +134,6 @@ class ObjTexture extends ObjBase {
 
         this.texture_asset = texture_asset;
         this.model_asset = model_asset;
-        this.program_holder = program_holder_texture;
-
         this.rotation_matrix = m4.identity();
     }
 
