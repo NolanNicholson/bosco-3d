@@ -61,6 +61,7 @@ class Starfield_Sub extends ObjColor {
         this.model_matrix = m4.translate(this.model_matrix,
             this.x, this.y, this.z);
 
+        gl.useProgram(this.program_holder.program);
         gl.bindVertexArray(this.vao);
         var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;
         gl.uniformMatrix4fv(uModelMatrixLoc, false, this.model_matrix);

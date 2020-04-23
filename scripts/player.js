@@ -171,14 +171,8 @@ class Player {
         model_matrix = m4.multiply(model_matrix,
             this.ship_model_asset.base_transform);
 
-        this.ship_obj.model_matrix = model_matrix;
-
         gl.bindTexture(gl.TEXTURE_2D, this.ship_texture_asset.texture);
-
-        gl.bindVertexArray(this.ship_model_asset.vao);
-        var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;
-        gl.uniformMatrix4fv(uModelMatrixLoc, false, model_matrix);
-        gl.drawArrays(gl.TRIANGLES, 0, this.ship_model_asset.num_vertices);
+        this.ship_model_asset.render(model_matrix);
 
         //update active bullets
         this.bullets.forEach(b => {

@@ -61,6 +61,13 @@ class Model {
         this.num_vertices = positions.length / 3;
     }
 
+    render(model_matrix) {
+        gl.useProgram(this.program_holder.program);
+        gl.bindVertexArray(this.vao);
+        var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;
+        gl.uniformMatrix4fv(uModelMatrixLoc, false, model_matrix);
+        gl.drawArrays(gl.TRIANGLES, 0, this.num_vertices);
+    }
 }
 
 class Model_ColorOnly {

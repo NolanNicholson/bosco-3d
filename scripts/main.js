@@ -118,37 +118,41 @@ function drawScene(now) {
         gl.clearColor(0, 0, 0, 1);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        // Perspective projection matrix
-        var proj_matrix = m4.perspective(
-            1,
-            gl.canvas.clientWidth / gl.canvas.clientHeight,
-            0.1,
-            2000,
-        );
-
         objects.forEach(obj => {
             obj.update(dt);
         });
 
         resolve_collisions(all_colliders);
 
-        // Camera view matrix
-        var view_matrix = camera.get_view_matrix_player(player);
+        // Update position of camera and starfield
         camera.follow_player(dt, player);
-
         obj_starfield.x = camera.x;
         obj_starfield.y = camera.y;
         obj_starfield.z = camera.z;
 
+        // View-Proj matrix: perspective projection * inverse-camera.
+        var proj_matrix = m4.perspective(
+            1,
+            gl.canvas.clientWidth / gl.canvas.clientHeight,
+            0.1,
+            2000,
+        );
+        var view_matrix = camera.get_view_matrix_player(player);
         var viewproj = m4.multiply(proj_matrix, view_matrix);
 
-        objects.forEach(obj => {
-            gl.useProgram(obj.program_holder.program);
-            gl.uniformMatrix4fv(obj.program_holder.locations.uViewProjMatrixLoc,
+        // Populate the relevant program holders with the view-proj matrix
+        [program_holder_color, program_holder_texture].forEach(ph => {
+            gl.useProgram(ph.program);
+            gl.uniformMatrix4fv(ph.locations.uViewProjMatrixLoc,
                 false, viewproj);
+        });
+
+        // Render each object
+        objects.forEach(obj => {
             obj.render();
         });
 
+        // Render colliders, if desired
         if (RENDER_COLLIDERS) {
             all_colliders.forEach(coll => {
                 render_collider(coll.collider);

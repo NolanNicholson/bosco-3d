@@ -146,9 +146,6 @@ class ObjTexture extends ObjBase {
         this.model_matrix = m4.multiply(this.model_matrix,
             this.model_asset.base_transform);
 
-        gl.bindVertexArray(this.model_asset.vao);
-        var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;
-        gl.uniformMatrix4fv(uModelMatrixLoc, false, this.model_matrix);
-        gl.drawArrays(gl.TRIANGLES, 0, this.model_asset.num_vertices);
+        this.model_asset.render(this.model_matrix);
     }
 }
