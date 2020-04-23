@@ -90,7 +90,11 @@ function handle_keydown(e) {
         case 80: // P key
             pause_unpause();
             break;
-        default: player.handle_keydown(e);
+        default: {
+            if (!paused) {
+                player.handle_keydown(e);
+            }
+        }
     }
 }
 
