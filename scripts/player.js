@@ -31,7 +31,9 @@ class Player {
             this.bullets.push(new PlayerBullet(this));
         }
 
-        all_colliders.push(...this.bullets);
+        //collider information (self, bullets)
+        this.collider = new ColliderPrism(0, 0, 0);
+        all_colliders.push(...this.bullets, this);
     }
 
     fire() {
@@ -141,6 +143,15 @@ class Player {
                 b.update(dt);
             }
         });
+
+        //update collider
+        this.collider.pos = [this.ship_obj.x, this.ship_obj.y, this.ship_obj.z];
+        this.collider.rotation_matrix = this.rotation_matrix;
+
+        this.collider.rotation_matrix = m4.rotate_x(
+            this.collider.rotation_matrix, this.pitch);
+        this.collider.rotation_matrix = m4.rotate_z(
+            this.collider.rotation_matrix, this.yaw);
     }
 
     render() {

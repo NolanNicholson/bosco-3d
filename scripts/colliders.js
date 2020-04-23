@@ -62,6 +62,22 @@ class ColliderPlane {
     }
 }
 
+class ColliderPrism {
+    constructor(x, y, z) {
+        this.pos = [x, y, z];
+        this.collider_type = 'prism';
+        this.rotation_matrix = m4.identity();
+
+        this.r_x = 1.2;
+        this.r_y = 0.5;
+        this.r_z = 0.9;
+    }
+
+    collides(other) {
+        return false;
+    }
+}
+
 function resolve_collisions(all_colliders) {
     var i1; var i2;
     var c1; var c2;
