@@ -57,6 +57,8 @@ class PlayerBullet extends ObjColor {
 
     activate() {
         this.active = true;
+        this.distance = 0;
+        this.bullet_speed = 100;
         this.x = this.player.ship_obj.x;
         this.y = this.player.ship_obj.y;
         this.z = this.player.ship_obj.z;
@@ -70,8 +72,6 @@ class PlayerBullet extends ObjColor {
 
     reset() {
         this.active = false;
-        this.distance = 0;
-        this.bullet_speed = 60;
     }
 
     collision_event(other) {
