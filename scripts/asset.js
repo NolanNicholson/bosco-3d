@@ -48,6 +48,9 @@ class Model {
 
         //"base" transformation matrix:
         //the models' .obj files as-is need to be rotated and scaled
+        //(note: the scale and rotation here are unique to the models
+        //designed for Bosco-3D; different model production workflows
+        //may require different base-transforms)
         this.base_transform = m4.identity();
         this.base_transform = m4.scale(this.base_transform,
             0.2, 0.2, 0.2);
@@ -62,6 +65,10 @@ class Model {
     }
 
     render(model_matrix) {
+        //apply model's base transformation matrix
+        model_matrix = m4.multiply(model_matrix,
+            this.base_transform);
+
         gl.useProgram(this.program_holder.program);
         gl.bindVertexArray(this.vao);
         var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;

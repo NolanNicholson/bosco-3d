@@ -167,10 +167,6 @@ class Player {
         model_matrix = m4.rotate_x(model_matrix, this.pitch);
         model_matrix = m4.rotate_z(model_matrix, this.yaw);
 
-        //base model transformation
-        model_matrix = m4.multiply(model_matrix,
-            this.ship_model_asset.base_transform);
-
         gl.bindTexture(gl.TEXTURE_2D, this.ship_texture_asset.texture);
         this.ship_model_asset.render(model_matrix);
 

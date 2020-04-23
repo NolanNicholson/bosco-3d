@@ -143,9 +143,6 @@ class ObjTexture extends ObjBase {
         gl.bindTexture(gl.TEXTURE_2D, this.texture_asset.texture);
 
         super.prep_model_matrix();
-        this.model_matrix = m4.multiply(this.model_matrix,
-            this.model_asset.base_transform);
-
         this.model_asset.render(this.model_matrix);
     }
 }
