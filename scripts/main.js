@@ -8,6 +8,7 @@ var textures = {
     enemy_p_alt:    new Texture("models/enemy_p_alt_tex.png"),
     base_core_side: new Texture("models/base_core_side_tex.png"),
     base_ball:      new Texture("models/base_ball_tex.png"),
+    base_crystal:   new Texture("models/base_crystal_tex.png"),
 }
 
 // Load model assets
@@ -19,7 +20,8 @@ var models = {
     enemy_spy:  new Model("models/enemy_spy.obj"),
     base_core_side: new Model("models/base_core_side.obj"),
     base_ball:      new Model("models/base_ball.obj"),
-    base_arm:      new Model("models/base_arm.obj"),
+    base_arm:       new Model("models/base_arm.obj"),
+    base_crystal:   new Model("models/base_crystal.obj"),
 }
 
 // List of all potential colliders

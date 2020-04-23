@@ -90,10 +90,14 @@ class EnemyBase {
         this.arms[1].rel_rotation = m4.rotation_x(Math.PI);
         this.arms[2].rel_rotation = m4.rotation_x(Math.PI);
 
+        this.crystal = new Part(this,
+            models.base_crystal, textures.base_crystal);
+
         this.parts = [
             ...this.core_sides,
             ...this.balls,
             ...this.arms,
+            this.crystal,
         ];
 
         this.rotation_matrix = m4.identity();
