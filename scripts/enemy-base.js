@@ -13,6 +13,7 @@ class Part extends ObjTexture {
             case 'player_bullet':
                 if (other.active) {
                     console.log(this.type, other.type);
+                    sounds.base_cannon_hit.play();
                     this.rel_rotation =
                         m4.rotate_x(this.rel_rotation, Math.PI / 6);
                     other.active = false;

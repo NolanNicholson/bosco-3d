@@ -38,6 +38,7 @@ class Player {
 
     fire() {
         if (!this.bullets[0].active && !this.bullets[1].active) {
+            sounds.player_shoot.play();
             var first_bullet = this.bullets.shift();
             first_bullet.activate();
 
