@@ -63,14 +63,14 @@ class ColliderPlane {
 }
 
 class ColliderPrism {
-    constructor(x, y, z) {
+    constructor(x, y, z, r_x, r_y, r_z) {
         this.pos = [x, y, z];
         this.collider_type = 'prism';
         this.rotation_matrix = m4.identity();
 
-        this.r_x = 1.2;
-        this.r_y = 0.5;
-        this.r_z = 0.9;
+        this.r_x = r_x || 1;
+        this.r_y = r_y || 1;
+        this.r_z = r_z || 1;
     }
 
     collides(other) {

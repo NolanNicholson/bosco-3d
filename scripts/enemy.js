@@ -22,7 +22,13 @@ class Enemy extends ObjTexture {
         }
 
         super(model, texture);
-        this.collider = new ColliderPrism(0, 0, 0);
+
+        //collider: identical for all enemies except the E-Type
+        if (enemy_type == 'e') {
+            this.collider = new ColliderPrism(0, 0, 0, 0.5, 0.5, 1);
+        } else {
+            this.collider = new ColliderPrism(0, 0, 0, 1, 0.5, 1);
+        }
         all_colliders.push(this);
 
         if (enemy_type == 'e')
