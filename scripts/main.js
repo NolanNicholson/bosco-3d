@@ -34,13 +34,13 @@ var player = new Player(models.player, textures.player);
 player.ship_obj.x = 12;
 player.ship_obj.y = 4;
 player.ship_obj.z = 50;
-var obj_enemy_i = new ObjTexture(models.enemy_i, textures.enemy_i);
+var obj_enemy_i = new Enemy('i');
 obj_enemy_i.x = 6;
-var obj_enemy_p = new ObjTexture(models.enemy_p, textures.enemy_p);
+var obj_enemy_p = new Enemy('p');
 obj_enemy_p.x = 10;
-var obj_enemy_e = new ObjTexture(models.enemy_e, textures.enemy_e);
+var obj_enemy_e = new Enemy('e');
 obj_enemy_e.x = 14;
-var obj_enemy_spy = new ObjTexture(models.enemy_spy, textures.enemy_spy);
+var obj_enemy_spy = new Enemy('spy');
 obj_enemy_spy.x = 18;
 
 var obj_base = new EnemyBase(models, textures);
