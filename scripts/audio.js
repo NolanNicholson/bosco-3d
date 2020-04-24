@@ -49,4 +49,5 @@ class Sound {
 var sounds = {
     player_shoot:       new Sound('audio/shoot.wav'),
     base_cannon_hit:    new Sound('audio/cannon-hit.wav'),
+    blast_off:          new Sound('audio/blast-off.wav'),
 };

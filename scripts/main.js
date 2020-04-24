@@ -166,3 +166,9 @@ function drawScene(now) {
 
     requestAnimationFrame(drawScene);
 }
+
+window.setTimeout(function() {
+    console.log("BLAST OFF");
+    sounds.blast_off.play();
+}, 200);
+
