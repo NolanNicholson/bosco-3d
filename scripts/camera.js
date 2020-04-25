@@ -1,3 +1,5 @@
+const CAMERA_VANTAGE = [0, 2, 12];
+
 class Camera {
     constructor() {
         //position and velocity
@@ -102,9 +104,9 @@ class Camera {
     }
 
     follow_player(dt, player) {
-        this.x = player.ship_obj.x + 0;
-        this.y = player.ship_obj.y + 4;
-        this.z = player.ship_obj.z + 12;
+        this.x = player.ship_obj.x + CAMERA_VANTAGE[0];
+        this.y = player.ship_obj.y + CAMERA_VANTAGE[1];
+        this.z = player.ship_obj.z + CAMERA_VANTAGE[2];
     }
 
     get_view_matrix_player(player) {
@@ -115,7 +117,7 @@ class Camera {
         camera_pos= m4.multiply(camera_pos,
             player.rotation_matrix);
         camera_pos= m4.translate(camera_pos,
-            0, 4, 12);
+            ...CAMERA_VANTAGE);
 
         var up = m4.identity();
         up = m4.multiply(up, player.rotation_matrix);

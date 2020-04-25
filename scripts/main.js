@@ -24,6 +24,9 @@ var models = {
     base_crystal:   new Model("models/base_crystal.obj"),
 }
 
+models.player.base_transform = m4.rotate_z(
+    models.player.base_transform, -0.1);
+
 // List of all potential colliders
 var all_colliders = [];
 

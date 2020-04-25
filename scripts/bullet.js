@@ -47,7 +47,7 @@ class PlayerBullet extends ObjColor {
         super(positions, colors);
 
         this.player = player;
-        this.life_distance = 40;
+        this.life_distance = 60;
 
         this.collider = new ColliderPoint(0, 0, 0);
         this.type = 'player_bullet';
