@@ -9,6 +9,7 @@ var textures = {
     base_core_side: new Texture("models/base_core_side_tex.png"),
     base_ball:      new Texture("models/base_ball_tex.png"),
     base_crystal:   new Texture("models/base_crystal_tex.png"),
+    cosmo_mine:     new Texture("models/cosmo_mine_tex.png"),
 }
 
 // Load model assets
@@ -22,6 +23,7 @@ var models = {
     base_ball:      new Model("models/base_ball.obj"),
     base_arm:       new Model("models/base_arm.obj"),
     base_crystal:   new Model("models/base_crystal.obj"),
+    cosmo_mine:     new Model("models/cosmo_mine.obj"),
 }
 
 models.player.base_transform = m4.rotate_z(
@@ -51,6 +53,9 @@ obj_base.x = 12; obj_base.y = -40; obj_base.z = 10;
 obj_base.rotation_matrix = m4.rotation_x(Math.PI / 8);
 obj_base.scale = 4;
 
+var obj_mine = new CosmoMine();
+obj_mine.x = 22;
+
 // Define some more test objects, in the shape of a formation
 var formation = [
     new ObjTexture(models.enemy_p, textures.enemy_p_alt),
@@ -75,6 +80,7 @@ formation[4].z = -10; // right
 var objects = [obj_floor, player, obj_starfield,
     obj_enemy_i, obj_enemy_p, obj_enemy_e, obj_enemy_spy,
     obj_base,
+    obj_mine,
     ...formation
 ];
 

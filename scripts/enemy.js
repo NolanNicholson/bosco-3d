@@ -61,3 +61,9 @@ class Enemy extends ObjTexture {
         }
     }
 }
+
+class CosmoMine extends ObjTexture {
+    constructor() {
+        super(models.cosmo_mine, textures.cosmo_mine);
+    }
+}
