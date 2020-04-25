@@ -66,8 +66,10 @@ class PlayerBullet extends ObjColor {
         this.rotation_matrix = m4.identity();
         this.rotation_matrix = m4.multiply(this.rotation_matrix,
             this.player.rotation_matrix);
+        /*
         this.rotation_matrix = m4.rotate_x(this.rotation_matrix,
             this.player.pitch);
+            */
     }
 
     reset() {
