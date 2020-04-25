@@ -7,6 +7,7 @@ class ColliderPoint {
     collides(other) {
         switch (other.collider_type) {
             case 'point':   return false;
+            case 'prism':
             case 'sphere':  return other.collides_point(this);
             default:        return false;
         }
@@ -54,7 +55,7 @@ class ColliderPlane {
         this.p_ref = p1;
         var PQ = v3.minus(p1, p2);
         var PR = v3.minus(p1, p3);
-        this.normal = v3.cross(PQ, PR);
+        this.normal = v3.normalize(v3.cross(PQ, PR));
     }
 
     collides_point(other) {
@@ -73,8 +74,21 @@ class ColliderPrism {
         this.r_z = r_z || 1;
     }
 
+    collides_point(other) {
+        //first, do a (cheaper) spherical collision check
+        this.r_max = distance([0, 0, 0], [this.r_x, this.r_y, this.r_z]);
+        if (distance(this.pos, other.pos) > this.r_max) return false;
+        else {
+            //TODO
+            return true;
+        }
+    }
+
     collides(other) {
-        return false;
+        switch (other.type) {
+            case 'point': return this.collides_point(other);
+            default: return false;
+        }
     }
 }
 
@@ -82,11 +96,14 @@ function resolve_collisions(all_colliders) {
     var i1; var i2;
     var c1; var c2;
     //TODO: this is O(n^2) and could probably be optimized)
+    //TODO: this also includes inactive bullets, which wastes time
     for (i1 = 0; i1 < all_colliders.length; i1++) {
+        c1 = all_colliders[i1];
+        //console.log(c1.type);
         for (i2 = i1 + 1; i2 < all_colliders.length; i2++) {
-            c1 = all_colliders[i1];
             c2 = all_colliders[i2];
             if (c1.collider.collides(c2.collider)) {
+                console.log(c1.type, c2.type);
                 c1.collision_event(c2);
                 c2.collision_event(c1);
             }

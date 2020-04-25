@@ -154,6 +154,10 @@ class Player {
             this.collider.rotation_matrix, this.yaw);
     }
 
+    collision_event(other) {
+        //TODO
+    }
+
     render() {
         var model_matrix = m4.identity();
         model_matrix = m4.translate(model_matrix,
