@@ -1,4 +1,5 @@
-function setup_color_object(positions, colors) {
+function setup_color_object(positions, colors, draw_type) {
+    draw_type = draw_type || gl.STATIC_DRAW;
 
     //locations within the GL program
     var locs = program_holder_color.locations;
@@ -11,7 +12,7 @@ function setup_color_object(positions, colors) {
 
     var positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), draw_type);
 
     //tell WebGL which attributes will come from buffers
     gl.enableVertexAttribArray(locs.positionAttributeLocation);
@@ -27,13 +28,21 @@ function setup_color_object(positions, colors) {
 
     var colorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), draw_type);
 
     //All of the previous params for gl.vertexAttribPointer are still correct.
     gl.vertexAttribPointer(locs.colorAttributeLocation,
         size, type, normalize, stride, offset);
 
-    return vao;
+    if (draw_type == gl.STATIC_DRAW) {
+        return vao;
+    } else {
+        return {
+            vao: vao,
+            position_buffer: positionBuffer,
+            color_buffer: colorBuffer,
+        };
+    }
 }
 
 function setup_textured_object(program_holder, positions, texcoords) {
@@ -134,7 +143,6 @@ class ObjTexture extends ObjBase {
 
         this.texture_asset = texture_asset;
         this.model_asset = model_asset;
-        this.rotation_matrix = m4.identity();
     }
 
     render() {
