@@ -86,8 +86,8 @@ function loadOBJFromString(string, load_as_wireframe) {
         }
     }
     return {
-        vertices: new Float32Array(vertices),
-        tex_vertices: new Float32Array(tex_vertices),
+        vertices: vertices,
+        tex_vertices: tex_vertices,
         vertexCount: vertices.length / 3
     };
 }
