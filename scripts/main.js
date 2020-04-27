@@ -56,9 +56,6 @@ obj_base.scale = 4;
 var obj_mine = new CosmoMine();
 obj_mine.x = 22;
 
-var obj_splode = new Explosion();
-obj_splode.x = 30;
-
 // Define some more test objects, in the shape of a formation
 var formation = [
     new ObjTexture(models.enemy_p, textures.enemy_p_alt),
@@ -84,7 +81,6 @@ var objects = [obj_floor, player, obj_starfield,
     obj_enemy_i, obj_enemy_p, obj_enemy_e, obj_enemy_spy,
     obj_base,
     obj_mine,
-    obj_splode,
     ...formation
 ];
 

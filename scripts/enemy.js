@@ -65,5 +65,34 @@ class Enemy extends ObjTexture {
 class CosmoMine extends ObjTexture {
     constructor() {
         super(models.cosmo_mine, textures.cosmo_mine);
+        this.collider = new ColliderSphere(0, 0, 0, 1.7);
+        all_colliders.push(this);
+        this.exploded = false;
+    }
+
+    collision_event(other) {
+        sounds.mine_hit.play();
+        this.exploded = true;
+        this.explosion = new Explosion();
+        this.explosion.x = this.x;
+        this.explosion.y = this.y;
+        this.explosion.z = this.z;
+    }
+
+    update(dt) {
+        if (this.exploded) {
+            this.explosion.update(dt);
+            this.collider.radius = this.explosion.scale;
+        } else {
+            this.collider.pos = [this.x, this.y, this.z];
+        }
+    }
+
+    render(dt) {
+        if (this.exploded) {
+            this.explosion.render();
+        } else {
+            super.render();
+        }
     }
 }

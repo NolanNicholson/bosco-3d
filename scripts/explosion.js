@@ -4,7 +4,7 @@ class Explosion extends ObjColor {
         this.program_holder = program_holder_color;
         this.loaded = false;
         this.age = 0;
-        this.max_age = 0.7;
+        this.max_age = 1;
         this.positions = [];
         this.scale = 2;
         this.palette = [[1, 1, 1], [1, 0, 0], [0, 0, 1], [0, 0, 0]];
