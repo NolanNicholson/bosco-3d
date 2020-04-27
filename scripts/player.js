@@ -32,7 +32,6 @@ class Player {
 
         //collider information (self, bullets)
         this.collider = new ColliderPrism(0, 0, 0, 1.2, 0.5, 0.9);
-        all_colliders.push(...this.bullets, this);
     }
 
     fire() {

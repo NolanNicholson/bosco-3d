@@ -52,12 +52,9 @@ class Enemy extends ObjTexture {
     collision_event(other) {
         switch(other.type) {
             case 'player_bullet':
-                if (other.active) {
-                    this.death_sound.play();
-                    this.rotation_matrix =
-                        m4.rotate_x(this.rotation_matrix, Math.PI / 6);
-                    other.active = false;
-                }
+                this.death_sound.play();
+                this.rotation_matrix =
+                    m4.rotate_x(this.rotation_matrix, Math.PI / 6);
         }
     }
 }

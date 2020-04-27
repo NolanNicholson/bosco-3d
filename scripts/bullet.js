@@ -51,12 +51,12 @@ class PlayerBullet extends ObjColor {
 
         this.collider = new ColliderPoint(0, 0, 0);
         this.type = 'player_bullet';
-
-        this.reset();
+        this.active = false;
     }
 
     activate() {
         this.active = true;
+        all_colliders.push(this);
         this.distance = 0;
         this.bullet_speed = 100;
         this.x = this.player.ship_obj.x;
@@ -72,11 +72,13 @@ class PlayerBullet extends ObjColor {
             */
     }
 
-    reset() {
+    deactivate() {
         this.active = false;
+        all_colliders.splice(all_colliders.indexOf(this), 1);
     }
 
     collision_event(other) {
+        this.deactivate();
     }
 
     update(dt) {
@@ -98,12 +100,8 @@ class PlayerBullet extends ObjColor {
         //update lifetime
         this.distance += Math.abs(dz);
         if (this.distance >= this.life_distance) {
-            this.reset();
+            this.deactivate();
         }
 
-    }
-
-    expire() {
-        this.active = false;
     }
 }
