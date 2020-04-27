@@ -53,9 +53,18 @@ obj_base.x = 12; obj_base.y = -40; obj_base.z = 10;
 obj_base.rotation_matrix = m4.rotation_x(Math.PI / 8);
 obj_base.scale = 4;
 
-var obj_mine = new CosmoMine();
-obj_mine.x = 12;
-obj_mine.y = 4;
+var mines = [];
+var obj_mine;
+var num_mines = 12;
+var theta;
+for (var i = 0; i < num_mines; i++) {
+    obj_mine = new CosmoMine();
+    theta = i / num_mines * 2 * Math.PI;
+    obj_mine.x = 40;
+    obj_mine.z = Math.cos(theta) * 25;
+    obj_mine.y = Math.sin(theta) * 25;
+    mines.push(obj_mine);
+}
 
 // Define some more test objects, in the shape of a formation
 var formation = [
@@ -81,7 +90,7 @@ formation[4].z = -10; // right
 var objects = [obj_floor, player, obj_starfield,
     obj_enemy_i, obj_enemy_p, obj_enemy_e, obj_enemy_spy,
     obj_base,
-    obj_mine,
+    ...mines,
     ...formation
 ];
 
