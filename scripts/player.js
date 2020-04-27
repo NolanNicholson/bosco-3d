@@ -1,5 +1,7 @@
 class Player {
     constructor(ship_model_asset, ship_texture_asset) {
+        this.type = 'player';
+
         this.ship_obj = new ObjTexture(ship_model_asset, ship_texture_asset);
 
         //movement flags
@@ -32,6 +34,7 @@ class Player {
 
         //collider information (self, bullets)
         this.collider = new ColliderPrism(0, 0, 0, 1.2, 0.5, 0.9);
+        all_colliders.push(this);
     }
 
     fire() {

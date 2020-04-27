@@ -78,7 +78,9 @@ class PlayerBullet extends ObjColor {
     }
 
     collision_event(other) {
-        this.deactivate();
+        if (other.type != 'player') {
+            this.deactivate();
+        }
     }
 
     update(dt) {

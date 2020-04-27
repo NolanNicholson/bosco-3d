@@ -39,7 +39,6 @@ class Explosion extends ObjColor {
 
     update(dt) {
         this.age += dt;
-        this.age %= this.max_age;
         this.scale = 4 * (this.age + 0.25);
     }
 

@@ -85,7 +85,7 @@ class ColliderPrism {
     }
 
     collides(other) {
-        switch (other.type) {
+        switch (other.collider_type) {
             case 'point': return this.collides_point(other);
             default: return false;
         }
@@ -99,7 +99,6 @@ function resolve_collisions(all_colliders) {
     //TODO: this also includes inactive bullets, which wastes time
     for (i1 = 0; i1 < all_colliders.length; i1++) {
         c1 = all_colliders[i1];
-        //console.log(c1.type);
         for (i2 = i1 + 1; i2 < all_colliders.length; i2++) {
             c2 = all_colliders[i2];
             if (c1.collider.collides(c2.collider)) {

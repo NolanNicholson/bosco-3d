@@ -54,7 +54,7 @@ obj_base.rotation_matrix = m4.rotation_x(Math.PI / 8);
 obj_base.scale = 4;
 
 var obj_mine = new CosmoMine();
-obj_mine.x = 22;
+obj_mine.x = 35;
 
 // Define some more test objects, in the shape of a formation
 var formation = [
