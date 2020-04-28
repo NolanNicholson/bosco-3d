@@ -61,8 +61,8 @@ for (var i = 0; i < num_mines; i++) {
     obj_mine = new CosmoMine();
     theta = i / num_mines * 2 * Math.PI;
     obj_mine.x = 40;
-    obj_mine.z = Math.cos(theta) * 25;
-    obj_mine.y = Math.sin(theta) * 25;
+    obj_mine.z = Math.cos(theta) * 20;
+    obj_mine.y = Math.sin(theta) * 20;
     mines.push(obj_mine);
 }
 

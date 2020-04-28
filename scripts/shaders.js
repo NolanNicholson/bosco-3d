@@ -51,26 +51,47 @@ float hash(float p) {
     return fract(p2.x * p2.y * 95.4337);
 }
 
-void main() {
-    float u = float(gl_VertexID) / float(u_num_clouds * 3);
-    float angle = hash(u) * PI * 2.0;
-    float z = hash(hash(u)) * 2.0 - 1.0;
-    float radius = 0.3;
+vec3 rotate(vec4 q, vec3 v) {
+    vec3 temp = cross(q.xyz, v) + q.w * v;
+    return v + 2.0 * cross(q.xyz, temp);
+}
 
-    vec3 tri_pos = vec3(cos(angle), sin(angle), z) * radius;
-    vec3 pos;
-    switch(gl_VertexID % 3) {
-        case 0: pos = tri_pos; break;
-        case 1: pos = tri_pos; break;
-        case 2: pos = vec3(0, 0, 0); break;
+void main() {
+    int tri_index = gl_VertexID / 3;
+    float u = float(tri_index) / float(u_num_clouds);
+    float angle = hash(u) * PI * 2.0;
+    float z = hash(u * 0.5) * 2.0 - 1.0;
+    float radius = 1.0;
+    float tri_radius = 0.4 * (1.0 - (u_t * u_t));
+    vec3 triangle[3] = vec3[](
+        vec3(-1, -1, 0) * tri_radius,
+        vec3( 1, -1, 0) * tri_radius,
+        vec3( 0,  1, 0) * tri_radius
+    );
+
+    //Prepare a quaternion representing a random rotation
+    float c = cos(angle / 2.0);
+    float s = sin(angle / 2.0);
+    float ax_x = hash(u * 0.1);
+    float ax_y = hash(u * 0.2);
+    float ax_z = sqrt(1.0 - ax_x * ax_x - ax_y * ax_y);
+    if (hash(u * 0.1) > 0.5) ax_x *= -1.0;
+    if (hash(u * 0.2) > 0.5) ax_y *= -1.0;
+    if (hash(u * 0.3) > 0.5) ax_z *= -1.0;
+
+    vec4 q = vec4(c, ax_x * s, ax_y * s, ax_z * s);
+    for (int i = 0; i < 3; i++) {
+        triangle[i] = rotate(q, (triangle[i] + vec3(0.0, 0.0, 1.0))) * radius;
     }
+
+    vec3 pos = triangle[gl_VertexID % 3];
+
     gl_Position = u_matrix_viewproj * u_matrix_model * vec4(pos, 1);
     gl_PointSize = 6.0f;
 
-    //int color_index = (gl_VertexID / 3) * 3 / u_num_clouds * 3 * 3;
-    int tri_index = gl_VertexID / 3;
     float tri_0_1 = float(tri_index) / float(u_num_clouds);
-    int color_index = int(sqrt(sqrt(hash(tri_0_1) * u_t)) * 3.0);
+    float cval = u_t * sqrt(tri_0_1) + 0.1 * hash(u * 0.7);
+    int color_index = (cval > 0.5 ? 2 : (cval > 0.3 ? 1 : 0));
     v_color = vec4(u_palette[color_index], 1.0f);
 }
 `;
@@ -110,11 +131,11 @@ void main() {
     float u = float(gl_VertexID) / float(u_num_shrapnel);
     float angle = hash(u) * PI * 2.0;
     float z = hash(hash(u)) * 2.0 - 1.0;
-    float radius = 0.8;
+    float radius = 1.1;
 
     vec3 pos = vec3(cos(angle), sin(angle), z) * radius;
     gl_Position = u_matrix_viewproj * u_matrix_model * vec4(pos, 1);
-    gl_PointSize = 2.0f;
+    gl_PointSize = 3.0f;
 
     int color_index = int((sqrt(u_t) * hash(u_t * u)) * 3.0);
     v_color = vec4(u_palette[color_index], 1.0f);

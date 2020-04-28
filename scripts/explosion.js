@@ -4,10 +4,10 @@ class Explosion extends ObjBase {
         this.age = 0;
         this.max_age = 1;
         this.scale = 2;
-        this.max_scale = 15;
+        this.max_scale = 12;
         this.palette = [[1, 1, 1], [1, 0, 0], [0, 0, 1]];
-        this.num_shrapnel = 30;
-        this.num_clouds = 20;
+        this.num_shrapnel = 60;
+        this.num_clouds = 60;
 
         //test coords - TODO: remove
         this.x = 2; this.y = 2; this.z = 2;
@@ -62,6 +62,8 @@ class Explosion extends ObjBase {
         gl.uniformMatrix4fv(uModelMatrixLoc, false, this.model_matrix);
 
         // Clouds: draw
+        gl.disable(gl.CULL_FACE);
         gl.drawArrays(gl.TRIANGLES, 0, this.num_clouds * 3);
+        gl.enable(gl.CULL_FACE);
     }
 }
