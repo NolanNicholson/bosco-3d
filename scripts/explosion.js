@@ -6,7 +6,7 @@ class Explosion extends ObjBase {
         this.scale = 2;
         this.max_scale = 15;
         this.palette = [[1, 1, 1], [1, 0, 0], [0, 0, 1]];
-        this.num_shrapnel = 20;
+        this.num_shrapnel = 30;
         this.num_clouds = 20;
 
         //test coords - TODO: remove
@@ -55,13 +55,13 @@ class Explosion extends ObjBase {
         var uPaletteLoc = ph_e.locations.uPaletteLoc;
         var uModelMatrixLoc = ph_e.locations.uModelMatrixLoc;
 
-        gl.uniform1i(uNumCloudsLoc, this.num_shrapnel);
+        gl.uniform1i(uNumCloudsLoc, this.num_clouds);
         gl.uniform1f(uTimeLoc, this.age / this.max_age);
         gl.uniform4f(uCenterLoc, this.x, this.y, this.z, 1.0);
         gl.uniform3fv(uPaletteLoc, this.palette.flat());
         gl.uniformMatrix4fv(uModelMatrixLoc, false, this.model_matrix);
 
         // Clouds: draw
-        gl.drawArrays(gl.POINTS, 0, this.num_shrapnel);
+        gl.drawArrays(gl.TRIANGLES, 0, this.num_clouds * 3);
     }
 }

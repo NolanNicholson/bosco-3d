@@ -52,16 +52,25 @@ float hash(float p) {
 }
 
 void main() {
-    float u = float(gl_VertexID) / float(u_num_clouds);
+    float u = float(gl_VertexID) / float(u_num_clouds * 3);
     float angle = hash(u) * PI * 2.0;
     float z = hash(hash(u)) * 2.0 - 1.0;
     float radius = 0.3;
 
-    vec3 pos = vec3(cos(angle), sin(angle), z) * radius;
+    vec3 tri_pos = vec3(cos(angle), sin(angle), z) * radius;
+    vec3 pos;
+    switch(gl_VertexID % 3) {
+        case 0: pos = tri_pos; break;
+        case 1: pos = tri_pos; break;
+        case 2: pos = vec3(0, 0, 0); break;
+    }
     gl_Position = u_matrix_viewproj * u_matrix_model * vec4(pos, 1);
     gl_PointSize = 6.0f;
 
-    int color_index = int(hash(hash(u)) * 3.0);
+    //int color_index = (gl_VertexID / 3) * 3 / u_num_clouds * 3 * 3;
+    int tri_index = gl_VertexID / 3;
+    float tri_0_1 = float(tri_index) / float(u_num_clouds);
+    int color_index = int(sqrt(sqrt(hash(tri_0_1) * u_t)) * 3.0);
     v_color = vec4(u_palette[color_index], 1.0f);
 }
 `;
