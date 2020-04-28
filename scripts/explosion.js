@@ -5,7 +5,7 @@ class Explosion extends ObjBase {
         this.max_age = 1;
         this.scale = 2;
         this.max_scale = 12;
-        this.palette = [[1, 1, 1], [1, 0, 0], [0, 0, 1]];
+        this.palette = [[1, 1, 1], [1, 0.2, 0.2], [0, 0.3, 1]];
         this.num_shrapnel = 60;
         this.num_clouds = 60;
 
@@ -13,9 +13,13 @@ class Explosion extends ObjBase {
         this.x = 2; this.y = 2; this.z = 2;
 
         var me = this;
-        //fetch the object file
+
         //"base" transformation matrix
         this.base_transform = m4.identity();
+        this.base_transform = m4.rotate_x(this.base_transform,
+            Math.random() * 2 * Math.PI);
+        this.base_transform = m4.rotate_z(this.base_transform,
+            Math.random() * 2 * Math.PI);
     }
 
     update(dt) {
@@ -28,6 +32,7 @@ class Explosion extends ObjBase {
         gl.useProgram(ph_s.program);
 
         super.prep_model_matrix();
+        this.model_matrix = m4.multiply(this.model_matrix, this.base_transform);
 
         // Shrapnel: assign uniforms
         var uNumShrapnelLoc = ph_s.locations.uNumShrapnelLoc;
