@@ -5,15 +5,38 @@ class Part extends ObjTexture {
         this.rel_rotation = m4.identity();
         this.parent_obj = parent_obj;
         this.type = 'part';
+        this.exploded = false;
+        this.explosion = false;
     }
 
     collision_event(other) {
-        //TODO: replace
-        switch(other.type) {
-            case 'player_bullet':
-                sounds.base_cannon_hit.play();
-                this.rel_rotation =
-                    m4.rotate_x(this.rel_rotation, Math.PI / 6);
+        if (!this.exploded) {
+            switch(other.type) {
+                case 'player_bullet':
+                    sounds.base_cannon_hit.play();
+                    this.exploded = true;
+                    this.explosion = new Explosion({
+                        size: 3 * this.parent_obj.scale,
+                    });
+                    this.explosion.x = this.x;
+                    this.explosion.y = this.y;
+                    this.explosion.z = this.z;
+                    this.model_asset = models.base_ball_d_c;
+                    this.texture_asset = textures.base_ball_d_c;
+            }
+        }
+    }
+
+    update(dt) {
+        super.update(dt);
+        if (this.explosion) {
+            this.explosion.update(dt);
+            this.explosion.x = this.x;
+            this.explosion.y = this.y;
+            this.explosion.z = this.z;
+            if (this.explosion.age >= this.explosion.max_age) {
+                this.explosion = false;
+            }
         }
     }
 
@@ -46,6 +69,13 @@ class Part extends ObjTexture {
             this.collider.pos = [this.x, this.y, this.z];
         }
     }
+
+    render() {
+        if (this.explosion) {
+            this.explosion.render();
+        }
+        super.render();
+    }
 }
 
 class EnemyBase {
@@ -72,6 +102,11 @@ class EnemyBase {
         this.balls[3].rel_position = [ 2.5, 0, -4.5];
         this.balls[4].rel_position = [-2.5, 0,  4.5];
         this.balls[5].rel_position = [ 2.5, 0,  4.5];
+
+        [4, 5].forEach(i => {
+            var ball = this.balls[i];
+            ball.rel_rotation = m4.rotation_x(Math.PI);
+        });
 
         this.arms = []
         for (var i = 0; i < 4; i++) {

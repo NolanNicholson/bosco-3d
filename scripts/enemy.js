@@ -65,7 +65,6 @@ class Enemy extends ObjTexture {
                     this.exploded = true;
                     this.explosion = new Explosion({
                         palette: explosion_palettes.enemy,
-                        size: 2,
                     });
                     this.explosion.x = this.x;
                     this.explosion.y = this.y;
