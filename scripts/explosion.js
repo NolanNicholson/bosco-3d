@@ -5,7 +5,7 @@ class Explosion extends ObjBase {
         this.max_age = 1;
         this.scale = 2;
         this.max_scale = 15;
-        this.palette = [[1, 1, 1], [1, 0, 0], [0, 0, 1], [0, 0, 0]];
+        this.palette = [[1, 1, 1], [1, 0, 0], [0, 0, 1]];
         this.num_shrapnel = 20;
 
         //test coords - TODO: remove
@@ -23,7 +23,7 @@ class Explosion extends ObjBase {
     }
 
     render() {
-        var ph = program_holder_explosion;
+        var ph = program_holder_shrapnel;
         gl.useProgram(ph.program);
 
         super.prep_model_matrix();
@@ -32,11 +32,13 @@ class Explosion extends ObjBase {
         var uNumShrapnelLoc = ph.locations.uNumShrapnelLoc;
         var uCenterLoc = ph.locations.uCenterLoc;
         var uTimeLoc = ph.locations.uTimeLoc;
+        var uPaletteLoc = ph.locations.uPaletteLoc;
         var uModelMatrixLoc = ph.locations.uModelMatrixLoc;
 
         gl.uniform1i(uNumShrapnelLoc, this.num_shrapnel);
         gl.uniform1f(uTimeLoc, this.age / this.max_age);
         gl.uniform4f(uCenterLoc, this.x, this.y, this.z, 1.0);
+        gl.uniform3fv(uPaletteLoc, this.palette.flat());
         gl.uniformMatrix4fv(uModelMatrixLoc, false, this.model_matrix);
 
         gl.drawArrays(gl.POINTS, 0, this.num_shrapnel);

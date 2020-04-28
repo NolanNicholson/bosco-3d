@@ -31,10 +31,13 @@ void main() {
 }
 `;
 
-var src_vs_explosion = `#version 300 es
+var src_vs_shrapnel = `#version 300 es
+
+out vec4 v_color;
 
 uniform int u_num_shrapnel;
 uniform float u_t;
+uniform vec3 u_palette[3];
 uniform mat4 u_matrix_model;
 uniform mat4 u_matrix_viewproj;
 
@@ -57,17 +60,21 @@ void main() {
 
     vec3 pos = vec3(cos(angle), sin(angle), z) * radius;
     gl_Position = u_matrix_viewproj * u_matrix_model * vec4(pos, 1);
-    gl_PointSize = 2.5f;
+    gl_PointSize = 2.0f;
+
+    int color_index = int((sqrt(u_t) * hash(u_t * u)) * 3.0);
+    v_color = vec4(u_palette[color_index], 1.0f);
 }
 `;
 
-var src_fs_explosion = `#version 300 es
+var src_fs_shrapnel = `#version 300 es
 
 precision mediump float;
+in vec4 v_color;
 out vec4 outColor;
 
 void main() {
-    outColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+    outColor = v_color;
 }
 `;
 
@@ -137,14 +144,15 @@ var program_holder_color = new ProgramHolder(
         }
     });
 
-var program_holder_explosion = new ProgramHolder(
-    gl, src_vs_explosion, src_fs_explosion,
+var program_holder_shrapnel = new ProgramHolder(
+    gl, src_vs_shrapnel, src_fs_shrapnel,
     {
         attribs: {
         },
         uniforms: {
             uTimeLoc: "u_t",
             uNumShrapnelLoc: "u_num_shrapnel",
+            uPaletteLoc: "u_palette",
             uModelMatrixLoc: "u_matrix_model",
             uViewProjMatrixLoc: "u_matrix_viewproj",
         }
