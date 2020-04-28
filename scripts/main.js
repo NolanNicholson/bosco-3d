@@ -164,7 +164,11 @@ function drawScene(now) {
         var viewproj = m4.multiply(proj_matrix, view_matrix);
 
         // Populate the relevant program holders with the view-proj matrix
-        [program_holder_color, program_holder_texture].forEach(ph => {
+        [
+            program_holder_color,
+            program_holder_texture,
+            program_holder_explosion,
+        ].forEach(ph => {
             gl.useProgram(ph.program);
             gl.uniformMatrix4fv(ph.locations.uViewProjMatrixLoc,
                 false, viewproj);
