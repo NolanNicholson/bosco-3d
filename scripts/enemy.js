@@ -39,22 +39,52 @@ class Enemy extends ObjTexture {
         if (enemy_type == 'e')
             this.r_vz = 4;
         this.type = 'enemy';
+        this.exploded = false;
     }
 
     update(dt) {
-        super.update(dt);
+        if (this.exploded) {
+            this.explosion.update(dt);
+            if (this.explosion.age > this.explosion.max_age) {
+                delete_object(this);
+            }
+        } else {
+            super.update(dt);
 
-        //sync collider with main object
-        this.collider.pos = [this.x, this.y, this.z];
-        this.collider.rotation_matrix = this.rotation_matrix;
+            //sync collider with main object
+            this.collider.pos = [this.x, this.y, this.z];
+            this.collider.rotation_matrix = this.rotation_matrix;
+        }
     }
 
     collision_event(other) {
-        switch(other.type) {
-            case 'player_bullet':
-                this.death_sound.play();
-                this.rotation_matrix =
-                    m4.rotate_x(this.rotation_matrix, Math.PI / 6);
+        if (!this.exploded) {
+            switch(other.type) {
+                case 'player_bullet':
+                    this.death_sound.play();
+                    this.exploded = true;
+                    this.explosion = new Explosion({
+                        palette: explosion_palettes.enemy,
+                        size: 2,
+                    });
+                    this.explosion.x = this.x;
+                    this.explosion.y = this.y;
+                    this.explosion.z = this.z;
+                    
+                    //remove this from colliders
+                    var collider_list = all_colliders;
+                    var collider_index = collider_list.indexOf(this);
+                    if (collider_index != -1)
+                        collider_list.splice(collider_index, 1);
+            }
+        }
+    }
+
+    render() {
+        if (this.exploded) {
+            this.explosion.render();
+        } else {
+            super.render();
         }
     }
 }
@@ -83,7 +113,13 @@ class CosmoMine extends ObjTexture {
         if (!this.exploded) {
             sounds.mine_hit.play();
             this.exploded = true;
-            this.explosion = new Explosion();
+            this.explosion = new Explosion({
+                palette: explosion_palettes.cosmo_mine,
+                size: 12,
+                num_shrapnel: 60,
+                num_clouds: 60,
+                max_age: 1,
+            });
             this.explosion.x = this.x;
             this.explosion.y = this.y;
             this.explosion.z = this.z;

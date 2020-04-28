@@ -1,13 +1,19 @@
+const explosion_palettes = {
+    cosmo_mine: [[1, 1, 1], [1, 0.2, 0.2], [0, 0.3, 1]],
+    base: [[1, 1, 1], [1, 0.7, 0.0], [1, 0.1, 0.1]],
+    enemy: [[1, 1, 1], [0.7, 0.7, 0.7], [1, 0.1, 0.1]],
+}
+
 class Explosion extends ObjBase {
-    constructor() {
+    constructor(params) {
         super();
         this.age = 0;
-        this.max_age = 1;
-        this.scale = 2;
-        this.max_scale = 12;
-        this.palette = [[1, 1, 1], [1, 0.2, 0.2], [0, 0.3, 1]];
-        this.num_shrapnel = 60;
-        this.num_clouds = 60;
+        this.max_scale = params.size;
+        this.palette = params.palette;
+        this.max_age = params.max_age || 0.5;
+        this.num_shrapnel = params.num_shrapnel || 20;
+        this.num_clouds = params.num_clouds || 30;
+        this.scale = 0;
 
         //test coords - TODO: remove
         this.x = 2; this.y = 2; this.z = 2;
