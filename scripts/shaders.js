@@ -31,6 +31,52 @@ void main() {
 }
 `;
 
+var src_vs_explosion = `#version 300 es
+
+out vec4 v_color;
+
+uniform int u_num_clouds;
+uniform float u_t;
+uniform vec3 u_palette[3];
+uniform mat4 u_matrix_model;
+uniform mat4 u_matrix_viewproj;
+
+#define PI radians(180.0)
+
+// hash function from https://www.shadertoy.com/view/4djSRW
+// given a value between 0 and 1, returns a pseudorandom between 0 and 1
+float hash(float p) {
+    vec2 p2 = fract(vec2(p * 5.3983, p * 5.4427));
+    p2 += dot(p2.yx, p2.xy + vec2(21.5351, 14.3137));
+    return fract(p2.x * p2.y * 95.4337);
+}
+
+void main() {
+    float u = float(gl_VertexID) / float(u_num_clouds);
+    float angle = hash(u) * PI * 2.0;
+    float z = hash(hash(u)) * 2.0 - 1.0;
+    float radius = 0.3;
+
+    vec3 pos = vec3(cos(angle), sin(angle), z) * radius;
+    gl_Position = u_matrix_viewproj * u_matrix_model * vec4(pos, 1);
+    gl_PointSize = 6.0f;
+
+    int color_index = int(hash(hash(u)) * 3.0);
+    v_color = vec4(u_palette[color_index], 1.0f);
+}
+`;
+
+var src_fs_explosion = `#version 300 es
+
+precision mediump float;
+in vec4 v_color;
+out vec4 outColor;
+
+void main() {
+    outColor = v_color;
+}
+`;
+
 var src_vs_shrapnel = `#version 300 es
 
 out vec4 v_color;
@@ -44,8 +90,7 @@ uniform mat4 u_matrix_viewproj;
 #define PI radians(180.0)
 
 // hash function from https://www.shadertoy.com/view/4djSRW
-// given a value between 0 and 1
-// returns a value between 0 and 1 that *appears* kind of random
+// given a value between 0 and 1, returns a pseudorandom between 0 and 1
 float hash(float p) {
     vec2 p2 = fract(vec2(p * 5.3983, p * 5.4427));
     p2 += dot(p2.yx, p2.xy + vec2(21.5351, 14.3137));
@@ -144,6 +189,23 @@ var program_holder_color = new ProgramHolder(
         }
     });
 
+//explosion: for the core "cloud" of an explosion
+var program_holder_explosion = new ProgramHolder(
+    gl, src_vs_explosion, src_fs_explosion,
+    {
+        attribs: {
+        },
+        uniforms: {
+            uTimeLoc: "u_t",
+            uNumCloudsLoc: "u_num_clouds",
+            uPaletteLoc: "u_palette",
+            uModelMatrixLoc: "u_matrix_model",
+            uViewProjMatrixLoc: "u_matrix_viewproj",
+        }
+    });
+
+
+//shrapnel: for flickering bits of shrapnel on the edge of an explosion
 var program_holder_shrapnel = new ProgramHolder(
     gl, src_vs_shrapnel, src_fs_shrapnel,
     {

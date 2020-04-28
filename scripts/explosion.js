@@ -7,6 +7,7 @@ class Explosion extends ObjBase {
         this.max_scale = 15;
         this.palette = [[1, 1, 1], [1, 0, 0], [0, 0, 1]];
         this.num_shrapnel = 20;
+        this.num_clouds = 20;
 
         //test coords - TODO: remove
         this.x = 2; this.y = 2; this.z = 2;
@@ -23,17 +24,17 @@ class Explosion extends ObjBase {
     }
 
     render() {
-        var ph = program_holder_shrapnel;
-        gl.useProgram(ph.program);
+        var ph_s = program_holder_shrapnel;
+        gl.useProgram(ph_s.program);
 
         super.prep_model_matrix();
 
-
-        var uNumShrapnelLoc = ph.locations.uNumShrapnelLoc;
-        var uCenterLoc = ph.locations.uCenterLoc;
-        var uTimeLoc = ph.locations.uTimeLoc;
-        var uPaletteLoc = ph.locations.uPaletteLoc;
-        var uModelMatrixLoc = ph.locations.uModelMatrixLoc;
+        // Shrapnel: assign uniforms
+        var uNumShrapnelLoc = ph_s.locations.uNumShrapnelLoc;
+        var uCenterLoc = ph_s.locations.uCenterLoc;
+        var uTimeLoc = ph_s.locations.uTimeLoc;
+        var uPaletteLoc = ph_s.locations.uPaletteLoc;
+        var uModelMatrixLoc = ph_s.locations.uModelMatrixLoc;
 
         gl.uniform1i(uNumShrapnelLoc, this.num_shrapnel);
         gl.uniform1f(uTimeLoc, this.age / this.max_age);
@@ -41,6 +42,26 @@ class Explosion extends ObjBase {
         gl.uniform3fv(uPaletteLoc, this.palette.flat());
         gl.uniformMatrix4fv(uModelMatrixLoc, false, this.model_matrix);
 
+        // Shrapnel: draw
+        gl.drawArrays(gl.POINTS, 0, this.num_shrapnel);
+
+        var ph_e = program_holder_explosion;
+        gl.useProgram(ph_e.program);
+
+        // Clouds: assign uniforms
+        var uNumCloudsLoc = ph_e.locations.uNumCloudsLoc;
+        var uCenterLoc = ph_e.locations.uCenterLoc;
+        var uTimeLoc = ph_e.locations.uTimeLoc;
+        var uPaletteLoc = ph_e.locations.uPaletteLoc;
+        var uModelMatrixLoc = ph_e.locations.uModelMatrixLoc;
+
+        gl.uniform1i(uNumCloudsLoc, this.num_shrapnel);
+        gl.uniform1f(uTimeLoc, this.age / this.max_age);
+        gl.uniform4f(uCenterLoc, this.x, this.y, this.z, 1.0);
+        gl.uniform3fv(uPaletteLoc, this.palette.flat());
+        gl.uniformMatrix4fv(uModelMatrixLoc, false, this.model_matrix);
+
+        // Clouds: draw
         gl.drawArrays(gl.POINTS, 0, this.num_shrapnel);
     }
 }

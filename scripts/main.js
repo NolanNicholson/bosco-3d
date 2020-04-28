@@ -167,6 +167,7 @@ function drawScene(now) {
         [
             program_holder_color,
             program_holder_texture,
+            program_holder_explosion,
             program_holder_shrapnel,
         ].forEach(ph => {
             gl.useProgram(ph.program);
