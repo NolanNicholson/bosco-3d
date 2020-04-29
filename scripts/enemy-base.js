@@ -5,6 +5,47 @@ class Part extends ObjTexture {
         this.rel_rotation = m4.identity();
         this.parent_obj = parent_obj;
         this.type = 'part';
+    }
+
+    update(dt) {
+        super.update(dt);
+    }
+
+    sync_with_parent() {
+        var p = this.parent_obj;
+
+        //apply rotation
+        this.rotation_matrix = m4.multiply(
+            p.rotation_matrix, this.rel_rotation);
+
+        this.x = p.x + this.rel_position[0];
+        this.y = p.y + this.rel_position[1];
+        this.z = p.z + this.rel_position[2];
+
+        var movement_matrix = m4.identity();
+        movement_matrix = m4.translate(movement_matrix, p.x, p.y, p.z);
+        movement_matrix = m4.scale(movement_matrix,
+            p.scale, p.scale, p.scale);
+        movement_matrix = m4.multiply(movement_matrix, p.rotation_matrix);
+        movement_matrix = m4.translate(movement_matrix,
+            this.rel_position[0], this.rel_position[1], this.rel_position[2]);
+        movement_matrix = m4.multiply(movement_matrix, this.rel_rotation);
+
+        this.x = movement_matrix[12];
+        this.y = movement_matrix[13];
+        this.z = movement_matrix[14];
+        this.scale = p.scale;
+
+        if (this.collider) {
+            this.collider.pos = [this.x, this.y, this.z];
+        }
+    }
+
+}
+
+class BaseCannon extends Part {
+    constructor(parent_obj, model, texture) {
+        super(parent_obj, models.base_ball, textures.base_ball);
         this.exploded = false;
         this.explosion = false;
     }
@@ -40,36 +81,6 @@ class Part extends ObjTexture {
         }
     }
 
-    sync_with_parent() {
-        var p = this.parent_obj;
-
-        //apply rotation
-        this.rotation_matrix = m4.multiply(
-            p.rotation_matrix, this.rel_rotation);
-
-        this.x = p.x + this.rel_position[0];
-        this.y = p.y + this.rel_position[1];
-        this.z = p.z + this.rel_position[2];
-
-        var movement_matrix = m4.identity();
-        movement_matrix = m4.translate(movement_matrix, p.x, p.y, p.z);
-        movement_matrix = m4.scale(movement_matrix,
-            p.scale, p.scale, p.scale);
-        movement_matrix = m4.multiply(movement_matrix, p.rotation_matrix);
-        movement_matrix = m4.translate(movement_matrix,
-            this.rel_position[0], this.rel_position[1], this.rel_position[2]);
-        movement_matrix = m4.multiply(movement_matrix, this.rel_rotation);
-
-        this.x = movement_matrix[12];
-        this.y = movement_matrix[13];
-        this.z = movement_matrix[14];
-        this.scale = p.scale;
-
-        if (this.collider) {
-            this.collider.pos = [this.x, this.y, this.z];
-        }
-    }
-
     render() {
         if (this.explosion) {
             this.explosion.render();
@@ -91,7 +102,7 @@ class EnemyBase {
         this.balls = []
         var ball;
         for (var i = 0; i < 6; i++) {
-            ball = new Part(this, models.base_ball, textures.base_ball);
+            ball = new BaseCannon(this);
             ball.collider = new ColliderSphere(0, 0, 0, 7);
             this.balls.push(ball);
         }
@@ -104,8 +115,11 @@ class EnemyBase {
         this.balls[5].rel_position = [ 2.5, 0,  4.5];
 
         [4, 5].forEach(i => {
-            var ball = this.balls[i];
-            ball.rel_rotation = m4.rotation_x(Math.PI);
+            this.balls[i].rel_rotation = m4.rotation_x(Math.PI);
+        });
+        [2, 4].forEach(i => {
+            this.balls[i].rel_rotation = m4.rotate_z(
+                this.balls[i].rel_rotation, Math.PI);
         });
 
         this.arms = []
