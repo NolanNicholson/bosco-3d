@@ -29,6 +29,12 @@ class Explosion extends ObjBase {
             Math.random() * 2 * Math.PI);
     }
 
+    relocate(x, y, z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
     update(dt) {
         this.age += dt;
         this.scale = this.max_scale * Math.cbrt(this.age / this.max_age);
