@@ -107,6 +107,7 @@ window.addEventListener("keyup", handle_keyup);
 
 var then;
 function start_game() {
+    gl.disable(gl.SCISSOR_TEST);
     then = 0;
     requestAnimationFrame(drawScene);
 }
@@ -116,6 +117,7 @@ var total_assets =
     Object.keys(textures).length +
     Object.keys(models).length +
     Object.keys(sounds).length;
+
 function confirm_asset_loaded() {
     assets_loaded++;
     if (assets_loaded == total_assets) {
@@ -123,6 +125,34 @@ function confirm_asset_loaded() {
         start_game();
     }
 }
+
+function drawLoadingScreen() {
+    // Resize the canvas and viewport
+    resizeCanvasToDisplaySize(gl.canvas, 0.5);
+    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+    // clear the canvas
+    gl.clearColor(0, 0, 0, 1);
+    gl.scissor(0, 0, gl.canvas.width, gl.canvas.height);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    // draw a loading bar using SCISSOR_TEST
+    var bar_height = gl.canvas.height * 0.015;
+    var bar_width = gl.canvas.width * assets_loaded / total_assets;
+    console.log(bar_width, bar_height);
+    gl.scissor(0, 0, bar_width, bar_height);
+    gl.clearColor(1, 1, 1, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+    // queue up next frame, unless loading is done
+    if (assets_loaded < total_assets) {
+        console.log(assets_loaded, total_assets);
+        requestAnimationFrame(drawLoadingScreen);
+    }
+}
+
+gl.enable(gl.SCISSOR_TEST);
+requestAnimationFrame(drawLoadingScreen);
 
 function drawScene(now) {
     now *= 0.001; // convert ms to seconds
