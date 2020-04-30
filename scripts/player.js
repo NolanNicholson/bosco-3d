@@ -7,9 +7,11 @@ class Player {
         //movement flags
         this.yawing_left = false;       this.yawing_right = false;
         this.pitching_up = false;         this.pitching_down = false;
+        this.strafing = false;
 
         //ship speed
         this.drive_speed = 10;
+        this.strafe_speed = 10;
 
         //direction and adjustment speed
         this.pitch = 0; this.yaw = 0;
@@ -68,6 +70,9 @@ class Player {
             case 32: // Spacebar
                 this.fire();
                 break;
+            case 16: // Shift
+                this.strafing = true;
+                break;
             case 79: // O
                 if (this.drive_speed) this.drive_speed = 0;
                 else this.drive_speed = 10;
@@ -92,6 +97,9 @@ class Player {
                 this.pitching_up = false;
                 break;
             case 32: // Spacebar
+                break;
+            case 16: // Shift
+                this.strafing = false;
                 break;
             default:
                 console.log("Key Up:", e.keyCode);
@@ -118,11 +126,14 @@ class Player {
                 this.pitch_target - this.pitch, this.tack_anim_speed);
         }
 
-        //update rotation matrix using pitch and yaw
-        this.rotation_matrix = m4.rotate_x(this.rotation_matrix,
-            this.pitch * this.pitch_speed * dt);
-        this.rotation_matrix = m4.rotate_y(this.rotation_matrix,
-            this.yaw * this.yaw_speed * dt);
+        // If the ship is NOT strafing,
+        // update rotation matrix using pitch and yaw.
+        if (!this.strafing) {
+            this.rotation_matrix = m4.rotate_x(this.rotation_matrix,
+                this.pitch * this.pitch_speed * dt);
+            this.rotation_matrix = m4.rotate_y(this.rotation_matrix,
+                this.yaw * this.yaw_speed * dt);
+        }
 
         //use a movement matrix to get new ship coordinates
         var movement_matrix = m4.identity();
@@ -132,8 +143,16 @@ class Player {
 
         movement_matrix = m4.multiply(movement_matrix, this.rotation_matrix);
 
+        // Drive the ship forward, and strafe it if applicable
         movement_matrix = m4.translate(movement_matrix,
             0, 0, -this.drive_speed * dt);
+        if (this.strafing) {
+            var ss = this.strafe_speed * dt;
+            var move_x = this.yawing_right - this.yawing_left;
+            var move_y = this.pitching_up - this.pitching_down;
+            movement_matrix = m4.translate(movement_matrix,
+                ss * move_x, ss * move_y, 0);
+        }
 
         this.ship_obj.x = movement_matrix[12];
         this.ship_obj.y = movement_matrix[13];
