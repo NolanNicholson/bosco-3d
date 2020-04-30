@@ -13,6 +13,33 @@ class Explodable extends ObjTexture {
     constructor(model, texture) {
         super(model, texture);
         this.exploded = false;
+        this.explosion_properties = {};
+        this.remove_collider_when_exploded = true;
+    }
+
+    collision_event(other) {
+        if (!this.exploded) {
+            this.explode();
+        }
+    }
+
+    delete_collider() {
+        //remove this object's collider from the master list (if it's in it)
+        var collider_list = all_colliders;
+        var collider_index = collider_list.indexOf(this);
+        if (collider_index != -1)
+            collider_list.splice(collider_index, 1);
+    }
+
+    explode() {
+        this.explode_sound.play();
+        this.exploded = true;
+        this.explosion = new Explosion(this.explosion_properties);
+        this.explosion.relocate(this.x, this.y, this.z);
+
+        if (this.remove_collider_when_exploded) {
+            this.delete_collider();
+        }
     }
 
     update(dt) {
@@ -43,33 +70,33 @@ class Explodable extends ObjTexture {
 
 class Enemy extends Explodable {
     constructor(enemy_type) {
-        var model; var texture; var death_sound;
+        var model; var texture; var explode_sound;
         switch(enemy_type) {
             case 'p':
                 model = models.enemy_p;
                 texture = textures.enemy_p;
-                death_sound = sounds.p_type_hit;
+                explode_sound = sounds.p_type_hit;
                 break;
             case 'e':
                 model = models.enemy_e;
                 texture = textures.enemy_e;
-                death_sound = sounds.e_type_hit;
+                explode_sound = sounds.e_type_hit;
                 break;
             case 'spy':
                 model = models.enemy_spy;
                 texture = textures.enemy_spy;
-                death_sound = sounds.i_type_spy_hit;
+                explode_sound = sounds.i_type_spy_hit;
                 break;
             case 'i':
             default:
                 model = models.enemy_i;
                 texture = textures.enemy_i;
-                death_sound = sounds.i_type_spy_hit;
+                explode_sound = sounds.i_type_spy_hit;
                 break;
         }
 
         super(model, texture);
-        this.death_sound = death_sound;
+        this.explode_sound = explode_sound;
 
         //collider: identical for all enemies except the E-Type
         if (enemy_type == 'e') {
@@ -84,28 +111,9 @@ class Enemy extends Explodable {
             this.r_vz = 4;
 
         this.type = 'enemy';
-    }
-
-    collision_event(other) {
-        if (!this.exploded) {
-            switch(other.type) {
-                case 'player_bullet':
-                    this.death_sound.play();
-                    this.exploded = true;
-                    this.explosion = new Explosion({
-                        palette: explosion_palettes.enemy,
-                    });
-                    this.explosion.x = this.x;
-                    this.explosion.y = this.y;
-                    this.explosion.z = this.z;
-                    
-                    //remove this from colliders
-                    var collider_list = all_colliders;
-                    var collider_index = collider_list.indexOf(this);
-                    if (collider_index != -1)
-                        collider_list.splice(collider_index, 1);
-            }
-        }
+        this.explosion_properties = {
+            palette: explosion_palettes.enemy,
+        };
     }
 }
 
@@ -115,23 +123,15 @@ class CosmoMine extends Explodable {
         this.collider = new ColliderSphere(0, 0, 0, 1.7);
         all_colliders.push(this);
         this.type = 'mine';
-    }
-
-    collision_event(other) {
-        if (!this.exploded) {
-            sounds.mine_hit.play();
-            this.exploded = true;
-            this.explosion = new Explosion({
-                palette: explosion_palettes.cosmo_mine,
-                size: 12,
-                num_shrapnel: 60,
-                num_clouds: 60,
-                max_age: 1,
-            });
-            this.explosion.x = this.x;
-            this.explosion.y = this.y;
-            this.explosion.z = this.z;
-        }
+        this.explosion_properties = {
+            palette: explosion_palettes.cosmo_mine,
+            size: 12,
+            num_shrapnel: 60,
+            num_clouds: 60,
+            max_age: 1,
+        };
+        this.explode_sound = sounds.mine_hit;
+        this.remove_collider_when_exploded = false;
     }
 
     update(dt) {
@@ -152,5 +152,14 @@ class Asteroid extends Explodable {
             Math.random() * 2 * Math.PI);
         this.rotation_matrix = m4.rotate_y(this.rotation_matrix,
             Math.random() * 2 * Math.PI);
+
+        this.collider = new ColliderSphere(0, 0, 0, this.scale);
+        all_colliders.push(this);
+
+        this.explode_sound = sounds.asteroid_hit;
+        this.explosion_properties = {
+            size: this.scale * 1.3,
+        }
+        this.type = 'asteroid';
     }
 }

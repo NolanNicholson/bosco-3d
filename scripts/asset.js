@@ -202,5 +202,6 @@ var sounds = {
     p_type_hit:         new Sound('audio/p-type-hit.wav'),
     i_type_spy_hit:     new Sound('audio/i-type-spy-hit.wav'),
     mine_hit:           new Sound('audio/boom.wav'),
+    asteroid_hit:       new Sound('audio/asteroid-hit.wav'),
 };
 
