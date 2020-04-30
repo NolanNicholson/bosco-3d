@@ -96,8 +96,24 @@ function handle_keyup(e) {
 window.addEventListener("keydown", handle_keydown);
 window.addEventListener("keyup", handle_keyup);
 
-var then = 0;
-requestAnimationFrame(drawScene);
+var then;
+function start_game() {
+    then = 0;
+    requestAnimationFrame(drawScene);
+}
+
+var assets_loaded = 0;
+var total_assets =
+    Object.keys(textures).length +
+    Object.keys(models).length +
+    Object.keys(sounds).length;
+function confirm_asset_loaded() {
+    assets_loaded++;
+    if (assets_loaded == total_assets) {
+        console.log("Assets loaded");
+        start_game();
+    }
+}
 
 function drawScene(now) {
     now *= 0.001; // convert ms to seconds

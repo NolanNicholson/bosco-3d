@@ -202,15 +202,3 @@ var sounds = {
     mine_hit:           new Sound('audio/boom.wav'),
 };
 
-var assets_loaded = 0;
-var total_assets =
-    Object.keys(textures).length +
-    Object.keys(models).length +
-    Object.keys(sounds).length;
-function confirm_asset_loaded() {
-    assets_loaded++;
-    console.log("Assets loaded: ", assets_loaded, "/", total_assets);
-    if (assets_loaded == total_assets) {
-        console.log("All assets loaded");
-    }
-}
