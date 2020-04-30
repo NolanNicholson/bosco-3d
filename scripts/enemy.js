@@ -145,3 +145,14 @@ class CosmoMine extends ObjTexture {
         }
     }
 }
+
+class Asteroid extends ObjTexture {
+    constructor() {
+        super(models.asteroid1, textures.asteroid);
+        this.scale = Math.random() * 2 + 1;
+        this.rotation_matrix = m4.rotate_x(this.rotation_matrix,
+            Math.random() * 2 * Math.PI);
+        this.rotation_matrix = m4.rotate_y(this.rotation_matrix,
+            Math.random() * 2 * Math.PI);
+    }
+}

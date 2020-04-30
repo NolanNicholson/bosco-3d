@@ -25,6 +25,15 @@ obj_base.x = 12; obj_base.y = -40; obj_base.z = 10;
 obj_base.rotation_matrix = m4.rotation_x(Math.PI / 8);
 obj_base.scale = 4;
 
+var asteroids = [];
+for (var i = 0; i < 10; i++) {
+    var ast = new Asteroid();
+    ast.x = Math.random() * 40 - 40;
+    ast.y = Math.random() * 40 - 40;
+    ast.z = Math.random() * 40 - 40;
+    asteroids.push(ast);
+}
+
 var mines = [];
 var obj_mine;
 var num_mines = 12;
@@ -62,7 +71,7 @@ formation[4].z = -10; // right
 var objects = [obj_floor, player, obj_starfield,
     obj_enemy_i, obj_enemy_p, obj_enemy_e, obj_enemy_spy,
     obj_base,
-    ...mines,
+    ...mines, ...asteroids,
     ...formation
 ];
 

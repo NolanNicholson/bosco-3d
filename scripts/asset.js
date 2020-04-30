@@ -173,6 +173,7 @@ var textures = {
     base_ball_d:    new Texture("models/base_ball_destroyed_tex.png"),
     base_crystal:   new Texture("models/base_crystal_tex.png"),
     cosmo_mine:     new Texture("models/cosmo_mine_tex.png"),
+    asteroid:       new Texture("models/asteroid_tex.png"),
 }
 
 // Load model assets
@@ -189,6 +190,7 @@ var models = {
     base_arm:       new Model("models/base_arm.obj"),
     base_crystal:   new Model("models/base_crystal.obj"),
     cosmo_mine:     new Model("models/cosmo_mine.obj"),
+    asteroid1:      new Model("models/asteroid1.obj"),
 }
 
 // Load sound assets
