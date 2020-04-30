@@ -1,10 +1,20 @@
 var audio_context;
+var sounds = {};
 window.addEventListener('load', init_audio, false);
 
 function init_audio() {
     try {
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         audio_context = new AudioContext();
+        sounds = {
+            player_shoot:       new Sound('audio/shoot.wav'),
+            base_cannon_hit:    new Sound('audio/cannon-hit.wav'),
+            blast_off:          new Sound('audio/blast-off.wav'),
+            e_type_hit:         new Sound('audio/e-type-hit.wav'),
+            p_type_hit:         new Sound('audio/p-type-hit.wav'),
+            i_type_spy_hit:     new Sound('audio/i-type-spy-hit.wav'),
+            mine_hit:           new Sound('audio/boom.wav'),
+        };
     } catch(e) {
         console.error("Error: Web Audio API not supported.");
     }
@@ -46,12 +56,3 @@ class Sound {
     }
 }
 
-var sounds = {
-    player_shoot:       new Sound('audio/shoot.wav'),
-    base_cannon_hit:    new Sound('audio/cannon-hit.wav'),
-    blast_off:          new Sound('audio/blast-off.wav'),
-    e_type_hit:         new Sound('audio/e-type-hit.wav'),
-    p_type_hit:         new Sound('audio/p-type-hit.wav'),
-    i_type_spy_hit:     new Sound('audio/i-type-spy-hit.wav'),
-    mine_hit:           new Sound('audio/boom.wav'),
-};

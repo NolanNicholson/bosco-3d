@@ -221,7 +221,6 @@ class EnemyBase {
 
     destroy() {
         //first, remove colliders
-        console.log(this);
         this.colliders.forEach(coll => {
             var i_coll = all_colliders.indexOf(coll);
             if (i_coll != -1) all_colliders.splice(i_coll, 1);
