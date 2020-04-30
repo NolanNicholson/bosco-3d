@@ -8,7 +8,7 @@ var textures = {
     enemy_p_alt:    new Texture("models/enemy_p_alt_tex.png"),
     base_core_side: new Texture("models/base_core_side_tex.png"),
     base_ball:      new Texture("models/base_ball_tex.png"),
-    base_ball_d_c:  new Texture("models/base_ball_destroyed_tex.png"),
+    base_ball_d:    new Texture("models/base_ball_destroyed_tex.png"),
     base_crystal:   new Texture("models/base_crystal_tex.png"),
     cosmo_mine:     new Texture("models/cosmo_mine_tex.png"),
 }
@@ -23,6 +23,7 @@ var models = {
     base_core_side: new Model("models/base_core_side.obj"),
     base_ball:      new Model("models/base_ball.obj"),
     base_ball_d_c:  new Model("models/base_ball_destroyed_corner.obj"),
+    base_ball_d_s:  new Model("models/base_ball_destroyed_side.obj"),
     base_arm:       new Model("models/base_arm.obj"),
     base_crystal:   new Model("models/base_crystal.obj"),
     cosmo_mine:     new Model("models/cosmo_mine.obj"),

@@ -48,6 +48,7 @@ class BaseCannon extends Part {
         super(parent_obj, models.base_ball, textures.base_ball);
         this.exploded = false;
         this.explosion = false;
+        this.is_corner = true;
     }
 
     collision_event(other) {
@@ -62,8 +63,11 @@ class BaseCannon extends Part {
                     this.explosion.x = this.x;
                     this.explosion.y = this.y;
                     this.explosion.z = this.z;
-                    this.model_asset = models.base_ball_d_c;
-                    this.texture_asset = textures.base_ball_d_c;
+                    if (this.is_corner)
+                        this.model_asset = models.base_ball_d_c;
+                    else
+                        this.model_asset = models.base_ball_d_s;
+                    this.texture_asset = textures.base_ball_d;
 
                     //communicate damage to the main base
                     this.parent_obj.damage();
@@ -117,6 +121,9 @@ class EnemyBase {
         this.balls[3].rel_position = [ 2.5, 0, -4.5];
         this.balls[4].rel_position = [-2.5, 0,  4.5];
         this.balls[5].rel_position = [ 2.5, 0,  4.5];
+        this.balls[0].is_corner = false;
+        this.balls[1].is_corner = false;
+        this.balls[0].rel_rotation = m4.rotation_z(Math.PI);
 
         // some of the base cannons need to be rotated
         [4, 5].forEach(i => {
