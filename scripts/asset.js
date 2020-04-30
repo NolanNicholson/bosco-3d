@@ -184,6 +184,7 @@ var models = {
     enemy_e:        new Model("models/enemy_e.obj"),
     enemy_spy:      new Model("models/enemy_spy.obj"),
     base_core_side: new Model("models/base_core_side.obj"),
+    base_core_door: new Model("models/base_core_door.obj"),
     base_ball:      new Model("models/base_ball.obj"),
     base_ball_d_c:  new Model("models/base_ball_destroyed_corner.obj"),
     base_ball_d_s:  new Model("models/base_ball_destroyed_side.obj"),

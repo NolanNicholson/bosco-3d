@@ -43,8 +43,21 @@ class Part extends ObjTexture {
 
 }
 
+class BaseCoreDoor extends Part {
+    constructor(parent_obj) {
+        super(parent_obj, models.base_core_door, textures.base_core_side);
+        this.rotation_speed = 1;
+    }
+
+    update(dt) {
+        super.update(dt);
+        this.rel_rotation = m4.rotate_x(this.rel_rotation,
+            this.rotation_speed * dt);
+    }
+}
+
 class BaseCannon extends Part {
-    constructor(parent_obj, model, texture) {
+    constructor(parent_obj) {
         super(parent_obj, models.base_ball, textures.base_ball);
         this.exploded = false;
         this.explosion = false;
@@ -147,14 +160,17 @@ class EnemyBase {
         this.arms[1].rel_rotation = m4.rotation_x(Math.PI);
         this.arms[2].rel_rotation = m4.rotation_x(Math.PI);
 
+        // set up the core crystal
         this.crystal = new Part(this,
             models.base_crystal, textures.base_crystal);
+        this.crystal_guard = new BaseCoreDoor(this);
 
         this.parts = [
             ...this.core_sides,
             ...this.balls,
             ...this.arms,
             this.crystal,
+            this.crystal_guard,
         ];
 
         this.rotation_matrix = m4.identity();
