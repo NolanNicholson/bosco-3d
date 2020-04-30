@@ -5,6 +5,7 @@ class Texture {
     constructor(filename) {
         //Initialize the texture with a placeholder
         this.texture = gl.createTexture();
+        this.loaded = false;
         gl.bindTexture(gl.TEXTURE_2D, this.texture);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA,
             gl.UNSIGNED_BYTE,
@@ -25,6 +26,8 @@ class Texture {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
             //generate mipmap
             gl.generateMipmap(gl.TEXTURE_2D);
+            me.loaded = true;
+            confirm_asset_loaded();
         });
     }
 }
@@ -32,6 +35,7 @@ class Texture {
 class Model {
     constructor(obj_filename) {
         this.program_holder = program_holder_texture;
+        this.loaded = false;
 
         var me = this;
 
@@ -44,6 +48,8 @@ class Model {
             var positions = obj_file.vertices;
             var texcoords = obj_file.tex_vertices;
             me.load_data(positions, texcoords);
+            me.loaded = true;
+            confirm_asset_loaded();
         });
 
         //"base" transformation matrix:
@@ -106,4 +112,45 @@ class Model_ColorOnly {
         this.num_vertices = positions.length / 3;
     }
 
+}
+
+// Load texture assets
+var textures = {
+    player:         new Texture("models/player_tex.png"),
+    enemy_i:        new Texture("models/enemy_i_tex.png"),
+    enemy_p:        new Texture("models/enemy_p_tex.png"),
+    enemy_e:        new Texture("models/enemy_e_tex.png"),
+    enemy_spy:      new Texture("models/enemy_spy_tex.png"),
+    enemy_p_alt:    new Texture("models/enemy_p_alt_tex.png"),
+    base_core_side: new Texture("models/base_core_side_tex.png"),
+    base_ball:      new Texture("models/base_ball_tex.png"),
+    base_ball_d:    new Texture("models/base_ball_destroyed_tex.png"),
+    base_crystal:   new Texture("models/base_crystal_tex.png"),
+    cosmo_mine:     new Texture("models/cosmo_mine_tex.png"),
+}
+
+// Load model assets
+var models = {
+    player:         new Model("models/player.obj"),
+    enemy_i:        new Model("models/enemy_i.obj"),
+    enemy_p:        new Model("models/enemy_p.obj"),
+    enemy_e:        new Model("models/enemy_e.obj"),
+    enemy_spy:      new Model("models/enemy_spy.obj"),
+    base_core_side: new Model("models/base_core_side.obj"),
+    base_ball:      new Model("models/base_ball.obj"),
+    base_ball_d_c:  new Model("models/base_ball_destroyed_corner.obj"),
+    base_ball_d_s:  new Model("models/base_ball_destroyed_side.obj"),
+    base_arm:       new Model("models/base_arm.obj"),
+    base_crystal:   new Model("models/base_crystal.obj"),
+    cosmo_mine:     new Model("models/cosmo_mine.obj"),
+}
+
+var assets_loaded = 0;
+var total_assets = Object.keys(textures).length + Object.keys(models).length;
+function confirm_asset_loaded() {
+    assets_loaded++;
+    console.log("Assets loaded: ", assets_loaded, "/", total_assets);
+    if (assets_loaded == total_assets) {
+        console.log("All assets loaded");
+    }
 }
