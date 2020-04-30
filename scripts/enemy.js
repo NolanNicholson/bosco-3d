@@ -1,4 +1,47 @@
-class Enemy extends ObjTexture {
+function delete_object(o) {
+    var collider_list = all_colliders;
+    var object_list = objects;
+
+    var collider_index = collider_list.indexOf(o);
+    if (collider_index != -1) collider_list.splice(collider_index, 1);
+
+    var obj_index = object_list.indexOf(o);
+    if (obj_index != -1) object_list.splice(obj_index, 1);
+}
+
+class Explodable extends ObjTexture {
+    constructor(model, texture) {
+        super(model, texture);
+        this.exploded = false;
+    }
+
+    update(dt) {
+        if (this.exploded) {
+            this.explosion.update(dt);
+            if (this.explosion.age > this.explosion.max_age) {
+                delete_object(this);
+            }
+        } else {
+            super.update(dt);
+
+            //sync collider with main object
+            if (this.collider) {
+                this.collider.pos = [this.x, this.y, this.z];
+                this.collider.rotation_matrix = this.rotation_matrix;
+            }
+        }
+    }
+
+    render() {
+        if (this.exploded) {
+            this.explosion.render();
+        } else {
+            super.render();
+        }
+    }
+}
+
+class Enemy extends Explodable {
     constructor(enemy_type) {
         var model; var texture; var death_sound;
         switch(enemy_type) {
@@ -36,25 +79,11 @@ class Enemy extends ObjTexture {
         }
         all_colliders.push(this);
 
+        //the E-Type enemy is a missile, so let's give it a spin effect
         if (enemy_type == 'e')
             this.r_vz = 4;
+
         this.type = 'enemy';
-        this.exploded = false;
-    }
-
-    update(dt) {
-        if (this.exploded) {
-            this.explosion.update(dt);
-            if (this.explosion.age > this.explosion.max_age) {
-                delete_object(this);
-            }
-        } else {
-            super.update(dt);
-
-            //sync collider with main object
-            this.collider.pos = [this.x, this.y, this.z];
-            this.collider.rotation_matrix = this.rotation_matrix;
-        }
     }
 
     collision_event(other) {
@@ -78,33 +107,13 @@ class Enemy extends ObjTexture {
             }
         }
     }
-
-    render() {
-        if (this.exploded) {
-            this.explosion.render();
-        } else {
-            super.render();
-        }
-    }
 }
 
-function delete_object(o) {
-    var collider_list = all_colliders;
-    var object_list = objects;
-
-    var collider_index = collider_list.indexOf(o);
-    if (collider_index != -1) collider_list.splice(collider_index, 1);
-
-    var obj_index = object_list.indexOf(o);
-    if (obj_index != -1) object_list.splice(obj_index, 1);
-}
-
-class CosmoMine extends ObjTexture {
+class CosmoMine extends Explodable {
     constructor() {
         super(models.cosmo_mine, textures.cosmo_mine);
         this.collider = new ColliderSphere(0, 0, 0, 1.7);
         all_colliders.push(this);
-        this.exploded = false;
         this.type = 'mine';
     }
 
@@ -126,27 +135,16 @@ class CosmoMine extends ObjTexture {
     }
 
     update(dt) {
+        super.update(dt);
+        //since the mine's explosion (uniquely) has a collider,
+        //we also need to update it
         if (this.exploded) {
-            this.explosion.update(dt);
             this.collider.radius = this.explosion.scale;
-            if (this.explosion.age > this.explosion.max_age) {
-                delete_object(this);
-            }
-        } else {
-            this.collider.pos = [this.x, this.y, this.z];
-        }
-    }
-
-    render(dt) {
-        if (this.exploded) {
-            this.explosion.render();
-        } else {
-            super.render();
         }
     }
 }
 
-class Asteroid extends ObjTexture {
+class Asteroid extends Explodable {
     constructor() {
         super(models.asteroid1, textures.asteroid);
         this.scale = Math.random() * 2 + 1;
