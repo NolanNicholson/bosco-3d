@@ -5,7 +5,6 @@ class Texture {
     constructor(filename) {
         //Initialize the texture with a placeholder
         this.texture = gl.createTexture();
-        this.loaded = false;
         gl.bindTexture(gl.TEXTURE_2D, this.texture);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA,
             gl.UNSIGNED_BYTE,
@@ -26,7 +25,6 @@ class Texture {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
             //generate mipmap
             gl.generateMipmap(gl.TEXTURE_2D);
-            me.loaded = true;
             confirm_asset_loaded();
         });
     }
@@ -35,11 +33,9 @@ class Texture {
 class Model {
     constructor(obj_filename) {
         this.program_holder = program_holder_texture;
-        this.loaded = false;
-
-        var me = this;
 
         //fetch the object file
+        var me = this;
         fetch(obj_filename)
         .then(response => response.text())
         .then((obj_string) => {
@@ -87,9 +83,8 @@ class Model_ColorOnly {
     constructor(obj_filename) {
         this.program_holder = program_holder_color;
 
-        var me = this;
-
         //fetch the object file
+        var me = this;
         fetch(obj_filename)
         .then(response => response.text())
         .then((obj_string) => {
@@ -112,6 +107,57 @@ class Model_ColorOnly {
         this.num_vertices = positions.length / 3;
     }
 
+}
+
+// Audio assets: loading and playing
+var audio_context;
+window.addEventListener('load', init_audio, false);
+
+function init_audio() {
+    try {
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        audio_context = new AudioContext();
+        for (const sound_name in sounds) {
+            sounds[sound_name].load();
+        }
+    } catch(e) {
+        console.error("Error: Web Audio API not supported.");
+    }
+}
+
+class Sound {
+    constructor(path) {
+        this.loaded = false;
+        this.path = path;
+    }
+
+    load() {
+        var me = this;
+        fetch(this.path)
+        .then(response => response.arrayBuffer())
+        .then((data) => {
+            audio_context.decodeAudioData(data,
+                buffer => {
+                    this.audio_buffer = buffer;
+                    me.loaded = true;
+                    confirm_asset_loaded();
+                }, error => {
+                    console.error(error);
+                }
+            );
+        })
+    }
+
+    play() {
+        if (!this.loaded) {
+            console.error('Error: Attempting to play unloaded sound');
+        } else {
+            var source = audio_context.createBufferSource();
+            source.buffer = this.audio_buffer;
+            source.connect(audio_context.destination);
+            source.start(0);
+        }
+    }
 }
 
 // Load texture assets
@@ -145,8 +191,22 @@ var models = {
     cosmo_mine:     new Model("models/cosmo_mine.obj"),
 }
 
+// Load sound assets
+var sounds = {
+    player_shoot:       new Sound('audio/shoot.wav'),
+    base_cannon_hit:    new Sound('audio/cannon-hit.wav'),
+    blast_off:          new Sound('audio/blast-off.wav'),
+    e_type_hit:         new Sound('audio/e-type-hit.wav'),
+    p_type_hit:         new Sound('audio/p-type-hit.wav'),
+    i_type_spy_hit:     new Sound('audio/i-type-spy-hit.wav'),
+    mine_hit:           new Sound('audio/boom.wav'),
+};
+
 var assets_loaded = 0;
-var total_assets = Object.keys(textures).length + Object.keys(models).length;
+var total_assets =
+    Object.keys(textures).length +
+    Object.keys(models).length +
+    Object.keys(sounds).length;
 function confirm_asset_loaded() {
     assets_loaded++;
     console.log("Assets loaded: ", assets_loaded, "/", total_assets);
