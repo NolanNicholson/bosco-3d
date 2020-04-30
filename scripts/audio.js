@@ -1,20 +1,13 @@
 var audio_context;
-var sounds = {};
 window.addEventListener('load', init_audio, false);
 
 function init_audio() {
     try {
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         audio_context = new AudioContext();
-        sounds = {
-            player_shoot:       new Sound('audio/shoot.wav'),
-            base_cannon_hit:    new Sound('audio/cannon-hit.wav'),
-            blast_off:          new Sound('audio/blast-off.wav'),
-            e_type_hit:         new Sound('audio/e-type-hit.wav'),
-            p_type_hit:         new Sound('audio/p-type-hit.wav'),
-            i_type_spy_hit:     new Sound('audio/i-type-spy-hit.wav'),
-            mine_hit:           new Sound('audio/boom.wav'),
-        };
+        for (const sound_name in sounds) {
+            sounds[sound_name].load();
+        }
     } catch(e) {
         console.error("Error: Web Audio API not supported.");
     }
@@ -23,14 +16,12 @@ function init_audio() {
 class Sound {
     constructor(path) {
         this.loaded = false;
-        if (path) {
-            this.load(path);
-        }
+        this.path = path;
     }
 
-    load(path) {
+    load() {
         var me = this;
-        fetch(path)
+        fetch(this.path)
         .then(response => response.arrayBuffer())
         .then((data) => {
             audio_context.decodeAudioData(data,
@@ -55,4 +46,14 @@ class Sound {
         }
     }
 }
+
+var sounds = {
+    player_shoot:       new Sound('audio/shoot.wav'),
+    base_cannon_hit:    new Sound('audio/cannon-hit.wav'),
+    blast_off:          new Sound('audio/blast-off.wav'),
+    e_type_hit:         new Sound('audio/e-type-hit.wav'),
+    p_type_hit:         new Sound('audio/p-type-hit.wav'),
+    i_type_spy_hit:     new Sound('audio/i-type-spy-hit.wav'),
+    mine_hit:           new Sound('audio/boom.wav'),
+};
 
