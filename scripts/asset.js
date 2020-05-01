@@ -148,14 +148,17 @@ class Sound {
         })
     }
 
-    play() {
+    play(loop = false) {
         if (!this.loaded) {
             console.error('Error: Attempting to play unloaded sound');
         } else {
-            var source = audio_context.createBufferSource();
-            source.buffer = this.audio_buffer;
-            source.connect(audio_context.destination);
-            source.start(0);
+            this.source = audio_context.createBufferSource();
+            if (loop) {
+                this.source.loop = true;
+            }
+            this.source.buffer = this.audio_buffer;
+            this.source.connect(audio_context.destination);
+            this.source.start(0);
         }
     }
 }

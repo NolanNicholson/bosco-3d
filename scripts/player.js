@@ -37,9 +37,6 @@ class Player {
         //collider information (self, bullets)
         this.collider = new ColliderPrism(0, 0, 0, 1.2, 0.5, 0.9);
         all_colliders.push(this);
-
-        //properties for the engine's vroom sound
-        this.making_vroom_sound = false;
     }
 
     fire() {
@@ -176,25 +173,15 @@ class Player {
             this.collider.rotation_matrix, this.pitch);
         this.collider.rotation_matrix = m4.rotate_z(
             this.collider.rotation_matrix, this.yaw);
+    }
 
-        //manage sounds
-        if (this.making_vroom_sound) {
-            this.sound_duration -= dt;
-            //console.log(this.sound_duration);
-            if (this.sound_duration < dt) {
-                var vroom = sounds.player_drive_loop;
-                var vroom_length = vroom.audio_buffer.duration;
-                vroom.play();
-                this.sound_duration = vroom_length;
-                console.log("play", this.sound_duration);
-            }
-        }
+    loop_drive_sound() {
+        sounds.player_drive_loop.play(true);
     }
 
     start_drive_sound() {
-        this.making_vroom_sound = true;
         sounds.player_drive_start.play();
-        this.sound_duration = sounds.player_drive_start.audio_buffer.duration;
+        sounds.player_drive_start.source.onended = this.loop_drive_sound;
     }
 
     collision_event(other) {

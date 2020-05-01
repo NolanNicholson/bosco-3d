@@ -82,6 +82,9 @@ function pause_unpause() {
     paused = !paused;
     if (paused) {
         console.log('pause');
+        audio_context.suspend();
+    } else {
+        audio_context.resume();
     }
 }
 
