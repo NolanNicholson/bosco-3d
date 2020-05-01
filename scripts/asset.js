@@ -195,6 +195,7 @@ var models = {
     base_crystal:   new Model("models/base_crystal.obj"),
     cosmo_mine:     new Model("models/cosmo_mine.obj"),
     asteroid1:      new Model("models/asteroid1.obj"),
+    asteroid2:      new Model("models/asteroid2.obj"),
 }
 
 // Load sound assets
