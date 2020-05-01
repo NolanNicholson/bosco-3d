@@ -109,6 +109,7 @@ var then;
 function start_game() {
     gl.disable(gl.SCISSOR_TEST);
     then = 0;
+    player.start_drive_sound();
     requestAnimationFrame(drawScene);
 }
 
@@ -139,14 +140,12 @@ function drawLoadingScreen() {
     // draw a loading bar using SCISSOR_TEST
     var bar_height = gl.canvas.height * 0.015;
     var bar_width = gl.canvas.width * assets_loaded / total_assets;
-    console.log(bar_width, bar_height);
     gl.scissor(0, 0, bar_width, bar_height);
     gl.clearColor(1, 1, 1, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // queue up next frame, unless loading is done
     if (assets_loaded < total_assets) {
-        console.log(assets_loaded, total_assets);
         requestAnimationFrame(drawLoadingScreen);
     }
 }
