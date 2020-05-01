@@ -173,6 +173,8 @@ class Player {
             this.collider.rotation_matrix, this.pitch);
         this.collider.rotation_matrix = m4.rotate_z(
             this.collider.rotation_matrix, this.yaw);
+
+        this.ship_obj.bounds_check();
     }
 
     loop_drive_sound() {

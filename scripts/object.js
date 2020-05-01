@@ -101,6 +101,25 @@ class ObjBase {
         this.rotation_matrix = m4.rotate_z(this.rotation_matrix, this.r_vz * dt);
     }
 
+    bounds_check() {
+        var bounds = level_bounds;
+
+        if (this.x > bounds.x.max)
+            this.x -= (bounds.x.max - bounds.x.min);
+        if (this.x < bounds.x.min)
+            this.x += (bounds.x.max - bounds.x.min);
+
+        if (this.y > bounds.y.max)
+            this.y -= (bounds.y.max - bounds.y.min);
+        if (this.y < bounds.y.min)
+            this.y += (bounds.y.max - bounds.y.min);
+
+        if (this.z > bounds.z.max)
+            this.z -= (bounds.z.max - bounds.z.min);
+        if (this.z < bounds.z.min)
+            this.z += (bounds.z.max - bounds.z.min);
+    }
+
     prep_model_matrix() {
         this.model_matrix = m4.identity();
         this.model_matrix = m4.translate(this.model_matrix,

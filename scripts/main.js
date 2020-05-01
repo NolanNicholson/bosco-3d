@@ -47,6 +47,12 @@ for (var i = 0; i < num_mines; i++) {
     mines.push(obj_mine);
 }
 
+var level_bounds = {
+    x: { min: -50, max: 50 },
+    y: { min: -50, max: 50 },
+    z: { min: -50, max: 50 },
+};
+
 // Define some more test objects, in the shape of a formation
 var formation = [
     new ObjTexture(models.enemy_p, textures.enemy_p_alt),
