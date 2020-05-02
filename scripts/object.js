@@ -122,8 +122,31 @@ class ObjBase {
 
     prep_model_matrix() {
         this.model_matrix = m4.identity();
+
+
+        var render_x = this.x;
+        var render_y = this.y;
+        var render_z = this.z;
+
+        var pl = player.ship_obj;
+        if ((pl.x + PLAYER_VIEW_DISTANCE > level_bounds.x.max)
+            && (this.x < pl.x - PLAYER_VIEW_DISTANCE)
+        ) {
+            render_x += (level_bounds.x.max - level_bounds.x.min);
+        }
+        if ((pl.y + PLAYER_VIEW_DISTANCE > level_bounds.y.max)
+            && (this.y < pl.y - PLAYER_VIEW_DISTANCE)
+        ) {
+            render_y += (level_bounds.y.max - level_bounds.y.min);
+        }
+        if ((pl.z + PLAYER_VIEW_DISTANCE > level_bounds.z.max)
+            && (this.z < pl.z - PLAYER_VIEW_DISTANCE)
+        ) {
+            render_z += (level_bounds.z.max - level_bounds.z.min);
+        }
+
         this.model_matrix = m4.translate(this.model_matrix,
-            this.x, this.y, this.z);
+            render_x, render_y, render_z);
         this.model_matrix = m4.multiply(this.model_matrix, this.rotation_matrix);
         this.model_matrix = m4.scale(this.model_matrix,
             this.scale, this.scale, this.scale);

@@ -1,3 +1,5 @@
+const PLAYER_DRIVE_SPEED = 20;
+
 class Player {
     constructor(ship_model_asset, ship_texture_asset) {
         this.type = 'player';
@@ -10,7 +12,7 @@ class Player {
         this.strafing = false;
 
         //ship speed
-        this.drive_speed = 10;
+        this.drive_speed = PLAYER_DRIVE_SPEED;
         this.strafe_speed = 10;
 
         //direction and adjustment speed
@@ -75,7 +77,7 @@ class Player {
                 break;
             case 79: // O
                 if (this.drive_speed) this.drive_speed = 0;
-                else this.drive_speed = 10;
+                else this.drive_speed = PLAYER_DRIVE_SPEED;
                 break;
             default:
                 console.log("Key Down:", e.keyCode);

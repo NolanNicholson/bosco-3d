@@ -1,3 +1,5 @@
+const PLAYER_VIEW_DISTANCE = 40;
+
 models.player.base_transform = m4.rotate_z(
     models.player.base_transform, -0.1);
 
