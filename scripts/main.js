@@ -1,4 +1,4 @@
-const PLAYER_VIEW_DISTANCE = 40;
+const PLAYER_VIEW_DISTANCE = 100;
 
 models.player.base_transform = m4.rotate_z(
     models.player.base_transform, -0.1);
@@ -50,9 +50,9 @@ for (var i = 0; i < num_mines; i++) {
 }
 
 var level_bounds = {
-    x: { min: -50, max: 50 },
-    y: { min: -50, max: 50 },
-    z: { min: -50, max: 50 },
+    x: { min: -300, max: 300 },
+    y: { min: -300, max: 300 },
+    z: { min: -300, max: 300 },
 };
 
 // Define some more test objects, in the shape of a formation
