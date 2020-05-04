@@ -8,7 +8,6 @@ function setup_color_object(positions, colors, draw_type) {
         locs = program_holder_color.locations;
     } else {
         locs = program_holder_single_color.locations;
-        console.log("single color being used");
     }
 
     //create and bind a VAO
