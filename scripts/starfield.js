@@ -2,7 +2,7 @@ function starfield(num_stars) {
     var positions = [];
     var colors = [];
 
-    var radius = 100
+    var radius = 2000;
 
     var white = [1, 1, 1];
     var red = [1, 0, 0];
