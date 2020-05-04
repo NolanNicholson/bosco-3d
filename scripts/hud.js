@@ -149,9 +149,34 @@ function draw_minimap() {
     hudpoints.render(model_matrix);
 }
 
+const digits = [
+    images.hud_0, images.hud_1,
+    images.hud_2, images.hud_3,
+    images.hud_4, images.hud_5,
+    images.hud_6, images.hud_7,
+    images.hud_8, images.hud_9,
+];
+function draw_digit(ctx, digit, x, y) {
+    ctx.drawImage(digits[digit].img, x, y);
+}
+
+function draw_number_r(ctx, num, x, y) {
+    //Draws a right-justified number.
+    //x, y denotes the coordinates of the final digit.
+    while (num > 0) {
+        draw_digit(ctx, num % 10, x, y);
+        num = Math.floor(num / 10);
+        x -= 8;
+    }
+}
+
 function draw_hud() {
     resize_hud(0.5);
     draw_minimap();
 
     ctx_hud.drawImage(images.hud_hiscore.img, 0, 0);
+    ctx_hud.drawImage(images.hud_1up.img, 0, 16);
+    var x_nums = Math.min(128, (Math.floor(canv_hud.width / 8) - 1) * 8);
+    draw_number_r(ctx_hud, 1234567890, x_nums, 8);
+    draw_number_r(ctx_hud, 987654321, x_nums, 24);
 }

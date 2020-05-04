@@ -287,4 +287,15 @@ var sounds = {
 
 var images = {
     hud_hiscore:        new ImageAsset('hud/hiscore.png'),
+    hud_1up:            new ImageAsset('hud/1up.png'),
+    hud_0:              new ImageAsset('hud/0.png'),
+    hud_1:              new ImageAsset('hud/1.png'),
+    hud_2:              new ImageAsset('hud/2.png'),
+    hud_3:              new ImageAsset('hud/3.png'),
+    hud_4:              new ImageAsset('hud/4.png'),
+    hud_5:              new ImageAsset('hud/5.png'),
+    hud_6:              new ImageAsset('hud/6.png'),
+    hud_7:              new ImageAsset('hud/7.png'),
+    hud_8:              new ImageAsset('hud/8.png'),
+    hud_9:              new ImageAsset('hud/9.png'),
 };
