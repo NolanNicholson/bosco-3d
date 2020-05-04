@@ -228,6 +228,9 @@ function drawScene(now) {
                 render_collider(coll.collider);
             });
         }
+
+        // Draw HUD
+        draw_hud();
     }
 
     requestAnimationFrame(drawScene);
