@@ -73,9 +73,11 @@ class HUDPoints {
 
         // add enemy bases
         bases.forEach(base_obj => {
-            this.positions.push(...this.normalized_loc(base_obj));
-            this.colors.push(...hud_colors.green);
-            this.num_vertices++;
+            if (!base_obj.explosions) {
+                this.positions.push(...this.normalized_loc(base_obj));
+                this.colors.push(...hud_colors.green);
+                this.num_vertices++;
+            }
         });
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.position_buffer);
