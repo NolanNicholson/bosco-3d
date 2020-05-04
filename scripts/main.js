@@ -11,6 +11,13 @@ models.player.base_transform = m4.rotate_z(
 // List of all potential colliders
 var all_colliders = [];
 
+// Level boundaries (beyond which everything wraps over)
+var level_bounds = {
+    x: { min: -300, max: 300 },
+    y: { min: -300, max: 300 },
+    z: { min: -300, max: 300 },
+};
+
 // Define test objects
 var obj_floor = new Floor(2, 10, 2);
 var obj_starfield = new Starfield();
@@ -27,10 +34,22 @@ obj_enemy_e.x = 14;
 var obj_enemy_spy = new Enemy('spy');
 obj_enemy_spy.x = 18;
 
-var obj_base = new EnemyBase(models, textures);
-obj_base.x = 12; obj_base.y = -40; obj_base.z = 10;
-obj_base.rotation_matrix = m4.rotation_x(Math.PI / 8);
-obj_base.scale = 4;
+var bases = [
+    new EnemyBase(),
+    new EnemyBase(),
+    new EnemyBase(),
+];
+bases[0].x = 12; bases[0].y = -40; bases[0].z = 10;
+bases[0].rotation_matrix = m4.rotation_x(Math.PI * 0.75);
+bases[0].scale = 4;
+
+bases[1].x = 40; bases[1].y = 40; bases[1].z = -40;
+bases[1].rotation_matrix = m4.rotation_x(Math.PI / 8);
+bases[1].scale = 4;
+
+bases[2].x = -20; bases[2].y = -100; bases[2].z = -100;
+bases[2].rotation_matrix = m4.rotation_y(Math.PI / 8);
+bases[2].scale = 4;
 
 var asteroids = [];
 for (var i = 0; i < 10; i++) {
@@ -53,12 +72,6 @@ for (var i = 0; i < num_mines; i++) {
     obj_mine.y = Math.sin(theta) * 20;
     mines.push(obj_mine);
 }
-
-var level_bounds = {
-    x: { min: -300, max: 300 },
-    y: { min: -300, max: 300 },
-    z: { min: -300, max: 300 },
-};
 
 // Define some more test objects, in the shape of a formation
 var formation = [
@@ -83,7 +96,7 @@ formation[4].z = -10; // right
 // List of objects to be updated and rendered
 var objects = [obj_floor, player, obj_starfield,
     obj_enemy_i, obj_enemy_p, obj_enemy_e, obj_enemy_spy,
-    obj_base,
+    ...bases,
     ...mines, ...asteroids,
     ...formation
 ];

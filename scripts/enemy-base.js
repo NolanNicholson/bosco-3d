@@ -110,7 +110,7 @@ class BaseCannon extends Part {
 }
 
 class EnemyBase {
-    constructor(models, textures) {
+    constructor() {
         // set up the "sides" of the core
         this.core_sides = [
             new Part(this, models.base_core_side, textures.base_core_side),
