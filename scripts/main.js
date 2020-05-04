@@ -209,6 +209,7 @@ function drawScene(now) {
         // Populate the relevant program holders with the view-proj matrix
         [
             program_holder_color,
+            program_holder_single_color,
             program_holder_texture,
             program_holder_explosion,
             program_holder_shrapnel,

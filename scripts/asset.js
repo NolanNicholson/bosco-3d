@@ -80,7 +80,7 @@ class Model {
 
 class Model_Wireframe {
     constructor(obj_filename) {
-        this.program_holder = program_holder_color;
+        this.program_holder = program_holder_single_color;
 
         //fetch the object file
         var me = this;
@@ -90,11 +90,7 @@ class Model_Wireframe {
             var obj_file = loadOBJFromString(obj_string, true);
 
             var positions = obj_file.vertices;
-            var colors = [];
-            for (var i = 0; i < positions.length / 3; i++) {
-                colors.push(1, 1, 0.5);
-            }
-            me.load_data(positions, colors);
+            me.load_data(positions);
             confirm_asset_loaded();
         });
 
@@ -102,16 +98,25 @@ class Model_Wireframe {
         this.base_transform = m4.identity();
     }
 
-    load_data(positions, colors) {
-        this.vao = setup_color_object(positions, colors);
+    load_data(positions) {
+        this.vao = setup_color_object(positions);
         this.num_vertices = positions.length / 3;
     }
 
-    render(model_matrix) {
-        gl.useProgram(program_holder_color.program);
+    render(model_matrix, color) {
+        //default color: bright yellow
+        color = color || [1, 1, 0.5, 1];
+
+        gl.useProgram(this.program_holder.program);
         gl.bindVertexArray(this.vao);
-        var uModelMatrixLoc = program_holder_color.locations.uModelMatrixLoc;
+
+        // load object-specific uniforms
+        var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;
         gl.uniformMatrix4fv(uModelMatrixLoc, false, model_matrix);
+        var uColorLoc = this.program_holder.locations.uColorLoc;
+        gl.uniform4f(uColorLoc, ...color);
+
+        // draw as lines
         gl.drawArrays(gl.LINES, 0, this.num_vertices);
     }
 }

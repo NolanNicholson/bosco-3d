@@ -27,7 +27,7 @@ function draw_hud() {
     var view_matrix = m4.translation(0, 0, -10);
     var viewproj = m4.multiply(proj_matrix, view_matrix);
 
-    var ph = program_holder_color;
+    var ph = program_holder_single_color;
     gl.useProgram(ph.program);
     gl.uniformMatrix4fv(ph.locations.uViewProjMatrixLoc,
         false, viewproj);
@@ -35,5 +35,5 @@ function draw_hud() {
     //Render a cube
     //var model_matrix = m4.identity();
     var model_matrix = m4.inverse(player.rotation_matrix);
-    wireframes.cube.render(model_matrix);
+    wireframes.cube.render(model_matrix, [0.8, 0, 1, 1]);
 }

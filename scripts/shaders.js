@@ -31,6 +31,32 @@ void main() {
 }
 `;
 
+var src_vs_single_color = `#version 300 es
+
+in vec4 a_position;
+
+uniform mat4 u_matrix_model;
+uniform mat4 u_matrix_viewproj;
+
+void main() {
+    gl_Position = u_matrix_viewproj * u_matrix_model * a_position;
+    gl_PointSize = 2.0f;
+}
+`;
+
+var src_fs_single_color = `#version 300 es
+
+precision mediump float;
+
+uniform vec4 u_color;
+in vec4 v_color;
+out vec4 outColor;
+
+void main() {
+    outColor = u_color;
+}
+`;
+
 var src_vs_explosion = `#version 300 es
 
 out vec4 v_color;
@@ -205,6 +231,7 @@ class ProgramHolder {
 
 // Define "program holders" which set up both the shaders
 // and hold the location info for the shader variables.
+//
 // color: for objects which use a color buffer
 var program_holder_color = new ProgramHolder(
     gl, src_vs_color, src_fs_color,
@@ -214,6 +241,20 @@ var program_holder_color = new ProgramHolder(
             colorAttributeLocation: "a_color",
         },
         uniforms: {
+            uModelMatrixLoc: "u_matrix_model",
+            uViewProjMatrixLoc: "u_matrix_viewproj",
+        }
+    });
+
+// singlecolor: for objects which use a color buffer
+var program_holder_single_color = new ProgramHolder(
+    gl, src_vs_single_color, src_fs_single_color,
+    {
+        attribs: {
+            positionAttributeLocation: "a_position",
+        },
+        uniforms: {
+            uColorLoc: "u_color",
             uModelMatrixLoc: "u_matrix_model",
             uViewProjMatrixLoc: "u_matrix_viewproj",
         }

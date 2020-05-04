@@ -1,8 +1,15 @@
 function setup_color_object(positions, colors, draw_type) {
+    colors = colors || [];
     draw_type = draw_type || gl.STATIC_DRAW;
 
     //locations within the GL program
-    var locs = program_holder_color.locations;
+    var locs;
+    if (colors.length) {
+        locs = program_holder_color.locations;
+    } else {
+        locs = program_holder_single_color.locations;
+        console.log("single color being used");
+    }
 
     //create and bind a VAO
     var vao = gl.createVertexArray();
@@ -16,7 +23,6 @@ function setup_color_object(positions, colors, draw_type) {
 
     //tell WebGL which attributes will come from buffers
     gl.enableVertexAttribArray(locs.positionAttributeLocation);
-    gl.enableVertexAttribArray(locs.colorAttributeLocation);
 
     var size = 3;          // 3 values per step
     var type = gl.FLOAT;   // data is 32bit floats
@@ -26,13 +32,19 @@ function setup_color_object(positions, colors, draw_type) {
     gl.vertexAttribPointer(locs.positionAttributeLocation,
         size, type, normalize, stride, offset);
 
-    var colorBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), draw_type);
+    //only build a color buffer if we have color data
+    var colorBuffer;
+    if (colors.length) {
+        gl.enableVertexAttribArray(locs.colorAttributeLocation);
+        colorBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), draw_type);
 
-    //All of the previous params for gl.vertexAttribPointer are still correct.
-    gl.vertexAttribPointer(locs.colorAttributeLocation,
-        size, type, normalize, stride, offset);
+        //All of the previous params for gl.vertexAttribPointer
+        //are still correct.
+        gl.vertexAttribPointer(locs.colorAttributeLocation,
+            size, type, normalize, stride, offset);
+    }
 
     if (draw_type == gl.STATIC_DRAW) {
         return vao;
