@@ -133,6 +133,7 @@ var assets_loaded = 0;
 var total_assets =
     Object.keys(textures).length +
     Object.keys(models).length +
+    Object.keys(wireframes).length +
     Object.keys(sounds).length;
 
 function confirm_asset_loaded() {

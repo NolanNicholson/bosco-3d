@@ -1,18 +1,5 @@
 RENDER_COLLIDERS = true;
 
-test_models = {
-    sphere: new Model_ColorOnly('models/icosphere.obj'),
-    cube:   new Model_ColorOnly('models/cube.obj'),
-}
-
-function render_wireframe(wf, model_matrix) {
-    gl.useProgram(program_holder_color.program);
-    gl.bindVertexArray(wf.vao);
-    var uModelMatrixLoc = program_holder_color.locations.uModelMatrixLoc;
-    gl.uniformMatrix4fv(uModelMatrixLoc, false, model_matrix);
-    gl.drawArrays(gl.LINES, 0, wf.num_vertices);
-}
-
 function render_sphere_collider(c) {
     //prep model matrix
     var model_matrix = m4.identity();
@@ -20,7 +7,7 @@ function render_sphere_collider(c) {
     model_matrix = m4.scale(model_matrix, c.radius, c.radius, c.radius);
 
     //render
-    render_wireframe(test_models.sphere, model_matrix);
+    wireframes.sphere.render(model_matrix);
 }
 
 function render_prism_collider(c) {
@@ -31,7 +18,7 @@ function render_prism_collider(c) {
     model_matrix = m4.scale(model_matrix, c.r_x, c.r_y, c.r_z);
 
     //render
-    render_wireframe(test_models.cube, model_matrix);
+    wireframes.cube.render(model_matrix);
 }
 
 function render_collider(c) {

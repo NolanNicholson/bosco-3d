@@ -44,7 +44,6 @@ class Model {
             var positions = obj_file.vertices;
             var texcoords = obj_file.tex_vertices;
             me.load_data(positions, texcoords);
-            me.loaded = true;
             confirm_asset_loaded();
         });
 
@@ -79,7 +78,7 @@ class Model {
     }
 }
 
-class Model_ColorOnly {
+class Model_Wireframe {
     constructor(obj_filename) {
         this.program_holder = program_holder_color;
 
@@ -96,6 +95,7 @@ class Model_ColorOnly {
                 colors.push(1, 1, 0.5);
             }
             me.load_data(positions, colors);
+            confirm_asset_loaded();
         });
 
         //"base" transformation matrix
@@ -107,6 +107,13 @@ class Model_ColorOnly {
         this.num_vertices = positions.length / 3;
     }
 
+    render(model_matrix) {
+        gl.useProgram(program_holder_color.program);
+        gl.bindVertexArray(this.vao);
+        var uModelMatrixLoc = program_holder_color.locations.uModelMatrixLoc;
+        gl.uniformMatrix4fv(uModelMatrixLoc, false, model_matrix);
+        gl.drawArrays(gl.LINES, 0, this.num_vertices);
+    }
 }
 
 // Audio assets: loading and playing
@@ -198,6 +205,12 @@ var models = {
     asteroid2:      new Model("models/asteroid2.obj"),
 }
 
+// Load wireframe model assets
+var wireframes = {
+    sphere: new Model_Wireframe('models/icosphere.obj'),
+    cube:   new Model_Wireframe('models/cube.obj'),
+}
+
 // Load sound assets
 var sounds = {
     player_drive_start: new Sound('audio/ship-drive-start.wav'),
@@ -211,4 +224,3 @@ var sounds = {
     mine_hit:           new Sound('audio/boom.wav'),
     asteroid_hit:       new Sound('audio/asteroid-hit.wav'),
 };
-
