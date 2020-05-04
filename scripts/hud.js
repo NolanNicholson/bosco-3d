@@ -19,10 +19,12 @@ function getHUDViewport(canvas, hud_canvas) {
     ];
 }
 
-const point_colors = {
-    white: [1, 1, 1],
-    black: [0, 0, 0],
-    green: [0.1, 0.9, 0],
+const hud_colors = {
+    white:          [1, 1, 1],
+    black:          [0, 0, 0],
+    green:          [0.1, 0.9, 0],
+    purple:         [0.7, 0, 1, 1],
+    dark_purple:    [0.2, 0.1, 0.3, 1],
 }
 
 class HUDPoints {
@@ -62,16 +64,17 @@ class HUDPoints {
         this.positions = [];
         this.colors = [];
 
-        // add player
+        // add player (light blinks black/white)
         var ship_pos = this.normalized_loc(player.ship_obj);
         this.positions.push(...ship_pos);
-        this.colors.push(...point_colors.white);
+        var blink = Date.now() / 400 % 1 > 0.4;
+        this.colors.push(...(blink ? hud_colors.white : hud_colors.black));
         this.num_vertices = 1;
 
         // add enemy bases
         bases.forEach(base_obj => {
             this.positions.push(...this.normalized_loc(base_obj));
-            this.colors.push(...point_colors.green);
+            this.colors.push(...hud_colors.green);
             this.num_vertices++;
         });
 
@@ -116,11 +119,15 @@ function draw_hud() {
             false, viewproj);
     });
 
-    //Render a cube
-    //var model_matrix = m4.identity();
+    //Rotation is the inverse of the player's
     var model_matrix = m4.inverse(player.rotation_matrix);
-    var purple = [0.8, 0, 1, 1];
-    wireframes.cube.render(model_matrix, purple);
+
+    //Render a solid cube AND a wireframe
+    //(DEPTH_TEST needs to be off so the solid cube doesn't block everything)
+    gl.disable(gl.DEPTH_TEST);
+    models.cube.render(model_matrix, hud_colors.dark_purple);
+    gl.enable(gl.DEPTH_TEST);
+    wireframes.cube.render(model_matrix, hud_colors.purple);
 
     //Render points in the cube
     hudpoints.render(model_matrix);

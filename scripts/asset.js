@@ -78,6 +78,48 @@ class Model {
     }
 }
 
+class Model_SolidColor {
+    constructor(obj_filename) {
+        this.program_holder = program_holder_single_color;
+
+        //fetch the object file
+        var me = this;
+        fetch(obj_filename)
+        .then(response => response.text())
+        .then((obj_string) => {
+            var obj_file = loadOBJFromString(obj_string, false);
+            var positions = obj_file.vertices;
+            me.load_data(positions);
+            confirm_asset_loaded();
+        });
+
+        //"base" transformation matrix
+        this.base_transform = m4.identity();
+    }
+
+    load_data(positions) {
+        this.vao = setup_color_object(positions);
+        this.num_vertices = positions.length / 3;
+    }
+
+    render(model_matrix, color) {
+        //default color: bright yellow
+        color = color || [1, 1, 0.5, 1];
+
+        gl.useProgram(this.program_holder.program);
+        gl.bindVertexArray(this.vao);
+
+        // load object-specific uniforms
+        var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;
+        gl.uniformMatrix4fv(uModelMatrixLoc, false, model_matrix);
+        var uColorLoc = this.program_holder.locations.uColorLoc;
+        gl.uniform4f(uColorLoc, ...color);
+
+        // draw as lines
+        gl.drawArrays(gl.TRIANGLES, 0, this.num_vertices);
+    }
+}
+
 class Model_Wireframe {
     constructor(obj_filename) {
         this.program_holder = program_holder_single_color;
@@ -208,6 +250,7 @@ var models = {
     cosmo_mine:     new Model("models/cosmo_mine.obj"),
     asteroid1:      new Model("models/asteroid1.obj"),
     asteroid2:      new Model("models/asteroid2.obj"),
+    cube:           new Model_SolidColor("models/cube.obj"),
 }
 
 // Load wireframe model assets
