@@ -21,14 +21,22 @@ function getHUDViewport(canvas, hud_canvas) {
 
 const point_colors = {
     white: [1, 1, 1],
+    black: [0, 0, 0],
     green: [0.1, 0.9, 0],
 }
 
 class HUDPoints {
     constructor() {
         this.program_holder = program_holder_color;
-        this.positions = [0, 0, 0, 0.2, 0.2, 0.2];
-        this.colors = [...point_colors.white, ...point_colors.green];
+
+        //dummy data for initially populating the buffer
+        var num_points = 64;
+        this.positions = [];
+        this.colors = [];
+        for (var i = 0; i < 32; i++) {
+            this.positions.push(0, 0, 0);
+            this.colors.push(0, 0, 0);
+        }
 
         // set up VAO and buffers (DYNAMIC_DRAW so we can move points around)
         var vao_and_buffers= setup_color_object(
@@ -51,15 +59,26 @@ class HUDPoints {
     }
 
     update_points() {
+        this.positions = [];
+        this.colors = [];
+
+        // add player
         var ship_pos = this.normalized_loc(player.ship_obj);
-        this.positions = new Float32Array(ship_pos);
-        this.colors = new Float32Array([1, 1, 1]);
+        this.positions.push(...ship_pos);
+        this.colors.push(...point_colors.white);
         this.num_vertices = 1;
 
+        // add enemy bases
+        bases.forEach(base_obj => {
+            this.positions.push(...this.normalized_loc(base_obj));
+            this.colors.push(...point_colors.green);
+            this.num_vertices++;
+        });
+
         gl.bindBuffer(gl.ARRAY_BUFFER, this.position_buffer);
-        gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.positions);
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(this.positions));
         gl.bindBuffer(gl.ARRAY_BUFFER, this.color_buffer);
-        gl.bufferSubData(gl.ARRAY_BUFFER, 0, this.colors);
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(this.colors));
     }
 
     render(model_matrix) {

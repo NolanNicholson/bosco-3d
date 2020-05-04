@@ -43,11 +43,11 @@ bases[0].x = 12; bases[0].y = -40; bases[0].z = 10;
 bases[0].rotation_matrix = m4.rotation_x(Math.PI * 0.75);
 bases[0].scale = 4;
 
-bases[1].x = 40; bases[1].y = 40; bases[1].z = -40;
+bases[1].x = 40; bases[1].y = 200; bases[1].z = -40;
 bases[1].rotation_matrix = m4.rotation_x(Math.PI / 8);
 bases[1].scale = 4;
 
-bases[2].x = -20; bases[2].y = -100; bases[2].z = -100;
+bases[2].x = -200; bases[2].y = -100; bases[2].z = -250;
 bases[2].rotation_matrix = m4.rotation_y(Math.PI / 8);
 bases[2].scale = 4;
 
