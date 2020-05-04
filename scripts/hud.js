@@ -1,5 +1,19 @@
 // HUD drawing script
 const canv_hud = document.getElementById("ui");
+const ctx_hud = canv_hud.getContext("2d");
+
+function resize_hud(multiplier) {
+    multiplier = multiplier || 1;
+    const dpr = window.devicePixelRatio;
+    const width  = canv_hud.clientWidth  * dpr * multiplier | 0;
+    const height = canv_hud.clientHeight * dpr * multiplier | 0;
+    if (canv_hud.width !== width ||  canv_hud.height !== height) {
+        canv_hud.width  = width;
+        canv_hud.height = height;
+        return true;
+    }
+    return false;
+}
 
 function getHUDViewport(canvas, hud_canvas) {
     var square_size = Math.min(hud_canvas.clientWidth, hud_canvas.clientHeight);
@@ -97,7 +111,7 @@ class HUDPoints {
 }
 var hudpoints = new HUDPoints();
 
-function draw_hud() {
+function draw_minimap() {
     //Reset the GL viewport to the HUD part of the screen
     var hud_view = getHUDViewport(gl.canvas, canv_hud);
     gl.viewport(...hud_view);
@@ -133,4 +147,11 @@ function draw_hud() {
 
     //Render points in the cube
     hudpoints.render(model_matrix);
+}
+
+function draw_hud() {
+    resize_hud(0.5);
+    draw_minimap();
+
+    ctx_hud.drawImage(images.hud_hiscore.img, 0, 0);
 }

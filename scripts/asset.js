@@ -217,6 +217,18 @@ class Sound {
     }
 }
 
+class ImageAsset {
+    constructor(filename) {
+        //Asynchronously load the file
+        this.img = new Image();
+        this.img.src = filename;
+        var me = this;
+        this.img.addEventListener('load', function() {
+            confirm_asset_loaded();
+        });
+    }
+}
+
 // Load texture assets
 var textures = {
     player:         new Texture("models/player_tex.png"),
@@ -271,4 +283,8 @@ var sounds = {
     i_type_spy_hit:     new Sound('audio/i-type-spy-hit.wav'),
     mine_hit:           new Sound('audio/boom.wav'),
     asteroid_hit:       new Sound('audio/asteroid-hit.wav'),
+};
+
+var images = {
+    hud_hiscore:        new ImageAsset('hud/hiscore.png'),
 };
