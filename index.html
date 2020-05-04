@@ -21,11 +21,14 @@
                 image-rendering: pixelated;
                 -ms-interpolation-mode: nearest-neighbor;
             }
-            #ui {
-                opacity: 0.5;
+            #main-screen {
+                width: 100vw;
+                height: 100vh;
+                display: block;
+                position: fixed;
             }
             @media all and (orientation : landscape) {
-                #c {
+                #main-screen {
                     width: 75vw;
                 }
                 #ui {
@@ -35,7 +38,7 @@
                 }
             }
             @media all and (orientation : portrait) {
-                #c {
+                #main-screen {
                     height: 75vh;
                 }
                 #ui {
@@ -50,6 +53,7 @@
     <body>
         <canvas id="c"></canvas>
         <canvas id="ui"></canvas>
+        <span id="main-screen"></span>
         <script src="scripts/init-gl.js"></script>
         <script src="scripts/gl-helpers.js"></script>
         <script src="scripts/shaders.js"></script>

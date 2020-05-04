@@ -26,6 +26,15 @@ function resizeCanvasToDisplaySize(canvas, multiplier) {
     return false;
 }
 
+function getMainViewport(canvas, sizer) {
+    return [
+        0,
+        canvas.height * (1 - sizer.clientHeight / canvas.clientHeight),
+        canvas.width / canvas.clientWidth * sizer.clientWidth,
+        canvas.height / canvas.clientHeight * sizer.clientHeight
+    ];
+}
+
 function createProgram(gl, vertexShader, fragmentShader) {
     var program = gl.createProgram();
     gl.attachShader(program, vertexShader);

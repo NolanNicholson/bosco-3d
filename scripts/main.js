@@ -1,5 +1,10 @@
 const PLAYER_VIEW_DISTANCE = 100;
 
+//An element that determines the size of the main 3D view.
+//This can't just be the canvas itself, because the HUD on the side also
+//has at least one 3D element, so the main canvas needs to extend to that space
+const main_view_sizer = document.getElementById("main-screen");
+
 models.player.base_transform = m4.rotate_z(
     models.player.base_transform, -0.1);
 
@@ -172,7 +177,7 @@ function drawScene(now) {
     if (!paused) {
         // Resize the canvas and viewport
         resizeCanvasToDisplaySize(gl.canvas, 0.5);
-        gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+        gl.viewport(...getMainViewport(gl.canvas, main_view_sizer));
 
         // clear the canvas
         gl.clearColor(0, 0, 0, 1);
@@ -193,7 +198,7 @@ function drawScene(now) {
         // View-Proj matrix: perspective projection * inverse-camera.
         var proj_matrix = m4.perspective(
             1,
-            gl.canvas.clientWidth / gl.canvas.clientHeight,
+            main_view_sizer.clientWidth / main_view_sizer.clientHeight,
             0.1,
             2000,
         );
