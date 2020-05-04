@@ -40,6 +40,10 @@ class Explodable extends ObjTexture {
         if (this.remove_collider_when_exploded) {
             this.delete_collider();
         }
+
+        if (this.worth) {
+            score += this.worth;
+        }
     }
 
     update(dt) {
@@ -70,33 +74,38 @@ class Explodable extends ObjTexture {
 
 class Enemy extends Explodable {
     constructor(enemy_type) {
-        var model; var texture; var explode_sound;
+        var model; var texture; var explode_sound; var worth;
         switch(enemy_type) {
             case 'p':
                 model = models.enemy_p;
                 texture = textures.enemy_p;
                 explode_sound = sounds.p_type_hit;
+                worth = 60;
                 break;
             case 'e':
                 model = models.enemy_e;
                 texture = textures.enemy_e;
                 explode_sound = sounds.e_type_hit;
+                worth = 70;
                 break;
             case 'spy':
                 model = models.enemy_spy;
                 texture = textures.enemy_spy;
                 explode_sound = sounds.i_type_spy_hit;
+                worth = Math.floor(Math.random() * 3 + 1) * 500;
                 break;
             case 'i':
             default:
                 model = models.enemy_i;
                 texture = textures.enemy_i;
                 explode_sound = sounds.i_type_spy_hit;
+                worth = 50;
                 break;
         }
 
         super(model, texture);
         this.explode_sound = explode_sound;
+        this.worth = worth;
 
         //collider: identical for all enemies except the E-Type
         if (enemy_type == 'e') {
@@ -122,7 +131,6 @@ class CosmoMine extends Explodable {
         super(models.cosmo_mine, textures.cosmo_mine);
         this.collider = new ColliderSphere(0, 0, 0, 1.7);
         all_colliders.push(this);
-        this.type = 'mine';
         this.explosion_properties = {
             palette: explosion_palettes.cosmo_mine,
             size: 12,
@@ -132,6 +140,9 @@ class CosmoMine extends Explodable {
         };
         this.explode_sound = sounds.mine_hit;
         this.remove_collider_when_exploded = false;
+
+        this.type = 'mine';
+        this.worth = 20;
     }
 
     update(dt) {
@@ -164,5 +175,6 @@ class Asteroid extends Explodable {
             size: this.scale * 1.3,
         }
         this.type = 'asteroid';
+        this.worth = 10;
     }
 }

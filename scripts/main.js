@@ -18,6 +18,10 @@ var level_bounds = {
     z: { min: -300, max: 300 },
 };
 
+// Score
+var hiscore = 20000;
+var score = 0;
+
 // Define test objects
 var obj_floor = new Floor(2, 10, 2);
 var obj_starfield = new Starfield();

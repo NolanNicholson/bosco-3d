@@ -163,10 +163,12 @@ function draw_digit(ctx, digit, x, y) {
 function draw_number_r(ctx, num, x, y) {
     //Draws a right-justified number.
     //x, y denotes the coordinates of the final digit.
-    while (num > 0) {
+    drew_anything = false;
+    while (num > 0 || !drew_anything) {
         draw_digit(ctx, num % 10, x, y);
         num = Math.floor(num / 10);
         x -= 8;
+        drew_anything = true;
     }
 }
 
@@ -177,6 +179,6 @@ function draw_hud() {
     ctx_hud.drawImage(images.hud_hiscore.img, 0, 0);
     ctx_hud.drawImage(images.hud_1up.img, 0, 16);
     var x_nums = Math.min(128, (Math.floor(canv_hud.width / 8) - 1) * 8);
-    draw_number_r(ctx_hud, 1234567890, x_nums, 8);
-    draw_number_r(ctx_hud, 987654321, x_nums, 24);
+    draw_number_r(ctx_hud, hiscore, x_nums, 8);
+    draw_number_r(ctx_hud, score, x_nums, 24);
 }
