@@ -2,6 +2,7 @@ class ColliderPoint {
     constructor(x, y, z) {
         this.pos = [x, y, z];
         this.collider_type = 'point';
+        this.has_collided = false; // whether a collision happened this frame
     }
 
     collides(other) {
@@ -26,6 +27,7 @@ class ColliderSphere {
         this.pos = [x, y, z];
         this.radius = radius;
         this.collider_type = 'sphere';
+        this.has_collided = false; // whether a collision happened this frame
     }
 
     collides_point(other) {
@@ -49,6 +51,7 @@ class ColliderSphere {
 class ColliderPlane {
     constructor(p1, p2, p3) {
         this.update_plane(p1, p2, p3);
+        this.has_collided = false; // whether a collision happened this frame
     }
 
     update_plane(p1, p2, p3) {
@@ -93,15 +96,22 @@ class ColliderPrism {
 }
 
 function resolve_collisions(all_colliders) {
+    //debug: reset colliders so only collisions show
+    all_colliders.forEach(c => {
+        c.collider.has_collided = false;
+    });
+
+    //collision check
+    //TODO: this is O(n^2) and could probably be optimized)
     var i1; var i2;
     var c1; var c2;
-    //TODO: this is O(n^2) and could probably be optimized)
-    //TODO: this also includes inactive bullets, which wastes time
     for (i1 = 0; i1 < all_colliders.length; i1++) {
         c1 = all_colliders[i1];
         for (i2 = i1 + 1; i2 < all_colliders.length; i2++) {
             c2 = all_colliders[i2];
             if (c1.collider.collides(c2.collider)) {
+                c1.collider.has_collided = true;
+                c2.collider.has_collided = true;
                 console.log(c1.type, c2.type);
                 c1.collision_event(c2);
                 c2.collision_event(c1);
