@@ -298,4 +298,9 @@ var images = {
     hud_7:              new ImageAsset('hud/7.png'),
     hud_8:              new ImageAsset('hud/8.png'),
     hud_9:              new ImageAsset('hud/9.png'),
+    condition:          new ImageAsset('hud/condition.png'),
+    con_green:          new ImageAsset('hud/condition-green.png'),
+    con_yellow:         new ImageAsset('hud/condition-yellow.png'),
+    con_red:            new ImageAsset('hud/condition-red.png'),
+    ship:               new ImageAsset('hud/ship.png'),
 };

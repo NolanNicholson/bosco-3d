@@ -163,7 +163,7 @@ function draw_digit(ctx, digit, x, y) {
 function draw_number_r(ctx, num, x, y) {
     //Draws a right-justified number.
     //x, y denotes the coordinates of the final digit.
-    drew_anything = false;
+    drew_anything = false; // so that "0" gets drawn
     while (num > 0 || !drew_anything) {
         draw_digit(ctx, num % 10, x, y);
         num = Math.floor(num / 10);
@@ -173,12 +173,24 @@ function draw_number_r(ctx, num, x, y) {
 }
 
 function draw_hud() {
-    resize_hud(0.5);
+    resize_hud(0.33);
     draw_minimap();
 
-    ctx_hud.drawImage(images.hud_hiscore.img, 0, 0);
-    ctx_hud.drawImage(images.hud_1up.img, 0, 16);
-    var x_nums = Math.min(128, (Math.floor(canv_hud.width / 8) - 1) * 8);
+    var x_l = 4;
+
+    ctx_hud.drawImage(images.hud_hiscore.img, x_l, 0);
+    ctx_hud.drawImage(images.hud_1up.img, x_l, 16);
+    var x_nums = 56 + x_l;
     draw_number_r(ctx_hud, hiscore, x_nums, 8);
     draw_number_r(ctx_hud, score, x_nums, 24);
+
+    if (canv_hud.height > canv_hud.width) {
+        ctx_hud.drawImage(images.condition.img, x_l, 48);
+        ctx_hud.drawImage(images.con_green.img, x_l, 60);
+        ctx_hud.drawImage(images.ship.img, x_l, 144);
+        ctx_hud.drawImage(images.ship.img, x_l+16, 144);
+    } else {
+        ctx_hud.drawImage(images.condition.img, 64, 0);
+        ctx_hud.drawImage(images.con_green.img, 64, 12);
+    }
 }
