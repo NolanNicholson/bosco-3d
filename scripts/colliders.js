@@ -97,6 +97,31 @@ class ColliderPrism extends Collider {
         this.inv_rot = m4.inverse(this.rotation_matrix);
     }
 
+    get_relative_point(other_pos) {
+        //gets a point's coordinates in the prism's own
+        //frame of reference, relative to its center
+        var point_relative = m4.identity();
+        point_relative = m4.multiply(point_relative,
+            this.inv_rot);
+        point_relative = m4.translate(point_relative,
+            ...v3.minus(other_pos, this.pos));
+
+        return [point_relative[12], point_relative[13], point_relative[14]];
+    }
+
+    point_within(pr) {
+        // returns whether or not a point (given in the prism's local,
+        // de-rotated frame of reference) is within the prism's bounds
+        return (
+               pr[0] >= -this.r_x
+            && pr[0] <=  this.r_x
+            && pr[1] >= -this.r_y
+            && pr[1] <=  this.r_y
+            && pr[2] >= -this.r_z
+            && pr[2] <=  this.r_z
+        );
+    }
+
     collides_point(other) {
         //first, do (cheaper) spherical collision checks
         var dist = distance(this.pos, other.pos);
@@ -105,24 +130,8 @@ class ColliderPrism extends Collider {
 
         //if it's between the two, we do the more expensive check
         else {
-            //TODO
-            var point_relative = m4.identity();
-            point_relative = m4.multiply(point_relative,
-                this.inv_rot);
-            point_relative = m4.translate(point_relative,
-                ...v3.minus(other.pos, this.pos));
-
-            var pr_x = point_relative[12];
-            var pr_y = point_relative[13];
-            var pr_z = point_relative[14];
-            return (
-                   pr_x >= -this.r_x
-                && pr_x <=  this.r_x
-                && pr_y >= -this.r_y
-                && pr_y <=  this.r_y
-                && pr_z >= -this.r_z
-                && pr_z <=  this.r_z
-            );
+            var pr = this.get_relative_point(other.pos);
+            return this.point_within(pr);
         }
     }
 
@@ -134,8 +143,14 @@ class ColliderPrism extends Collider {
 
         //if it's between the two, we do the more expensive check
         else {
-            //TODO
-            return true;
+            var pr = this.get_relative_point(other.pos);
+            //get the point on the prism closest to the sphere
+            var closest_point = [
+                Math.max(-this.r_x, Math.min(pr[0], this.r_x)),
+                Math.max(-this.r_y, Math.min(pr[1], this.r_y)),
+                Math.max(-this.r_z, Math.min(pr[2], this.r_z)),
+            ];
+            return (distance(closest_point, pr) <= other.radius);
         }
     }
 
