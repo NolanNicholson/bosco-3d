@@ -1,20 +1,3 @@
-class ColliderPoint {
-    constructor(x, y, z) {
-        this.pos = [x, y, z];
-        this.collider_type = 'point';
-        this.has_collided = false; // whether a collision happened this frame
-    }
-
-    collides(other) {
-        switch (other.collider_type) {
-            case 'point':   return false;
-            case 'prism':
-            case 'sphere':  return other.collides_point(this);
-            default:        return false;
-        }
-    }
-}
-
 function distance(p1, p2) {
     var dx = p1[0] - p2[0];
     var dy = p1[1] - p2[1];
@@ -22,12 +5,43 @@ function distance(p1, p2) {
     return Math.sqrt(dx*dx + dy*dy + dz*dz);
 }
 
-class ColliderSphere {
+class Collider {
+    prep() {
+        this.has_collided = false;
+    }
+
+    collides_point(other) { return false; }
+    collides_sphere(other) { return false; }
+    collides_prism(other) { return false; }
+
+    collides(other) {
+        switch (other.collider_type) {
+            case 'point':   return this.collides_point(other);
+            case 'prism':   return this.collides_prism(other);
+            case 'sphere':  return this.collides_sphere(other);
+            default:        return false;
+        }
+    }
+}
+
+class ColliderPoint extends Collider {
+    constructor(x, y, z) {
+        super();
+        this.pos = [x, y, z];
+        this.collider_type = 'point';
+    }
+
+    collides_point(other)  { return false; }
+    collides_sphere(other) { return other.collides_point(this); }
+    collides_prism(other)  { return other.collides_point(this); }
+}
+
+class ColliderSphere extends Collider {
     constructor(x, y, z, radius) {
+        super();
         this.pos = [x, y, z];
         this.radius = radius;
         this.collider_type = 'sphere';
-        this.has_collided = false; // whether a collision happened this frame
     }
 
     collides_point(other) {
@@ -39,19 +53,15 @@ class ColliderSphere {
             (this.radius + other.radius)
     }
 
-    collides(other) {
-        switch (other.collider_type) {
-            case 'sphere':  return this.collides_sphere(other);
-            case 'point':   return this.collides_point(other);
-            default:        return false;
-        }
+    collides_prism(other) {
+        return other.collides_sphere(this);
     }
 }
 
-class ColliderPlane {
+class ColliderPlane extends Collider {
     constructor(p1, p2, p3) {
+        super();
         this.update_plane(p1, p2, p3);
-        this.has_collided = false; // whether a collision happened this frame
     }
 
     update_plane(p1, p2, p3) {
@@ -66,8 +76,9 @@ class ColliderPlane {
     }
 }
 
-class ColliderPrism {
+class ColliderPrism extends Collider {
     constructor(x, y, z, r_x, r_y, r_z) {
+        super();
         this.pos = [x, y, z];
         this.collider_type = 'prism';
         this.rotation_matrix = m4.identity();
@@ -77,28 +88,57 @@ class ColliderPrism {
         this.r_z = r_z || 1;
     }
 
-    collides_point(other) {
-        //first, do a (cheaper) spherical collision check
+    prep() {
+        super.prep();
+        // minimum and maximum radii - used for quick spherical checks
         this.r_max = distance([0, 0, 0], [this.r_x, this.r_y, this.r_z]);
-        if (distance(this.pos, other.pos) > this.r_max) return false;
+        this.r_min = Math.min(this.r_x, this.r_y, this.r_z);
+    }
+
+    collides_point(other) {
+        //first, do (cheaper) spherical collision checks
+        var dist = distance(this.pos, other.pos);
+        if (dist > this.r_max) return false;
+        else if (dist <= this.r_min) return true;
+
+        //if it's between the two, we do the more expensive check
         else {
             //TODO
             return true;
         }
     }
 
-    collides(other) {
-        switch (other.collider_type) {
-            case 'point': return this.collides_point(other);
-            default: return false;
+    collides_sphere(other) {
+        //first, do (cheaper) spherical collision checks
+        var dist = distance(this.pos, other.pos);
+        if (dist > this.r_max + other.radius) return false;
+        else if (dist <= this.r_min + other.radius) return true;
+
+        //if it's between the two, we do the more expensive check
+        else {
+            //TODO
+            return true;
+        }
+    }
+
+    collides_prism(other) {
+        //first, do (cheaper) spherical collision checks
+        var dist = distance(this.pos, other.pos);
+        if (dist > this.r_max + other.r_max) return false;
+        else if (dist <= this.r_min + other.r_min) return true;
+
+        //if it's between the two, we do the more expensive check
+        else {
+            //TODO
+            return true;
         }
     }
 }
 
 function resolve_collisions(all_colliders) {
-    //debug: reset colliders so only collisions show
+    //preparatory calculations for all colliders
     all_colliders.forEach(c => {
-        c.collider.has_collided = false;
+        c.collider.prep();
     });
 
     //collision check
