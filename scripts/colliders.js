@@ -93,6 +93,8 @@ class ColliderPrism extends Collider {
         // minimum and maximum radii - used for quick spherical checks
         this.r_max = distance([0, 0, 0], [this.r_x, this.r_y, this.r_z]);
         this.r_min = Math.min(this.r_x, this.r_y, this.r_z);
+
+        this.inv_rot = m4.inverse(this.rotation_matrix);
     }
 
     collides_point(other) {
@@ -104,7 +106,23 @@ class ColliderPrism extends Collider {
         //if it's between the two, we do the more expensive check
         else {
             //TODO
-            return true;
+            var point_relative = m4.identity();
+            point_relative = m4.multiply(point_relative,
+                this.inv_rot);
+            point_relative = m4.translate(point_relative,
+                ...v3.minus(other.pos, this.pos));
+
+            var pr_x = point_relative[12];
+            var pr_y = point_relative[13];
+            var pr_z = point_relative[14];
+            return (
+                   pr_x >= -this.r_x
+                && pr_x <=  this.r_x
+                && pr_y >= -this.r_y
+                && pr_y <=  this.r_y
+                && pr_z >= -this.r_z
+                && pr_z <=  this.r_z
+            );
         }
     }
 
