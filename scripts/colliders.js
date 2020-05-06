@@ -231,6 +231,14 @@ function resolve_collisions(all_colliders) {
         c1 = all_colliders[i1];
         for (i2 = i1 + 1; i2 < all_colliders.length; i2++) {
             c2 = all_colliders[i2];
+
+            // check if the colliders are of the same group -
+            // if so, collisions between them don't matter
+            if (c1.collider.group && c2.collider.group
+                && c1.collider.group == c2.collider.group) {
+                continue;
+            }
+
             if (c1.collider.collides(c2.collider)) {
                 c1.collider.has_collided = true;
                 c2.collider.has_collided = true;

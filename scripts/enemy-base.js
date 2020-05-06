@@ -13,6 +13,7 @@ class Part extends ObjTexture {
 
     sync_collider() {
         if (this.collider) {
+            this.collider.rotation_matrix = this.rotation_matrix;
             this.collider.pos = [this.x, this.y, this.z];
         }
     }
@@ -50,7 +51,9 @@ class Part extends ObjTexture {
 class BaseCrystal extends Part {
     constructor(parent_obj) {
         super(parent_obj, models.base_crystal, textures.base_crystal);
-        this.collider = new ColliderSphere(0, 0, 0, 5);
+        this.collider = new ColliderSphere(0, 0, 0, 4);
+        this.collider.group = 'base';
+        this.type = 'base_crystal';
     }
     collision_event(other) {
         switch(other.type) {
@@ -70,6 +73,7 @@ class BaseCoreDoor extends Part {
             new ColliderPrism(0, 0, 0, 2, 5, 1),
             new ColliderPrism(0, 0, 0, 2, 5, 1),
         ];
+        this.collider.group = 'base';
         this.type = 'base_core_door';
     }
 
@@ -160,16 +164,30 @@ class BaseCannon extends Part {
     }
 }
 
+class BaseCoreSide extends Part {
+    constructor(parent_obj) {
+        super(parent_obj, models.base_core_side, textures.base_core_side);
+        this.collider = new ColliderPrism(0, 0, 0, 4, 4, 6);
+        this.type = 'base-core-side';
+        this.collider.group = 'base';
+
+    }
+
+    collision_event(other) {
+        //none - the core sides are impervious
+    }
+}
+
 class EnemyBase {
     constructor() {
         // set up the "sides" of the core
         this.core_sides = [
-            new Part(this, models.base_core_side, textures.base_core_side),
-            new Part(this, models.base_core_side, textures.base_core_side),
+            new BaseCoreSide(this),
+            new BaseCoreSide(this),
         ];
         this.core_sides[1].rel_rotation = m4.rotation_z(Math.PI);
-        this.core_sides[0].rel_position = [ 0.5, 0, 0];
-        this.core_sides[1].rel_position = [ -0.5, 0, 0];
+        this.core_sides[0].rel_position = [ 1.5, 0, 0];
+        this.core_sides[1].rel_position = [ -1.5, 0, 0];
 
         // set up the base cannons
         this.balls = []
@@ -177,6 +195,7 @@ class EnemyBase {
         for (var i = 0; i < 6; i++) {
             ball = new BaseCannon(this);
             ball.collider = new ColliderSphere(0, 0, 0, 7);
+            ball.collider.group = 'base';
             this.balls.push(ball);
         }
         this.balls[0].rel_position = [-5, 0,  0];
@@ -229,6 +248,7 @@ class EnemyBase {
         this.spin_speed = 0.1;
 
         this.colliders = [...this.balls, this.crystal,
+            ...this.core_sides,
             this.crystal_guard];
         all_colliders.push(...this.colliders);
 
