@@ -43,6 +43,19 @@ class Part extends ObjTexture {
 
 }
 
+class BaseCrystal extends Part {
+    constructor(parent_obj) {
+        super(parent_obj, models.base_crystal, textures.base_crystal);
+    }
+    collision_event(other) {
+        switch(other.type) {
+            case 'player_bullet':
+                this.parent_obj.explode();
+                break;
+        }
+    }
+}
+
 class BaseCoreDoor extends Part {
     constructor(parent_obj) {
         super(parent_obj, models.base_core_door, textures.base_core_side);
@@ -161,8 +174,9 @@ class EnemyBase {
         this.arms[2].rel_rotation = m4.rotation_x(Math.PI);
 
         // set up the core crystal
-        this.crystal = new Part(this,
-            models.base_crystal, textures.base_crystal);
+        this.crystal = new BaseCrystal(this);
+        this.crystal.collider = new ColliderSphere(0, 0, 0, 5);
+
         this.crystal_guard = new BaseCoreDoor(this);
 
         this.parts = [
@@ -177,7 +191,7 @@ class EnemyBase {
 
         this.spin_speed = 0.1;
 
-        this.colliders = [...this.balls];
+        this.colliders = [...this.balls, this.crystal];
         all_colliders.push(...this.colliders);
 
         this.explosions = false;
