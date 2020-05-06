@@ -237,6 +237,12 @@ class EnemyBase {
     }
 
     explode() {
+        //first, remove colliders
+        this.colliders.forEach(coll => {
+            var i_coll = all_colliders.indexOf(coll);
+            if (i_coll != -1) all_colliders.splice(i_coll, 1);
+        });
+
         var exp_r = 6 * this.scale;
         var pal = explosion_palettes.base;
         this.explosions = [
@@ -257,12 +263,6 @@ class EnemyBase {
     }
 
     destroy() {
-        //first, remove colliders
-        this.colliders.forEach(coll => {
-            var i_coll = all_colliders.indexOf(coll);
-            if (i_coll != -1) all_colliders.splice(i_coll, 1);
-        });
-
         //then, remove this object from the list
         var obj_index = objects.indexOf(this);
         if (obj_index != -1) objects.splice(obj_index, 1);
