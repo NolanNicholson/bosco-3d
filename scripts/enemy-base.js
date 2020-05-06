@@ -11,6 +11,12 @@ class Part extends ObjTexture {
         super.update(dt);
     }
 
+    sync_collider() {
+        if (this.collider) {
+            this.collider.pos = [this.x, this.y, this.z];
+        }
+    }
+
     sync_with_parent() {
         var p = this.parent_obj;
 
@@ -36,9 +42,7 @@ class Part extends ObjTexture {
         this.z = movement_matrix[14];
         this.scale = p.scale;
 
-        if (this.collider) {
-            this.collider.pos = [this.x, this.y, this.z];
-        }
+        this.sync_collider();
     }
 
 }
@@ -46,6 +50,7 @@ class Part extends ObjTexture {
 class BaseCrystal extends Part {
     constructor(parent_obj) {
         super(parent_obj, models.base_crystal, textures.base_crystal);
+        this.collider = new ColliderSphere(0, 0, 0, 5);
     }
     collision_event(other) {
         switch(other.type) {
@@ -60,12 +65,44 @@ class BaseCoreDoor extends Part {
     constructor(parent_obj) {
         super(parent_obj, models.base_core_door, textures.base_core_side);
         this.rotation_speed = 1;
+        this.collider = new ColliderMulti();
+        this.collider.components = [
+            new ColliderPrism(0, 0, 0, 2, 5, 1),
+            new ColliderPrism(0, 0, 0, 2, 5, 1),
+        ];
+        this.type = 'base_core_door';
+    }
+
+    sync_collider() {
+        var rot = this.parent_obj.rotation_matrix;
+        rot = m4.multiply(rot, this.rel_rotation);
+        var comps = this.collider.components;
+
+        var pos_a = m4.translation(this.x, this.y, this.z);
+        pos_a = m4.multiply(pos_a, rot);
+
+        var pos_b;
+        pos_b = pos_a;
+        pos_b = m4.translate(pos_b, 0, 0, 5);
+
+        comps[0].pos = [pos_b[12], pos_b[13], pos_b[14]];
+        comps[0].rotation_matrix = rot;
+
+        pos_b = pos_a;
+        pos_b = m4.translate(pos_b, 0, 0, -5);
+
+        comps[1].pos = [pos_b[12], pos_b[13], pos_b[14]];
+        comps[1].rotation_matrix = rot;
     }
 
     update(dt) {
         super.update(dt);
         this.rel_rotation = m4.rotate_x(this.rel_rotation,
             this.rotation_speed * dt);
+    }
+
+    collision_event(other) {
+        //none - the door is impervious
     }
 }
 
@@ -75,6 +112,7 @@ class BaseCannon extends Part {
         this.exploded = false;
         this.explosion = false;
         this.is_corner = true;
+        this.type = 'base_cannon';
     }
 
     collision_event(other) {
@@ -175,7 +213,6 @@ class EnemyBase {
 
         // set up the core crystal
         this.crystal = new BaseCrystal(this);
-        this.crystal.collider = new ColliderSphere(0, 0, 0, 5);
 
         this.crystal_guard = new BaseCoreDoor(this);
 
@@ -191,7 +228,8 @@ class EnemyBase {
 
         this.spin_speed = 0.1;
 
-        this.colliders = [...this.balls, this.crystal];
+        this.colliders = [...this.balls, this.crystal,
+            this.crystal_guard];
         all_colliders.push(...this.colliders);
 
         this.explosions = false;

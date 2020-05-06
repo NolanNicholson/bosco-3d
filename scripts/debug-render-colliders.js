@@ -26,10 +26,17 @@ function render_prism_collider(c) {
     wireframes.cube.render(model_matrix, color);
 }
 
+function render_multi_collider(c) {
+    c.components.forEach(comp => {
+        render_collider(comp);
+    });
+}
+
 function render_collider(c) {
     switch(c.collider_type) {
         case 'sphere': render_sphere_collider(c); break;
         case 'point':  /* don't do anything */ break;
         case 'prism':  render_prism_collider(c); break;
+        case 'multi':  render_multi_collider(c); break;
     }
 }

@@ -16,6 +16,7 @@ class Collider {
 
     collides(other) {
         switch (other.collider_type) {
+            case 'multi':   return other.collides(this);
             case 'point':   return this.collides_point(other);
             case 'prism':   return this.collides_prism(other);
             case 'sphere':  return this.collides_sphere(other);
@@ -189,6 +190,30 @@ class ColliderPrism extends Collider {
             return (this.collides_prism_sub(other) &&
                 other.collides_prism_sub(this));
         }
+    }
+}
+
+class ColliderMulti {
+    //A collider made up of multiple components (assigned after instantiation.)
+    //Note that components of a ColliderMulti will not be checked
+    //for collision with one another.
+    constructor() {
+        this.components = [];
+        this.collider_type = 'multi';
+    }
+
+    prep() {
+        this.components.forEach(c => {
+            c.prep();
+        });
+    }
+
+    collides(other) {
+        //console.log("hi", this.components[0].pos);
+        for (var i = 0; i < this.components.length; i++) {
+            if (this.components[i].collides(other)) return true;
+        }
+        return false;
     }
 }
 
