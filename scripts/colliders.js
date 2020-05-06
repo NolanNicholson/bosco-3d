@@ -58,24 +58,6 @@ class ColliderSphere extends Collider {
     }
 }
 
-class ColliderPlane extends Collider {
-    constructor(p1, p2, p3) {
-        super();
-        this.update_plane(p1, p2, p3);
-    }
-
-    update_plane(p1, p2, p3) {
-        this.p_ref = p1;
-        var PQ = v3.minus(p1, p2);
-        var PR = v3.minus(p1, p3);
-        this.normal = v3.normalize(v3.cross(PQ, PR));
-    }
-
-    collides_point(other) {
-        return v3.dot(this.normal, v3.minus(other.pos, this.p_ref)) >= 0;
-    }
-}
-
 class ColliderPrism extends Collider {
     constructor(x, y, z, r_x, r_y, r_z) {
         super();
@@ -154,6 +136,48 @@ class ColliderPrism extends Collider {
         }
     }
 
+    collides_prism_sub(other) {
+        // Tests whether two prisms collide, using
+        // (a simplified version of) the Separating Axis Theorem
+        var relative_pos = v3.minus(other.pos, this.pos);
+        var x_min = Infinity; var x_max = -Infinity;
+        var y_min = Infinity; var y_max = -Infinity;
+        var z_min = Infinity; var z_max = -Infinity;
+
+        // Iterate over the eight points of the OTHER prism
+        for (var x_sign = -1; x_sign <= 1; x_sign += 2) {
+            for (var y_sign = -1; y_sign <= 1; y_sign += 2) {
+                for (var z_sign = -1; z_sign <= 1; z_sign += 2) {
+                    // Get each point in THIS prism's frame of reference
+                    var point_other = m4.identity();
+                    point_other = m4.multiply(point_other,
+                        this.inv_rot);
+                    point_other = m4.translate(point_other,
+                        ...relative_pos);
+                    point_other = m4.multiply(point_other,
+                        other.rotation_matrix);
+                    point_other = m4.translate(point_other,
+                        x_sign * other.r_x,
+                        y_sign * other.r_y,
+                        z_sign * other.r_z
+                    );
+                    // Update the observed max/mins
+                    x_min = Math.min(point_other[12], x_min);
+                    x_max = Math.max(point_other[12], x_max);
+                    y_min = Math.min(point_other[13], y_min);
+                    y_max = Math.max(point_other[13], y_max);
+                    z_min = Math.min(point_other[14], z_min);
+                    z_max = Math.max(point_other[14], z_max);
+                }
+            }
+        }
+        return (
+               (x_min <= this.r_x && x_max >= -this.r_x)
+            && (y_min <= this.r_y && y_max >= -this.r_y)
+            && (z_min <= this.r_z && z_max >= -this.r_z)
+        );
+    }
+
     collides_prism(other) {
         //first, do (cheaper) spherical collision checks
         var dist = distance(this.pos, other.pos);
@@ -162,8 +186,8 @@ class ColliderPrism extends Collider {
 
         //if it's between the two, we do the more expensive check
         else {
-            //TODO
-            return true;
+            return (this.collides_prism_sub(other) &&
+                other.collides_prism_sub(this));
         }
     }
 }
