@@ -282,6 +282,7 @@ var sounds = {
     player_drive_start: new Sound('audio/ship-drive-start.wav'),
     player_drive_loop:  new Sound('audio/ship-drive-loop.wav'),
     player_shoot:       new Sound('audio/shoot.wav'),
+    player_miss:        new Sound('audio/player-miss.wav'),
     base_cannon_hit:    new Sound('audio/cannon-hit.wav'),
     blast_off:          new Sound('audio/blast-off.wav'),
     e_type_hit:         new Sound('audio/e-type-hit.wav'),

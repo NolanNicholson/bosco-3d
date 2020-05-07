@@ -48,7 +48,7 @@ class Player {
         //explosion info
         this.explosion_properties = {
             palette: explosion_palettes.player,
-            scale: 3,
+            size: 3,
             max_age: 1.5,
         };
     }
@@ -251,7 +251,7 @@ class Player {
     explode() {
         sounds.player_drive_start.stop();
         sounds.player_drive_loop.stop();
-        sounds.mine_hit.play(); // TODO: this isn't the right explosion sound
+        sounds.player_miss.play(); // TODO: this isn't the right explosion sound
         this.state = 'exploding';
         this.explosion = new Explosion(this.explosion_properties);
         this.explosion.relocate(
