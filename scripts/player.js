@@ -6,7 +6,7 @@ class Player {
 
         this.ship_obj = new ObjTexture(ship_model_asset, ship_texture_asset);
 
-        //state: one of 'none', 'spawning', 'driving', 'exploded'
+        //state: one of 'none', 'spawning', 'driving', 'exploding', 'exploded'
         this.state = 'none';
         this.spawn_timer = 0;
         this.spawn_time = 1.2;
@@ -44,6 +44,13 @@ class Player {
         //collider information (self, bullets)
         this.collider = new ColliderPrism(0, 0, 0, 1.2, 0.5, 0.9);
         all_colliders.push(this);
+
+        //explosion info
+        this.explosion_properties = {
+            palette: explosion_palettes.player,
+            scale: 3,
+            max_age: 1.5,
+        };
     }
 
     fire() {
@@ -118,8 +125,12 @@ class Player {
             case 'spawning':
                 this.update_spawning(dt);
                 break;
-            default:
+            case 'exploding':
+                this.update_exploding(dt);
+                break;
+            case 'driving':
                 this.update_driving(dt);
+                break;
         }
     }
 
@@ -127,6 +138,13 @@ class Player {
         this.spawn_timer += dt;
         if (this.spawn_timer >= this.spawn_time) {
             this.takeoff();
+        }
+    }
+
+    update_exploding(dt) {
+        this.explosion.update(dt);
+        if (this.explosion.age > this.explosion.max_age) {
+            this.state = 'exploded';
         }
     }
 
@@ -225,7 +243,19 @@ class Player {
     }
 
     collision_event(other) {
-        //TODO
+        if (this.state == 'driving') {
+            this.explode();
+        }
+    }
+
+    explode() {
+        sounds.player_drive_start.stop();
+        sounds.player_drive_loop.stop();
+        sounds.mine_hit.play(); // TODO: this isn't the right explosion sound
+        this.state = 'exploding';
+        this.explosion = new Explosion(this.explosion_properties);
+        this.explosion.relocate(
+            this.ship_obj.x, this.ship_obj.y, this.ship_obj.z);
     }
 
     render() {
@@ -233,15 +263,24 @@ class Player {
         model_matrix = m4.translate(model_matrix,
             this.ship_obj.x, this.ship_obj.y, this.ship_obj.z);
 
-        //ship's actual rotation
-        model_matrix = m4.multiply(model_matrix, this.rotation_matrix);
+        switch (this.state) {
+            case 'exploding':
+                this.explosion.render();
+                break;
+            case 'exploded':
+                //do nothing
+                break;
+            default:
+                //ship's actual rotation
+                model_matrix = m4.multiply(model_matrix, this.rotation_matrix);
 
-        //(purely cosmetic) pitch/yaw rotations
-        model_matrix = m4.rotate_x(model_matrix, this.pitch * 0.7);
-        model_matrix = m4.rotate_z(model_matrix, this.yaw);
+                //(purely cosmetic) pitch/yaw rotations
+                model_matrix = m4.rotate_x(model_matrix, this.pitch * 0.7);
+                model_matrix = m4.rotate_z(model_matrix, this.yaw);
 
-        gl.bindTexture(gl.TEXTURE_2D, this.ship_texture_asset.texture);
-        this.ship_model_asset.render(model_matrix);
+                gl.bindTexture(gl.TEXTURE_2D, this.ship_texture_asset.texture);
+                this.ship_model_asset.render(model_matrix);
+        }
 
         //update active bullets
         this.bullets.forEach(b => {

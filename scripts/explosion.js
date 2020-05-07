@@ -3,7 +3,8 @@ const explosion_palettes = {
     base: [[1, 1, 1], [1, 0.7, 0.0], [1, 0.1, 0.1]],
     misc: [[1, 1, 1], [1, 0.7, 0.0], [0.7, 0.7, 0.7]],
     enemy: [[1, 1, 1], [0.7, 0.7, 0.7], [1, 0.1, 0.1]],
-}
+    player: [[1, 1, 0.5], [0.7, 0, 0], [0.5, 0.5, 0.5]],
+};
 
 class Explosion extends ObjBase {
     constructor(params) {

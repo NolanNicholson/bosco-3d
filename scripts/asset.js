@@ -215,6 +215,12 @@ class Sound {
             this.source.start(0);
         }
     }
+
+    stop() {
+        if (this.source) {
+            this.source.stop();
+        }
+    }
 }
 
 class ImageAsset {
