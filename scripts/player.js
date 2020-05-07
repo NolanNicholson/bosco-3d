@@ -21,14 +21,9 @@ class Player {
         this.strafe_speed = 10;
 
         //direction and adjustment speed
-        this.pitch = 0; this.yaw = 0;
-        this.pitch_target = 0; this.yaw_target = 0;
         this.tack_anim_speed = 0.1;
         this.pitch_speed = 2;
         this.yaw_speed = 2;
-
-        //current rotation
-        this.rotation_matrix = m4.identity();
 
         //assets
         this.ship_model_asset = ship_model_asset;
@@ -51,6 +46,8 @@ class Player {
             size: 3,
             max_age: 1.5,
         };
+        this.explosion_time = 0;
+        this.explosion_timer = 2;
     }
 
     fire() {
@@ -128,6 +125,9 @@ class Player {
             case 'exploding':
                 this.update_exploding(dt);
                 break;
+            case 'exploded':
+                this.update_exploded(dt);
+                break;
             case 'driving':
                 this.update_driving(dt);
                 break;
@@ -145,6 +145,14 @@ class Player {
         this.explosion.update(dt);
         if (this.explosion.age > this.explosion.max_age) {
             this.state = 'exploded';
+            this.explosion_time = 0;
+        }
+    }
+
+    update_exploded(dt) {
+        this.explosion_time += dt;
+        if (this.explosion_time >= this.explosion_timer) {
+            this.spawn();
         }
     }
 
@@ -220,12 +228,21 @@ class Player {
     }
 
     spawn() {
+        //reset current rotation, pitch, and yaw
+        this.rotation_matrix = m4.identity();
+        this.pitch = 0; this.yaw = 0;
+        this.pitch_target = 0; this.yaw_target = 0;
+
         this.ship_obj.x = player_start_position[0];
         this.ship_obj.y = player_start_position[1];
         this.ship_obj.z = player_start_position[2];
         sounds.blast_off.play();
         this.spawn_timer = 0;
         this.state = 'spawning';
+
+        //spawning costs a life
+        lives--;
+        console.log(lives);
     }
 
     takeoff() {
@@ -239,7 +256,9 @@ class Player {
     }
 
     loop_drive_sound() {
-        sounds.player_drive_loop.play(true);
+        if (player.state == 'driving') {
+            sounds.player_drive_loop.play(true);
+        }
     }
 
     collision_event(other) {

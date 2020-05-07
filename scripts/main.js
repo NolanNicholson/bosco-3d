@@ -21,6 +21,7 @@ var level_bounds = {
 // Score
 var hiscore = 20000;
 var score = 0;
+var lives = 3;
 
 // Define test objects
 var obj_floor = new Floor(2, 10, 2);
