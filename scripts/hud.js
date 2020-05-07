@@ -9,11 +9,24 @@ const ctx_hud = canv_hud.getContext("2d");
 //has at least one 3D element, so the main canvas needs to extend to that space
 const main_view_sizer = document.getElementById("main-screen-landscape");
 
-function resize_hud(multiplier) {
-    multiplier = multiplier || 1;
+function resize_hud() {
+    // first, get the multiplier
+    var pixel_ratio;
+    if (canv_hud.clientWidth < canv_hud.clientHeight) {
+        //tall HUD (landscape)
+        pixel_ratio = Math.min(
+            Math.floor(canv_hud.clientWidth / 64),
+            Math.floor((canv_hud.clientHeight - canv_hud.clientWidth) / 80),
+        );
+    } else {
+        //wide HUD (portrait)
+        pixel_ratio = Math.floor(canv_hud.clientHeight / 60);
+    }
+    pixel_ratio = Math.max(pixel_ratio, 1);
+
     const dpr = window.devicePixelRatio;
-    const width  = canv_hud.clientWidth  * dpr * multiplier | 0;
-    const height = canv_hud.clientHeight * dpr * multiplier | 0;
+    const width  = canv_hud.clientWidth  * dpr / pixel_ratio | 0;
+    const height = canv_hud.clientHeight * dpr / pixel_ratio | 0;
     if (canv_hud.width !== width ||  canv_hud.height !== height) {
         // update dimensions
         canv_hud.width  = width;
@@ -24,14 +37,27 @@ function resize_hud(multiplier) {
 }
 
 function getHUDViewport(canvas, hud_canvas) {
-    var square_size = Math.min(hud_canvas.clientWidth, hud_canvas.clientHeight);
-    square_size *= canvas.width / canvas.clientWidth;
 
-    var w_ratio = canvas.width / canvas.clientWidth;
-    var h_ratio = canvas.height / canvas.clientHeight;
+    // determine size of minimap square
+    // based on expected size of other HUD elements
+    var square_size;
+    if (hud_canvas.clientWidth < hud_canvas.clientHeight) {
+        //tall HUD (landscape)
+        square_size = Math.min(hud_canvas.clientWidth,
+            hud_canvas.clientHeight - 160);
+    } else {
+        //wide HUD (portrait)
+        square_size = Math.min(hud_canvas.clientHeight,
+            hud_canvas.clientWidth - 160);
+    }
 
-    hud_center_x = w_ratio * (canvas.clientWidth - hud_canvas.clientWidth / 2);
-    hud_center_y = h_ratio * hud_canvas.clientHeight / 2;
+    // apply 3D canvas's pixel ratio to this square
+    var pixel_ratio = canvas.width / canvas.clientWidth;
+    square_size *= pixel_ratio;
+
+    var hud_center_x = pixel_ratio *
+        (canvas.clientWidth - hud_canvas.clientWidth / 2);
+    var hud_center_y = pixel_ratio * hud_canvas.clientHeight / 2;
 
     return [
         hud_center_x - square_size / 2,
@@ -180,25 +206,38 @@ function draw_number_r(ctx, num, x, y) {
     }
 }
 
+function draw_condition(x, y) {
+    ctx_hud.drawImage(images.condition.img, x, y);
+    ctx_hud.drawImage(images.con_green.img, x, y + 12);
+}
+
+function draw_lives(x, y, left_justified) {
+    var x_increment = (left_justified ? 16 : -16);
+    for (var i = 0; i < 2; i++) {
+        ctx_hud.drawImage(images.ship.img, x, y);
+        x += x_increment;
+    }
+}
+
 function draw_hud() {
-    resize_hud(0.33);
+    resize_hud();
     draw_minimap();
 
     var x_l = 4;
+    var x_r = canv_hud.width - 4;
+    var y_t = 4;
+    var y_b = canv_hud.height - 4;
 
-    ctx_hud.drawImage(images.hud_hiscore.img, x_l, 0);
-    ctx_hud.drawImage(images.hud_1up.img, x_l, 16);
     var x_nums = 56 + x_l;
-    draw_number_r(ctx_hud, hiscore, x_nums, 8);
-    draw_number_r(ctx_hud, score, x_nums, 24);
+    ctx_hud.drawImage(images.hud_hiscore.img,   x_l,    y_t);
+    draw_number_r(ctx_hud, hiscore,             x_nums, y_t + 8);
+    ctx_hud.drawImage(images.hud_1up.img,       x_l,    y_t + 16);
+    draw_number_r(ctx_hud, score,               x_nums, y_t + 24);
+    draw_condition(x_l, y_t + 36);
 
-    if (canv_hud.height > canv_hud.width) {
-        ctx_hud.drawImage(images.condition.img, x_l, 48);
-        ctx_hud.drawImage(images.con_green.img, x_l, 60);
-        ctx_hud.drawImage(images.ship.img, x_l, 144);
-        ctx_hud.drawImage(images.ship.img, x_l+16, 144);
-    } else {
-        ctx_hud.drawImage(images.condition.img, 64, 0);
-        ctx_hud.drawImage(images.con_green.img, 64, 12);
+    if (canv_hud.height > canv_hud.width) { // landscape 
+        draw_lives(x_l, y_b - 32, true);
+    } else { // portrait
+        draw_lives(x_r - 16, y_b - 32, false);
     }
 }
