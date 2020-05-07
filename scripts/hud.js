@@ -1,6 +1,13 @@
 // HUD drawing script
-const canv_hud = document.getElementById("ui");
+
+// HUD canvas and context
+const canv_hud = document.getElementById("hud-landscape");
 const ctx_hud = canv_hud.getContext("2d");
+
+//An element that determines the size of the main 3D view.
+//This can't just be the canvas itself, because the HUD on the side also
+//has at least one 3D element, so the main canvas needs to extend to that space
+const main_view_sizer = document.getElementById("main-screen-landscape");
 
 function resize_hud(multiplier) {
     multiplier = multiplier || 1;
@@ -8,6 +15,7 @@ function resize_hud(multiplier) {
     const width  = canv_hud.clientWidth  * dpr * multiplier | 0;
     const height = canv_hud.clientHeight * dpr * multiplier | 0;
     if (canv_hud.width !== width ||  canv_hud.height !== height) {
+        // update dimensions
         canv_hud.width  = width;
         canv_hud.height = height;
         return true;

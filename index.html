@@ -21,37 +21,36 @@
                 image-rendering: pixelated;
                 -ms-interpolation-mode: nearest-neighbor;
             }
-            #main-screen {
+            .main-screen {
                 width: 100vw;
                 height: 100vh;
                 display: block;
                 position: fixed;
             }
-            @media all and (orientation : landscape) {
-                #main-screen {
-                    width: 75vw;
-                }
-                #ui {
-                    left: 75vw;
-                    width: 25vw;
-                }
+            #main-screen-landscape {
+                width: 75vw;
             }
-            @media all and (orientation : portrait) {
-                #main-screen {
-                    height: 75vh;
-                }
-                #ui {
-                    top: 75vh;
-                    height: 25vh;
-                }
+            #main-screen-portrait {
+                height: 75vh;
+            }
+            .hud {
+                background-color: black;
+            }
+            #hud-landscape {
+                left: 75vw;
+                width: 25vw;
+            }
+            #hud-portrait {
+                top: 75vh;
+                height: 25vh;
             }
         </style>
         <script async src="https://www.googletagmanager.com/gtag/js?id=UA-146424119-1"></script>
     </head>
     <body>
         <canvas id="c"></canvas>
-        <canvas id="ui"></canvas>
-        <span id="main-screen"></span>
+        <canvas class="hud" id="hud-landscape"></canvas>
+        <span class="main-screen" id="main-screen-landscape"></span>
         <script src="scripts/init-gl.js"></script>
         <script src="scripts/gl-helpers.js"></script>
         <script src="scripts/shaders.js"></script>

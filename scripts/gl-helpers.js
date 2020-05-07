@@ -19,8 +19,20 @@ function resizeCanvasToDisplaySize(canvas, multiplier) {
     const width  = canvas.clientWidth  * dpr * multiplier | 0;
     const height = canvas.clientHeight * dpr * multiplier | 0;
     if (canvas.width !== width ||  canvas.height !== height) {
+
+        // update orientation if needed
+        const ratio = width / height;
+        if (ratio > 1.2) { // landscape
+            main_view_sizer.id = "main-screen-landscape";
+            canv_hud.id = "hud-landscape";
+        } else { // portrait
+            main_view_sizer.id = "main-screen-portrait";
+            canv_hud.id = "hud-portrait";
+        }
+
         canvas.width  = width;
         canvas.height = height;
+
         return true;
     }
     return false;

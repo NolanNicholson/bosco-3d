@@ -1,10 +1,5 @@
 const PLAYER_VIEW_DISTANCE = 100;
 
-//An element that determines the size of the main 3D view.
-//This can't just be the canvas itself, because the HUD on the side also
-//has at least one 3D element, so the main canvas needs to extend to that space
-const main_view_sizer = document.getElementById("main-screen");
-
 models.player.base_transform = m4.rotate_z(
     models.player.base_transform, -0.1);
 models.base_core_side.base_transform = m4.translate(
@@ -116,6 +111,7 @@ function pause_unpause() {
         console.log('pause');
         audio_context.suspend();
     } else {
+        console.log('unpause');
         audio_context.resume();
     }
 }
