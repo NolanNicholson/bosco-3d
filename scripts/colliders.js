@@ -203,9 +203,13 @@ class ColliderMulti {
     }
 
     prep() {
+        var sum_pos = [0, 0, 0];
         this.components.forEach(c => {
             c.prep();
+            sum_pos = v3.plus(sum_pos, c.pos);
         });
+        var nc = this.components.length;
+        this.pos = [sum_pos[0]/nc, sum_pos[1]/nc, sum_pos[2]/nc];
     }
 
     collides(other) {
@@ -217,35 +221,78 @@ class ColliderMulti {
     }
 }
 
+function collider_rmax(c) {
+    switch (c.collider_type) {
+        case 'multi':   return 10; //TODO: this is a hack
+        case 'point':   return 0;
+        case 'prism':   return c.r_max;
+        case 'sphere':  return c.radius;
+        default:        return 0;
+    }
+}
+
+function cmp_collider(c1, c2) {
+    // compare two objects based on their colliders' x coordinates (for sorting)
+    //console.log(c1.type, c2.type);
+    return c1.collider.pos[0] - c2.collider.pos[0];
+}
+
+
+var collisions_checked;
+function collision_check(c1, c2) {
+    // check if the colliders are of the same group -
+    // if so, collisions between them don't matter
+    collisions_checked++;
+    if (c1.collider.group && c2.collider.group
+        && c1.collider.group == c2.collider.group) {
+        return;
+    }
+
+    if (c1.collider.collides(c2.collider)) {
+        c1.collider.has_collided = true;
+        c2.collider.has_collided = true;
+        console.log(c1.type, c2.type);
+        c1.collision_event(c2);
+        c2.collision_event(c1);
+    }
+}
+
+const collision_detection_span = 10;
+
+function x_overlap(c1, c2) {
+    var dist = Math.abs(c1.collider.pos[0] - c2.collider.pos[0]);
+    // account for level wraparound
+    dist = Math.min(dist, (level_bounds.x.max - level_bounds.x.min - dist));
+    return dist <= collision_detection_span;
+}
+
 function resolve_collisions(all_colliders) {
+    collisions_checked = 0;
+
     //preparatory calculations for all colliders
     all_colliders.forEach(c => {
         c.collider.prep();
     });
 
+    // sort the list of colliders so we can walk through it linearly
+    all_colliders.sort(cmp_collider);
+
     //collision check
-    //TODO: this is O(n^2) and could probably be optimized)
     var i1; var i2;
     var c1; var c2;
+    var min_x;
+
     for (i1 = 0; i1 < all_colliders.length; i1++) {
         c1 = all_colliders[i1];
-        for (i2 = i1 + 1; i2 < all_colliders.length; i2++) {
+
+        // check forward through collision list, wrapping around if needed
+        i2 = (i1 + 1) % all_colliders.length;
+        c2 = all_colliders[i2];
+        while (i2 != i1 && x_overlap(c1, c2)) {
+            collision_check(c1, all_colliders[i2]);
+            i2++;
+            i2 %= all_colliders.length;
             c2 = all_colliders[i2];
-
-            // check if the colliders are of the same group -
-            // if so, collisions between them don't matter
-            if (c1.collider.group && c2.collider.group
-                && c1.collider.group == c2.collider.group) {
-                continue;
-            }
-
-            if (c1.collider.collides(c2.collider)) {
-                c1.collider.has_collided = true;
-                c2.collider.has_collided = true;
-                console.log(c1.type, c2.type);
-                c1.collision_event(c2);
-                c2.collision_event(c1);
-            }
         }
     }
 }
