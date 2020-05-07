@@ -7,6 +7,8 @@ function delete_object(o) {
 
     var obj_index = object_list.indexOf(o);
     if (obj_index != -1) object_list.splice(obj_index, 1);
+
+    delete o;
 }
 
 class Explodable extends ObjTexture {

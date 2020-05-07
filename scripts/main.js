@@ -1,4 +1,7 @@
-const PLAYER_VIEW_DISTANCE = 100;
+const PLAYER_VIEW_DISTANCE = 300;
+const PLAYER_VIEW_DIST_SQ = PLAYER_VIEW_DISTANCE * PLAYER_VIEW_DISTANCE;
+
+var objs_rendered;
 
 models.player.base_transform = m4.rotate_z(
     models.player.base_transform, -0.1);
@@ -103,6 +106,7 @@ var objects = [obj_floor, player, obj_starfield,
 ];
 
 var camera = new Camera();
+var viewproj;
 
 var paused = false;
 function pause_unpause() {
@@ -220,7 +224,7 @@ function drawScene(now) {
             2000,
         );
         var view_matrix = camera.get_view_matrix_player(player);
-        var viewproj = m4.multiply(proj_matrix, view_matrix);
+        viewproj = m4.multiply(proj_matrix, view_matrix);
 
         // Populate the relevant program holders with the view-proj matrix
         [
@@ -236,6 +240,7 @@ function drawScene(now) {
         });
 
         // Render each object
+        objs_rendered = 0;
         objects.forEach(obj => {
             obj.render();
         });

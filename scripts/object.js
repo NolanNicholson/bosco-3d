@@ -199,9 +199,29 @@ class ObjTexture extends ObjBase {
     }
 
     render() {
-        gl.bindTexture(gl.TEXTURE_2D, this.texture_asset.texture);
-
         super.prep_model_matrix();
+
+        // check distance to player
+        var rel_player = [
+            player.ship_obj.x - this.model_matrix[12],
+            player.ship_obj.y - this.model_matrix[13],
+            player.ship_obj.z - this.model_matrix[14],
+        ];
+        var dist_to_player_sq = (
+            rel_player[0] * rel_player[0]
+            + rel_player[1] * rel_player[1]
+            + rel_player[2] * rel_player[2]
+        );
+        if (dist_to_player_sq > PLAYER_VIEW_DIST_SQ)
+            return;
+
+        // check if behind player
+        var render_mat = m4.multiply(viewproj, this.model_matrix);
+        if (render_mat[14] < 0)
+            return;
+
+        objs_rendered++;
+        gl.bindTexture(gl.TEXTURE_2D, this.texture_asset.texture);
         this.model_asset.render(this.model_matrix);
     }
 }
