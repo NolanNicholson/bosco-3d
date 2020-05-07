@@ -6,6 +6,11 @@ class Player {
 
         this.ship_obj = new ObjTexture(ship_model_asset, ship_texture_asset);
 
+        //state: one of 'none', 'spawning', 'driving', 'exploded'
+        this.state = 'none';
+        this.spawn_timer = 0;
+        this.spawn_time = 1.2;
+
         //movement flags
         this.yawing_left = false;       this.yawing_right = false;
         this.pitching_up = false;         this.pitching_down = false;
@@ -109,6 +114,23 @@ class Player {
     }
 
     update(dt) {
+        switch (this.state) {
+            case 'spawning':
+                this.update_spawning(dt);
+                break;
+            default:
+                this.update_driving(dt);
+        }
+    }
+
+    update_spawning(dt) {
+        this.spawn_timer += dt;
+        if (this.spawn_timer >= this.spawn_time) {
+            this.takeoff();
+        }
+    }
+
+    update_driving(dt) {
         this.yaw_target = (this.yawing_left - this.yawing_right) * Math.PI / 6;
         this.pitch_target = (this.pitching_up - this.pitching_down)
             * Math.PI / 6;
@@ -179,13 +201,27 @@ class Player {
         this.ship_obj.bounds_check();
     }
 
-    loop_drive_sound() {
-        sounds.player_drive_loop.play(true);
+    spawn() {
+        this.ship_obj.x = player_start_position[0];
+        this.ship_obj.y = player_start_position[1];
+        this.ship_obj.z = player_start_position[2];
+        sounds.blast_off.play();
+        this.spawn_timer = 0;
+        this.state = 'spawning';
+    }
+
+    takeoff() {
+        this.state = 'driving';
+        this.start_drive_sound();
     }
 
     start_drive_sound() {
         sounds.player_drive_start.play();
         sounds.player_drive_start.source.onended = this.loop_drive_sound;
+    }
+
+    loop_drive_sound() {
+        sounds.player_drive_loop.play(true);
     }
 
     collision_event(other) {

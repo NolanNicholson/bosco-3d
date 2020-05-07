@@ -25,10 +25,10 @@ var score = 0;
 // Define test objects
 var obj_floor = new Floor(2, 10, 2);
 var obj_starfield = new Starfield();
+
 var player = new Player(models.player, textures.player);
-player.ship_obj.x = 12;
-player.ship_obj.y = 4;
-player.ship_obj.z = 50;
+var player_start_position = [12, 4, 50];
+
 var obj_enemy_i = new Enemy('i');
 obj_enemy_i.x = 6;
 var obj_enemy_p = new Enemy('p');
@@ -38,6 +38,7 @@ obj_enemy_e.x = 14;
 var obj_enemy_spy = new Enemy('spy');
 obj_enemy_spy.x = 18;
 
+//TODO: codify base positions
 var bases = [
     new EnemyBase(),
     new EnemyBase(),
@@ -140,11 +141,10 @@ function handle_keyup(e) {
 window.addEventListener("keydown", handle_keydown);
 window.addEventListener("keyup", handle_keyup);
 
-var then;
 function start_game() {
     gl.disable(gl.SCISSOR_TEST);
     then = 0;
-    player.start_drive_sound();
+    player.spawn();
     requestAnimationFrame(drawScene);
 }
 
@@ -164,7 +164,18 @@ function confirm_asset_loaded() {
     }
 }
 
-function drawLoadingScreen() {
+// frame counting
+var then;
+var dt;
+function tick(now) {
+    now *= 0.001; // convert ms to seconds
+    dt = now - then;
+    then = now;
+}
+
+function drawLoadingScreen(now) {
+    tick(now);
+
     // Resize the canvas and viewport
     resizeCanvasToDisplaySize(gl.canvas, 0.5);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
@@ -191,9 +202,7 @@ gl.enable(gl.SCISSOR_TEST);
 requestAnimationFrame(drawLoadingScreen);
 
 function drawScene(now) {
-    now *= 0.001; // convert ms to seconds
-    var dt = now - then;
-    then = now;
+    tick(now);
 
     if (!paused) {
         // Resize the canvas and viewport
@@ -258,11 +267,3 @@ function drawScene(now) {
 
     requestAnimationFrame(drawScene);
 }
-
-/*
-window.setTimeout(function() {
-    console.log("BLAST OFF");
-    sounds.blast_off.play();
-}, 200);
-*/
-
