@@ -74,7 +74,10 @@ class PlayerBullet extends ObjColor {
 
     deactivate() {
         this.active = false;
-        all_colliders.splice(all_colliders.indexOf(this), 1);
+        var collider_index = all_colliders.indexOf(this);
+        if (collider_index != -1) {
+            all_colliders.splice(collider_index, 1);
+        }
     }
 
     collision_event(other) {
