@@ -212,7 +212,7 @@ function draw_condition(x, y) {
 }
 
 function draw_lives(x, y, left_justified) {
-    ctx_hud.clearRect(0, y, canv_hud.width, 16);
+    ctx_hud.clearRect(x - (!left_justified) * 80, y, 80, 16);
     var x_increment = (left_justified ? 16 : -16);
     for (var i = 0; i < lives; i++) {
         ctx_hud.drawImage(images.ship.img, x, y);
