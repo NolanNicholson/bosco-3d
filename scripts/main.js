@@ -29,10 +29,6 @@ var obj_starfield = new Starfield();
 var player = new Player(models.player, textures.player);
 var player_start_position = [12, 4, 50];
 
-var obj_enemy_i = new Enemy('i');
-obj_enemy_i.x = -5;
-obj_enemy_i.y = 20;
-
 //TODO: codify base positions
 var bases = [
     new EnemyBase(),
@@ -93,10 +89,11 @@ formation[2].z = -13; // back
 formation[3].z = -10; // left
 formation[4].z = -10; // right
 
+var spawner = new RandomEnemySpawner();
+
 // List of objects to be updated and rendered
 var objects = [
     player, obj_starfield,
-    obj_enemy_i,
     ...bases,
     ...mines, ...asteroids,
     ...formation
@@ -208,6 +205,9 @@ function drawScene(now) {
         // clear the canvas
         gl.clearColor(0, 0, 0, 1);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+        // potentially add an enemy
+        spawner.update(dt);
 
         // update objects and resolve collisions
         objects.forEach(obj => {

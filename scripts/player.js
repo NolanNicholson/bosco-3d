@@ -270,6 +270,7 @@ class Player {
     }
 
     explode() {
+        var collo = all_colliders.length;
         sounds.player_drive_start.stop();
         sounds.player_drive_loop.stop();
         sounds.player_miss.play(); // TODO: this isn't the right explosion sound
@@ -280,6 +281,7 @@ class Player {
         this.explosion = new Explosion(this.explosion_properties);
         this.explosion.relocate(
             this.ship_obj.x, this.ship_obj.y, this.ship_obj.z);
+        console.log("player explosion", collo, all_colliders.length);
     }
 
     render() {

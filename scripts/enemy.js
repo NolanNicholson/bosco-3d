@@ -132,6 +132,12 @@ class Enemy extends Explodable {
         this.drive_speed = 19.5;
     }
 
+    explode() {
+        //just let the spawner know this enemy died
+        spawner.num_enemies--;
+        super.explode();
+    }
+
     update(dt) {
         var rel_to_player = v3.minus([this.x, this.y, this.z],
             [player.ship_obj.x, player.ship_obj.y, player.ship_obj.z]);
@@ -215,5 +221,53 @@ class Asteroid extends Explodable {
         }
         this.type = 'asteroid';
         this.worth = 10;
+    }
+}
+
+class RandomEnemySpawner {
+    constructor() {
+        this.timer = 0;
+        this.interval = 4;
+        this.num_enemies = 0;
+        this.max_num_enemies = 4;
+    }
+
+    update(dt) {
+        //don't do anything unless the player is driving
+        //and we have less than the maximum number of enemies
+        if (player.state != 'driving' ||
+            this.num_enemies >= this.max_num_enemies)
+            //TODO: note - implementing Formation Attacks may require
+            //some adjustments to this counter approach
+            return;
+
+        this.timer += dt;
+        if (this.timer >= this.interval) {
+            //randomly spawn either a P or I-type
+            var new_type = (Math.random() > 0.5 ? 'p' : 'i');
+            var new_enemy = new Enemy(new_type);
+
+            var new_location_matrix = m4.translation(
+                player.ship_obj.x, player.ship_obj.y, player.ship_obj.z);
+            var spawn_angle = Math.random() * 2 * Math.PI;
+            var spawn_radius = 20;
+            //var spawn_z = (Math.random() > 0.5 ? -10 : 10);
+            var spawn_z = -10;
+            new_location_matrix = m4.multiply(new_location_matrix,
+                player.rotation_matrix);
+            new_location_matrix = m4.translate(new_location_matrix,
+                spawn_radius * Math.cos(spawn_angle),
+                spawn_radius * Math.sin(spawn_angle), spawn_z);
+
+            new_enemy.x = new_location_matrix[12];
+            new_enemy.y = new_location_matrix[13];
+            new_enemy.z = new_location_matrix[14];
+
+            objects.push(new_enemy);
+
+            console.log("spawned a", new_type);
+            this.num_enemies++;
+            this.timer = 0;
+        }
     }
 }
