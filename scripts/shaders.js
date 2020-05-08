@@ -205,7 +205,10 @@ uniform sampler2D u_texture;
 out vec4 outColor;
 
 void main() {
-    outColor = texture(u_texture, v_texcoord);
+    if (gl_FragCoord.z > 0.9995f)
+        outColor = vec4(0.1, 0.2, 0.2, 1);
+    else
+        outColor = texture(u_texture, v_texcoord);
 }
 `;
 
