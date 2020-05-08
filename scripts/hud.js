@@ -208,7 +208,10 @@ function draw_number_r(ctx, num, x, y) {
 
 function draw_condition(x, y) {
     ctx_hud.drawImage(images.condition.img, x, y);
-    ctx_hud.drawImage(images.con_green.img, x, y + 12);
+    if (spawner.num_enemies)
+        ctx_hud.drawImage(images.con_yellow.img, x, y + 12);
+    else
+        ctx_hud.drawImage(images.con_green.img, x, y + 12);
 }
 
 function draw_lives(x, y, left_justified) {

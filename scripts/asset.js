@@ -289,6 +289,7 @@ var sounds = {
     i_type_spy_hit:     new Sound('audio/i-type-spy-hit.wav'),
     mine_hit:           new Sound('audio/boom.wav'),
     asteroid_hit:       new Sound('audio/asteroid-hit.wav'),
+    alert_alert:        new Sound('audio/alert.wav'),
 };
 
 var images = {

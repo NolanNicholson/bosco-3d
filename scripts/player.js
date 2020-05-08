@@ -281,7 +281,6 @@ class Player {
         this.explosion = new Explosion(this.explosion_properties);
         this.explosion.relocate(
             this.ship_obj.x, this.ship_obj.y, this.ship_obj.z);
-        console.log("player explosion", collo, all_colliders.length);
     }
 
     render() {
