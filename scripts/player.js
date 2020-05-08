@@ -51,7 +51,8 @@ class Player {
     }
 
     fire() {
-        if (!this.bullets[0].active && !this.bullets[1].active) {
+        if (this.state == 'driving'
+            && !this.bullets[0].active && !this.bullets[1].active) {
             sounds.player_shoot.play();
             var first_bullet = this.bullets.shift();
             first_bullet.activate();
@@ -236,6 +237,7 @@ class Player {
         this.ship_obj.x = player_start_position[0];
         this.ship_obj.y = player_start_position[1];
         this.ship_obj.z = player_start_position[2];
+        this.collider.pos = [this.ship_obj.x, this.ship_obj.y, this.ship_obj.z];
         sounds.blast_off.play();
         this.spawn_timer = 0;
         this.state = 'spawning';
@@ -271,6 +273,9 @@ class Player {
         sounds.player_drive_start.stop();
         sounds.player_drive_loop.stop();
         sounds.player_miss.play(); // TODO: this isn't the right explosion sound
+        this.bullets.forEach(b => {
+            b.deactivate();
+        });
         this.state = 'exploding';
         this.explosion = new Explosion(this.explosion_properties);
         this.explosion.relocate(
