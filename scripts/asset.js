@@ -24,7 +24,6 @@ class Texture {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
             //generate mipmap
-            gl.generateMipmap(gl.TEXTURE_2D);
             confirm_asset_loaded();
         });
     }
@@ -244,7 +243,9 @@ var textures = {
     enemy_spy:      new Texture("models/enemy_spy_tex.png"),
     enemy_p_alt:    new Texture("models/enemy_p_alt_tex.png"),
     base_core_side: new Texture("models/base_core_side_tex.png"),
+    base_core_s_f:  new Texture("models/base_core_side_tex_far.png"),
     base_ball:      new Texture("models/base_ball_tex.png"),
+    base_ball_f:    new Texture("models/base_ball_tex_far.png"),
     base_ball_d:    new Texture("models/base_ball_destroyed_tex.png"),
     base_crystal:   new Texture("models/base_crystal_tex.png"),
     cosmo_mine:     new Texture("models/cosmo_mine_tex.png"),

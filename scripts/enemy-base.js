@@ -18,6 +18,19 @@ class Part extends ObjTexture {
         }
     }
 
+    texture_lod(tx_close, tx_far) {
+        var rel_x = player.ship_obj.x - this.x;
+        var rel_y = player.ship_obj.y - this.y;
+        var rel_z = player.ship_obj.z - this.z;
+        var player_dist_sq =
+            (rel_x * rel_x) + (rel_y * rel_y) + (rel_z * rel_z);
+        if (player_dist_sq > 40000) {
+            this.texture_asset = tx_far;
+        } else {
+            this.texture_asset = tx_close;
+        }
+    }
+
     sync_with_parent() {
         var p = this.parent_obj;
 
@@ -160,6 +173,9 @@ class BaseCannon extends Part {
         if (this.explosion) {
             this.explosion.render();
         }
+        if (!this.exploded) {
+        this.texture_lod(textures.base_ball, textures.base_ball_f);
+        }
         super.render();
     }
 }
@@ -175,6 +191,11 @@ class BaseCoreSide extends Part {
 
     collision_event(other) {
         //none - the core sides are impervious
+    }
+    
+    render() {
+        this.texture_lod(textures.base_core_side, textures.base_core_s_f);
+        super.render();
     }
 }
 
