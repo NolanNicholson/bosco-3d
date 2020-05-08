@@ -24,20 +24,14 @@ var score = 0;
 var lives = 3;
 
 // Define test objects
-var obj_floor = new Floor(2, 10, 2);
 var obj_starfield = new Starfield();
 
 var player = new Player(models.player, textures.player);
 var player_start_position = [12, 4, 50];
 
 var obj_enemy_i = new Enemy('i');
-obj_enemy_i.x = 6;
-var obj_enemy_p = new Enemy('p');
-obj_enemy_p.x = 10;
-var obj_enemy_e = new Enemy('e');
-obj_enemy_e.x = 14;
-var obj_enemy_spy = new Enemy('spy');
-obj_enemy_spy.x = 18;
+obj_enemy_i.x = -5;
+obj_enemy_i.y = 20;
 
 //TODO: codify base positions
 var bases = [
@@ -100,8 +94,9 @@ formation[3].z = -10; // left
 formation[4].z = -10; // right
 
 // List of objects to be updated and rendered
-var objects = [obj_floor, player, obj_starfield,
-    obj_enemy_i, obj_enemy_p, obj_enemy_e, obj_enemy_spy,
+var objects = [
+    player, obj_starfield,
+    obj_enemy_i,
     ...bases,
     ...mines, ...asteroids,
     ...formation

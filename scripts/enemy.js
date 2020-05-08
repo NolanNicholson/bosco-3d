@@ -125,6 +125,43 @@ class Enemy extends Explodable {
         this.explosion_properties = {
             palette: explosion_palettes.enemy,
         };
+
+        //tracking properties
+        this.follow_angle = 0;
+        this.follow_wobble = 6;
+        this.drive_speed = 19.5;
+    }
+
+    update(dt) {
+        var rel_to_player = v3.minus([this.x, this.y, this.z],
+            [player.ship_obj.x, player.ship_obj.y, player.ship_obj.z]);
+        this.rotation_matrix = m4.lookAt(
+            [0, 0, 0],
+            rel_to_player,
+            [0, 1, 0]
+        );
+        this.rotation_matrix = m4.rotate_y(this.rotation_matrix,
+            Math.PI);
+
+        this.follow_angle = (this.follow_angle + 2 * dt) % (2 * Math.PI);
+
+        // only wobble if close to the player
+        var dist_sq_player = (
+              rel_to_player[0] * rel_to_player[0]
+            + rel_to_player[1] * rel_to_player[1]
+            + rel_to_player[2] * rel_to_player[2]
+        );
+        var wobble = dist_sq_player < 100 ? this.follow_wobble : 0;
+
+        super.update(dt);
+        var movement_matrix = this.rotation_matrix;
+        movement_matrix = m4.translate(this.rotation_matrix,
+            wobble * Math.cos(this.follow_angle) * dt,
+            wobble * Math.sin(this.follow_angle) * dt,
+            -this.drive_speed * dt);
+        this.x += movement_matrix[12];
+        this.y += movement_matrix[13];
+        this.z += movement_matrix[14];
     }
 }
 
