@@ -134,7 +134,7 @@ class Enemy extends Explodable {
 
     explode() {
         //just let the spawner know this enemy died
-        spawner.num_enemies--;
+        spawner.lose_enemy();
         super.explode();
     }
 
@@ -257,9 +257,26 @@ class RandomEnemySpawner {
 
         if (!this.num_enemies) {
             sounds.alert_alert.play();
+            sounds.player_drive_start.stop();
+            sounds.player_drive_loop.stop();
+            if (sounds.player_drive_start.source &&
+                sounds.player_drive_start.source.onended) {
+                sounds.player_drive_start.source.onended = null;
+            }
+
+            sounds.enemy_drive_loop.play(true);
         }
 
         this.num_enemies++;
+    }
+
+    lose_enemy() {
+        this.num_enemies--;
+        console.log("lost enemy (", this.num_enemies, ")");
+        if (!this.num_enemies && player.state == 'driving') {
+            sounds.enemy_drive_loop.stop();
+            sounds.player_drive_loop.play(true);
+        }
     }
 
     update(dt) {

@@ -270,7 +270,7 @@ class Player {
     }
 
     explode() {
-        var collo = all_colliders.length;
+        sounds.enemy_drive_loop.stop();
         sounds.player_drive_start.stop();
         sounds.player_drive_loop.stop();
         sounds.player_miss.play(); // TODO: this isn't the right explosion sound

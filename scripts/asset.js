@@ -205,6 +205,10 @@ class Sound {
         if (!this.loaded) {
             console.error('Error: Attempting to play unloaded sound');
         } else {
+            if (loop) {
+                //looping sounds can only have one active source at a time
+                this.stop();
+            }
             this.source = audio_context.createBufferSource();
             if (loop) {
                 this.source.loop = true;
@@ -284,6 +288,7 @@ var sounds = {
     player_miss:        new Sound('audio/player-miss.wav'),
     base_cannon_hit:    new Sound('audio/cannon-hit.wav'),
     blast_off:          new Sound('audio/blast-off.wav'),
+    enemy_drive_loop:   new Sound('audio/enemy-drive-loop.wav'),
     e_type_hit:         new Sound('audio/e-type-hit.wav'),
     p_type_hit:         new Sound('audio/p-type-hit.wav'),
     i_type_spy_hit:     new Sound('audio/i-type-spy-hit.wav'),
