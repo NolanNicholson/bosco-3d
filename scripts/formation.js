@@ -27,9 +27,9 @@ class FormationFollower extends Enemy {
 
     sync_leader() {
         this.rotation_matrix = this.leader.rotation_matrix;
-        this.x = this.leader.x + this.pos_x * 3;
+        this.x = this.leader.x + (this.pos_x * 3);
         this.y = this.leader.y;
-        this.z = this.leader.x + this.pos_z * 3;
+        this.z = this.leader.z + (this.pos_z * 3);
     }
 
     update(dt) {
@@ -55,5 +55,7 @@ class Formation {
             follower.sync_collider();
             this.followers.push(follower);
         }
+
+        objects.push(this.leader, ...this.followers);
     }
 }

@@ -14,14 +14,11 @@ var player_start_position = [12, 4, 50];
 
 var spawner = new RandomEnemySpawner();
 
-var form = new Formation(-40, 40, 40);
-
 // List of objects to be updated and rendered
 var objects = [
     player, obj_starfield,
     ...bases,
     ...mines, ...asteroids,
-    form.leader, ...form.followers
 ];
 
 var camera = new Camera();
@@ -43,6 +40,9 @@ function handle_keydown(e) {
     switch (e.keyCode) {
         case 80: // P key
             pause_unpause();
+            break;
+        case 73: // I key
+            var form = new Formation(-40, 0, 0);
             break;
         default: {
             if (!paused) {
