@@ -14,12 +14,14 @@ var player_start_position = [12, 4, 50];
 
 var spawner = new RandomEnemySpawner();
 
+var form = new Formation(-40, 40, 40);
+
 // List of objects to be updated and rendered
 var objects = [
     player, obj_starfield,
     ...bases,
     ...mines, ...asteroids,
-    ...formation
+    form.leader, ...form.followers
 ];
 
 var camera = new Camera();

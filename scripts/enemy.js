@@ -48,6 +48,11 @@ class Explodable extends ObjTexture {
         }
     }
 
+    sync_collider() {
+        this.collider.pos = [this.x, this.y, this.z];
+        this.collider.rotation_matrix = this.rotation_matrix;
+    }
+
     update(dt) {
         if (this.exploded) {
             this.explosion.update(dt);
@@ -59,8 +64,7 @@ class Explodable extends ObjTexture {
 
             //sync collider with main object
             if (this.collider) {
-                this.collider.pos = [this.x, this.y, this.z];
-                this.collider.rotation_matrix = this.rotation_matrix;
+                this.sync_collider();
             }
         }
     }
@@ -133,12 +137,14 @@ class Enemy extends Explodable {
     }
 
     explode() {
-        //just let the spawner know this enemy died
-        spawner.lose_enemy();
+        //let the spawner know this enemy died
+        if (!this.is_in_formation) {
+            spawner.lose_enemy();
+        }
         super.explode();
     }
 
-    update(dt) {
+    follow_player_with_wobble(dt) {
         var rel_to_player = v3.minus([this.x, this.y, this.z],
             [player.ship_obj.x, player.ship_obj.y, player.ship_obj.z]);
         this.rotation_matrix = m4.lookAt(
@@ -159,7 +165,6 @@ class Enemy extends Explodable {
         );
         var wobble = dist_sq_player < 100 ? this.follow_wobble : 0;
 
-        super.update(dt);
         var movement_matrix = this.rotation_matrix;
         movement_matrix = m4.translate(this.rotation_matrix,
             wobble * Math.cos(this.follow_angle) * dt,
@@ -168,6 +173,15 @@ class Enemy extends Explodable {
         this.x += movement_matrix[12];
         this.y += movement_matrix[13];
         this.z += movement_matrix[14];
+    }
+
+    explodable_update(dt) {
+        super.update(dt);
+    }
+
+    update(dt) {
+        this.follow_player_with_wobble(dt);
+        this.explodable_update(dt);
     }
 }
 
