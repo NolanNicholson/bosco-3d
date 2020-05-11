@@ -167,6 +167,14 @@ function drawScene(now) {
                 false, viewproj);
         });
 
+        // The texture program also needs the
+        // view and projection matrices, individually
+        gl.useProgram(program_holder_texture.program);
+        gl.uniformMatrix4fv(program_holder_texture.locations.uViewMatrixLoc,
+            false, view_matrix);
+        gl.uniformMatrix4fv(program_holder_texture.locations.uProjMatrixLoc,
+            false, proj_matrix);
+
         // Render each object
         objects.forEach(obj => {
             obj.render();

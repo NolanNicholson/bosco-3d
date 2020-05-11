@@ -184,13 +184,19 @@ var src_vs_texture = `#version 300 es
 in vec4 a_position;
 in vec2 a_texcoord;
 
+out float fog_depth;
+
 uniform mat4 u_matrix_model;
+uniform mat4 u_matrix_view;
+uniform mat4 u_matrix_projection;
 uniform mat4 u_matrix_viewproj;
 
 out vec2 v_texcoord;
 
 void main() {
-    gl_Position = u_matrix_viewproj * u_matrix_model * a_position;
+    vec4 view_position = u_matrix_view * u_matrix_model * a_position;
+    gl_Position = u_matrix_projection * view_position;
+    fog_depth = length(view_position.xyz);
     v_texcoord = a_texcoord;
 }
 `;
@@ -200,12 +206,14 @@ var src_fs_texture = `#version 300 es
 precision mediump float;
 
 in vec2 v_texcoord;
+in float fog_depth;
 uniform sampler2D u_texture;
 
 out vec4 outColor;
 
 void main() {
-    if (gl_FragCoord.z > 0.9995f)
+
+    if (fog_depth > 200.0)
         outColor = vec4(0.1, 0.2, 0.2, 1);
     else
         outColor = texture(u_texture, v_texcoord);
@@ -306,6 +314,8 @@ var program_holder_texture = new ProgramHolder(
         uniforms: {
             uModelMatrixLoc: "u_matrix_model",
             uViewProjMatrixLoc: "u_matrix_viewproj",
+            uViewMatrixLoc: "u_matrix_view",
+            uProjMatrixLoc: "u_matrix_projection",
         }
     });
 
