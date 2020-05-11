@@ -302,6 +302,7 @@ var wireframes = {
 
 // Load sound assets
 var sounds = {
+    battle_stations:    new Sound('audio/battle-stations.wav'),
     player_drive_start: new Sound('audio/ship-drive-start.wav'),
     player_drive_loop:  new Sound('audio/ship-drive-loop.wav'),
     player_shoot:       new Sound('audio/shoot.wav'),
