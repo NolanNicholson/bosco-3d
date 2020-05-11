@@ -29,23 +29,25 @@ var obj_starfield = new Starfield();
 var player = new Player(models.player, textures.player);
 var player_start_position = [12, 4, 50];
 
-//TODO: codify base positions
-var bases = [
-    new EnemyBase(),
-    new EnemyBase(),
-    new EnemyBase(),
-];
-bases[0].x = 12; bases[0].y = -40; bases[0].z = 10;
-bases[0].rotation_matrix = m4.rotation_x(Math.PI * 0.75);
-bases[0].scale = 4;
+var base_data = [
+    { x:   12, y: - 40, z:   10, rx: 0.75  },
+    { x:   40, y:  200, z: - 40, rx: 0.125 },
+    { x: -200, y: -100, z: -250, ry: 0.125 },
+]
 
-bases[1].x = 40; bases[1].y = 200; bases[1].z = -40;
-bases[1].rotation_matrix = m4.rotation_x(Math.PI / 8);
-bases[1].scale = 4;
-
-bases[2].x = -200; bases[2].y = -100; bases[2].z = -250;
-bases[2].rotation_matrix = m4.rotation_y(Math.PI / 8);
-bases[2].scale = 4;
+var bases = [];
+base_data.forEach(base_params => {
+    var new_b = new EnemyBase();
+    new_b.scale = 4;
+    new_b.x = base_params.x;
+    new_b.y = base_params.y;
+    new_b.z = base_params.z;
+    if (base_params.rx)
+        new_b.rotation_matrix = m4.rotation_x(Math.PI * base_params.rx);
+    if (base_params.ry)
+        new_b.rotation_matrix = m4.rotation_y(Math.PI * base_params.ry);
+    bases.push(new_b);
+});
 
 var asteroids = [];
 for (var i = 0; i < 10; i++) {
