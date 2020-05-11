@@ -175,6 +175,7 @@ class CosmoMine extends Explodable {
     constructor() {
         super(models.cosmo_mine, textures.cosmo_mine);
         this.collider = new ColliderSphere(0, 0, 0, 1.7);
+        this.scale = 2;
         all_colliders.push(this);
         this.explosion_properties = {
             palette: explosion_palettes.cosmo_mine,
@@ -201,12 +202,12 @@ class CosmoMine extends Explodable {
 }
 
 class Asteroid extends Explodable {
-    constructor() {
+    constructor(scale) {
         // choose a random model
         var model = (Math.random() > 0.5 ? models.asteroid1 : models.asteroid2);
         super(model, textures.asteroid);
 
-        this.scale = Math.random() * 4 + 1;
+        this.scale = scale;
         this.rotation_matrix = m4.rotate_x(this.rotation_matrix,
             Math.random() * 2 * Math.PI);
         this.rotation_matrix = m4.rotate_y(this.rotation_matrix,

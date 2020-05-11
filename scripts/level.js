@@ -7,6 +7,11 @@ var level_bounds = {
     y: { min: -300, max: 300 },
     z: { min: -300, max: 300 },
 };
+var level_size = {
+    x: level_bounds.x.max - level_bounds.x.min,
+    y: level_bounds.y.max - level_bounds.y.min,
+    z: level_bounds.z.max - level_bounds.z.min,
+}
 
 var base_data = [
     { x:   12, y: - 40, z:   10, rx: 0.75  },
@@ -28,25 +33,30 @@ base_data.forEach(base_params => {
     bases.push(new_b);
 });
 
+function random_loc_in_level() {
+    return [
+        Math.random() * level_size.x + level_bounds.x.min,
+        Math.random() * level_size.y + level_bounds.y.min,
+        Math.random() * level_size.z + level_bounds.z.min
+    ];
+}
+
 var asteroids = [];
-for (var i = 0; i < 10; i++) {
-    var ast = new Asteroid();
-    ast.x = Math.random() * 40 - 40;
-    ast.y = Math.random() * 40 - 40;
-    ast.z = Math.random() * 40 - 40;
+var num_asteroids = 200;
+for (var i = 0; i < num_asteroids; i++) {
+    var scale = Math.random() * 8 + 1;
+    var ast = new Asteroid(scale);
+    [ast.x, ast.y, ast.z] = random_loc_in_level();
     asteroids.push(ast);
 }
 
 var mines = [];
 var obj_mine;
-var num_mines = 12;
+var num_mines = 100;
 var theta;
 for (var i = 0; i < num_mines; i++) {
     obj_mine = new CosmoMine();
-    theta = i / num_mines * 2 * Math.PI;
-    obj_mine.x = 40;
-    obj_mine.z = Math.cos(theta) * 20;
-    obj_mine.y = Math.sin(theta) * 20;
+    [obj_mine.x, obj_mine.y, obj_mine.z] = random_loc_in_level();
     mines.push(obj_mine);
 }
 
