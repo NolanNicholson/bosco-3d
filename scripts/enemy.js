@@ -254,6 +254,7 @@ class RandomEnemySpawner {
         new_enemy.z = new_location_matrix[14];
 
         objects.push(new_enemy);
+        this.new_enemy = new_enemy;
 
         if (!this.num_enemies) {
             sounds.alert_alert.play();
@@ -279,8 +280,28 @@ class RandomEnemySpawner {
         }
     }
 
+    get_new_enemy_pan() {
+        if (!this.new_enemy) return 0;
+
+        var relative_enemy_position = [
+            this.new_enemy.x - player.ship_obj.x,
+            this.new_enemy.y - player.ship_obj.y,
+            this.new_enemy.z - player.ship_obj.z
+        ];
+
+        // rotate the relative enemy position to the player's field of view
+        var mat = m4.translate(m4.inverse(player.rotation_matrix),
+            ...relative_enemy_position);
+
+        var x = mat[12]; var z = mat[14];
+        return (x / Math.sqrt(x*x + z*z));
+
+    }
+
     update(dt) {
-        //don't do anything unless the player is driving
+        sounds.enemy_drive_loop.pan(this.get_new_enemy_pan());
+
+        //don't spawn, or update spawn timer, unless the player is driving
         //and we have less than the maximum number of enemies
         if (player.state != 'driving' ||
             this.num_enemies >= this.max_num_enemies)

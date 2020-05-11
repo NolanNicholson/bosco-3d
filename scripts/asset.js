@@ -202,6 +202,9 @@ class Sound {
     }
 
     play(loop = false) {
+        if (this.pan_node) {
+            delete this.pan_node;
+        }
         if (!this.loaded) {
             console.error('Error: Attempting to play unloaded sound');
         } else {
@@ -210,12 +213,23 @@ class Sound {
                 this.stop();
             }
             this.source = audio_context.createBufferSource();
-            if (loop) {
-                this.source.loop = true;
-            }
+            this.source.loop = loop;
             this.source.buffer = this.audio_buffer;
             this.source.connect(audio_context.destination);
             this.source.start(0);
+        }
+    }
+
+    pan(pan_value) {
+        if (this.source) {
+            if (!this.pan_node) {
+                this.source.disconnect();
+                this.pan_node = audio_context.createStereoPanner();
+                this.source.connect(this.pan_node);
+                this.pan_node.connect(audio_context.destination);
+            }
+
+            this.pan_node.pan.value = pan_value;
         }
     }
 
