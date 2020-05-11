@@ -42,8 +42,7 @@ function handle_keydown(e) {
             pause_unpause();
             break;
         case 73: // I key
-            sounds.battle_stations.play();
-            var form = new Formation(-40, 0, 0);
+            spawner.spawn_formation();
             break;
         default: {
             if (!paused) {

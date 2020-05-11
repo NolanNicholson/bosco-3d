@@ -56,6 +56,7 @@ class Formation {
             this.followers.push(follower);
         }
 
+        // add this formation's ships to the main list of objects
         objects.push(this.leader, ...this.followers);
     }
 }
