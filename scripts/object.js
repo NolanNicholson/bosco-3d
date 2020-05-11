@@ -220,7 +220,6 @@ class ObjTexture extends ObjBase {
         if (render_mat[14] < 0)
             return;
 
-        objs_rendered++;
         gl.bindTexture(gl.TEXTURE_2D, this.texture_asset.texture);
         this.model_asset.render(this.model_matrix);
     }

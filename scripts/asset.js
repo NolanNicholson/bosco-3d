@@ -288,6 +288,12 @@ var models = {
     cube:           new Model_SolidColor("models/cube.obj"),
 }
 
+// Manual adjustments to some models
+models.player.base_transform = m4.rotate_z(
+    models.player.base_transform, -0.1);
+models.base_core_side.base_transform = m4.translate(
+    models.base_core_side.base_transform, 0, 0, 4);
+
 // Load wireframe model assets
 var wireframes = {
     sphere: new Model_Wireframe('models/icosphere.obj'),
