@@ -58,7 +58,7 @@ class RandomEnemySpawner {
     spawn_formation() {
         sounds.battle_stations.play();
         this.formation = new Formation(-40, 0, 0);
-        formation_active = true;
+        this.formation_active = true;
     }
 
     get_new_enemy_pan() {

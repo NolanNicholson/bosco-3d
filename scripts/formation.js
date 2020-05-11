@@ -14,6 +14,13 @@ class FormationLeader extends Enemy {
         }
         this.is_in_formation = true;
     }
+
+    explode() {
+        super.explode();
+
+        // phone home that the formation has expired
+        spawner.formation_active = false;
+    }
 }
 
 class FormationFollower extends Enemy {
