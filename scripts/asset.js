@@ -338,5 +338,9 @@ var images = {
     con_green:          new ImageAsset('hud/condition-green.png'),
     con_yellow:         new ImageAsset('hud/condition-yellow.png'),
     con_red:            new ImageAsset('hud/condition-red.png'),
+    hud_formation:      new ImageAsset('hud/formation-attack.png'),
+    formation_cross:    new ImageAsset('hud/formation-cross.png'),
+    formation_i:        new ImageAsset('hud/formation-i.png'),
+    formation_v:        new ImageAsset('hud/formation-v.png'),
     ship:               new ImageAsset('hud/ship.png'),
 };

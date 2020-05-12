@@ -3,14 +3,17 @@ const formation_styles = [
     { // 'cross'
         x: [ 0,  0, -1,  1],
         z: [-1,  1,  0,  0],
+        hud_asset: images.formation_cross,
     },
     { // 'v'
         x: [-2, -1,  1,  2],
         z: [ 2,  1,  1,  2],
+        hud_asset: images.formation_v,
     },
     { // straight line
         x: [ 1,  2,  3,  4],
         z: [ 0,  0,  0,  0],
+        hud_asset: images.formation_i,
     }
 ];
 
@@ -82,6 +85,7 @@ class Formation {
         var formation_style_index = Math.floor(
             Math.random() * formation_styles.length);
         var formation_style = formation_styles[formation_style_index];
+        this.hud_asset = formation_style.hud_asset;
 
         this.leader = new FormationLeader(enemy_type);
         [this.leader.x, this.leader.y, this.leader.z] = [x, y, z];

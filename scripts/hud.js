@@ -216,11 +216,24 @@ function draw_number_r(ctx, num, x, y) {
 }
 
 function draw_condition(x, y) {
-    ctx_hud.drawImage(images.condition.img, x, y);
-    if (spawner.num_enemies)
-        ctx_hud.drawImage(images.con_yellow.img, x, y + 12);
-    else
-        ctx_hud.drawImage(images.con_green.img, x, y + 12);
+    ctx_hud.clearRect(x, y, 64, 32);
+    if (spawner.formation_active) {
+        var blink = Date.now() / 250 % 1 > 0.4;
+        if (blink) {
+            ctx_hud.drawImage(images.hud_formation.img, x, y);
+        }
+        if (spawner.formation.hud_asset == images.formation_v) {
+            ctx_hud.drawImage(spawner.formation.hud_asset.img, x, y + 16);
+        } else {
+            ctx_hud.drawImage(spawner.formation.hud_asset.img, x, y + 8);
+        }
+    } else {
+        ctx_hud.drawImage(images.condition.img, x, y);
+        if (spawner.num_enemies)
+            ctx_hud.drawImage(images.con_yellow.img, x, y + 12);
+        else
+            ctx_hud.drawImage(images.con_green.img, x, y + 12);
+    }
 }
 
 function draw_lives(x, y, left_justified) {
