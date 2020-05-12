@@ -71,6 +71,7 @@ const hud_colors = {
     white:          [1, 1, 1],
     black:          [0, 0, 0],
     green:          [0.1, 0.9, 0],
+    red:            [1, 0, 0],
     purple:         [0.7, 0, 1, 1],
     dark_purple:    [0.2, 0.1, 0.3, 1],
 }
@@ -127,6 +128,14 @@ class HUDPoints {
                 this.num_vertices++;
             }
         });
+
+        // add formation (if there is one)
+        if (spawner.formation_active) {
+            this.positions.push(
+                ...this.normalized_loc(spawner.formation.leader));
+            this.colors.push(...hud_colors.red);
+            this.num_vertices++;
+        }
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this.position_buffer);
         gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(this.positions));

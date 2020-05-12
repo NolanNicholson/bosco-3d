@@ -316,6 +316,7 @@ var sounds = {
     mine_hit:           new Sound('audio/boom.wav'),
     asteroid_hit:       new Sound('audio/asteroid-hit.wav'),
     alert_alert:        new Sound('audio/alert.wav'),
+    formation_loop:     new Sound('audio/formation-loop.wav'),
 };
 
 var images = {

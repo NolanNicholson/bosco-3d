@@ -19,7 +19,7 @@ class FormationLeader extends Enemy {
         super.explode();
 
         // phone home that the formation has expired
-        spawner.formation_active = false;
+        spawner.end_formation();
     }
 }
 

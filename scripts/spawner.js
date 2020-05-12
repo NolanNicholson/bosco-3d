@@ -33,17 +33,21 @@ class RandomEnemySpawner {
 
         if (!this.num_enemies) {
             sounds.alert_alert.play();
-            sounds.player_drive_start.stop();
-            sounds.player_drive_loop.stop();
-            if (sounds.player_drive_start.source &&
-                sounds.player_drive_start.source.onended) {
-                sounds.player_drive_start.source.onended = null;
-            }
-
+            this.quiet_player_sound();
             sounds.enemy_drive_loop.play(true);
         }
 
         this.num_enemies++;
+    }
+
+    quiet_player_sound() {
+        sounds.player_drive_start.stop();
+        sounds.player_drive_loop.stop();
+        if (sounds.player_drive_start.source &&
+            sounds.player_drive_start.source.onended) {
+            sounds.player_drive_start.source.onended = null;
+        }
+
     }
 
     lose_enemy() {
@@ -57,17 +61,33 @@ class RandomEnemySpawner {
 
     spawn_formation() {
         sounds.battle_stations.play();
-        this.formation = new Formation(-40, 0, 0);
+        sounds.formation_loop.play(true);
+        this.quiet_player_sound();
+        this.formation = new Formation(200, 200, 200);
         this.formation_active = true;
     }
 
-    get_new_enemy_pan() {
-        if (!this.new_enemy) return 0;
+    end_formation() {
+        this.formation_active = false;
+        sounds.formation_loop.stop();
+        if (player.state == 'driving') {
+            sounds.player_drive_loop.play(true);
+        }
+    }
+
+    get_active_pan() {
+        var panner;
+        if (this.formation_active)
+            panner = this.formation.leader;
+        else {
+            if (!this.new_enemy) return 0;
+            else panner = this.new_enemy;
+        }
 
         var relative_enemy_position = [
-            this.new_enemy.x - player.ship_obj.x,
-            this.new_enemy.y - player.ship_obj.y,
-            this.new_enemy.z - player.ship_obj.z
+            panner.x - player.ship_obj.x,
+            panner.y - player.ship_obj.y,
+            panner.z - player.ship_obj.z
         ];
 
         // rotate the relative enemy position to the player's field of view
@@ -80,7 +100,12 @@ class RandomEnemySpawner {
     }
 
     update(dt) {
-        sounds.enemy_drive_loop.pan(this.get_new_enemy_pan());
+        var pan = this.get_active_pan();
+        if (this.formation_active) {
+            sounds.formation_loop.pan(pan);
+        } else {
+            sounds.enemy_drive_loop.pan(pan);
+        }
 
         //don't spawn, or update spawn timer, unless the player is driving
         //and we have less than the maximum number of enemies
