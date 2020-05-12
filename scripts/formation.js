@@ -3,6 +3,14 @@ const formation_styles = [
     { // 'cross'
         x: [ 0,  0, -1,  1],
         z: [-1,  1,  0,  0],
+    },
+    { // 'v'
+        x: [-2, -1,  1,  2],
+        z: [ 2,  1,  1,  2],
+    },
+    { // straight line
+        x: [ 1,  2,  3,  4],
+        z: [ 0,  0,  0,  0],
     }
 ];
 
@@ -11,8 +19,11 @@ class FormationLeader extends Enemy {
         super(enemy_type);
         switch(enemy_type) {
             case 'p': this.texture_asset = textures.enemy_p_alt; break;
+            case 'e': this.texture_asset = textures.enemy_e_alt; break;
+            case 'i': this.texture_asset = textures.enemy_i_alt; break;
         }
         this.is_in_formation = true;
+        this.drive_speed = 60;
     }
 
     explode() {
@@ -20,6 +31,23 @@ class FormationLeader extends Enemy {
 
         // phone home that the formation has expired
         spawner.end_formation();
+    }
+
+    update(dt) {
+        super.update(dt);
+        var rel_player = [
+            this.x - player.ship_obj.x,
+            this.y - player.ship_obj.y,
+            this.z - player.ship_obj.z,
+        ]
+        var sq_dist = (
+              rel_player[0] * rel_player[0]
+            + rel_player[1] * rel_player[1]
+            + rel_player[2] * rel_player[2]
+        );
+        if (sq_dist < 800) {
+            this.drive_speed = 20;
+        }
     }
 }
 
@@ -47,7 +75,10 @@ class FormationFollower extends Enemy {
 
 class Formation {
     constructor(x, y, z) {
-        var enemy_type = 'p';
+        // random enemy type
+        var enemy_type = ['e', 'p', 'i'][
+            Math.floor(Math.random() * 3)];
+        // random formation style
         var formation_style_index = Math.floor(
             Math.random() * formation_styles.length);
         var formation_style = formation_styles[formation_style_index];
