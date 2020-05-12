@@ -144,26 +144,53 @@ class Enemy extends Explodable {
         super.explode();
     }
 
-    follow_player_with_wobble(dt) {
-        var rel_to_player = v3.minus([this.x, this.y, this.z],
+    get_rel_to_player() {
+        var rel_to_player = v3.minus(
+            [this.x, this.y, this.z],
             [player.ship_obj.x, player.ship_obj.y, player.ship_obj.z]);
-        this.rotation_matrix = m4.lookAt(
-            [0, 0, 0],
-            rel_to_player,
-            [0, 1, 0]
-        );
-        this.rotation_matrix = m4.rotate_y(this.rotation_matrix,
-            Math.PI);
 
-        this.follow_angle = (this.follow_angle + 2 * dt) % (2 * Math.PI);
+        // adjust the relative coordinates to loop over the level bounds
+        if (Math.abs(rel_to_player[0]) > level_size.x / 2)
+            rel_to_player[0] -= Math.sign(rel_to_player[0]) * level_size.x;
+        if (Math.abs(rel_to_player[1]) > level_size.y / 2)
+            rel_to_player[1] -= Math.sign(rel_to_player[1]) * level_size.y;
+        if (Math.abs(rel_to_player[2]) > level_size.z / 2)
+            rel_to_player[2] -= Math.sign(rel_to_player[2]) * level_size.z;
 
-        // only wobble if close to the player
+        return rel_to_player;
+    }
+
+    snap_into_level() {
+        while (this.x > level_bounds.x.max) this.x -= level_size.x;
+        while (this.y > level_bounds.y.max) this.y -= level_size.y;
+        while (this.z > level_bounds.z.max) this.z -= level_size.z;
+        while (this.x < level_bounds.x.min) this.x += level_size.x;
+        while (this.y < level_bounds.y.min) this.y += level_size.y;
+        while (this.z < level_bounds.z.min) this.z += level_size.z;
+    }
+
+    follow_player_with_wobble(dt) {
+        var rel_to_player = this.get_rel_to_player();
+
         var dist_sq_player = (
               rel_to_player[0] * rel_to_player[0]
             + rel_to_player[1] * rel_to_player[1]
             + rel_to_player[2] * rel_to_player[2]
         );
+        // only wobble if close to the player
         var wobble = dist_sq_player < 100 ? this.follow_wobble : 0;
+
+        var up = m4.translate(player.rotation_matrix, 0, 1, 0).slice(12, 15);
+
+        this.rotation_matrix = m4.lookAt(
+            [0, 0, 0],
+            rel_to_player,
+            up,
+        );
+        this.rotation_matrix = m4.rotate_y(this.rotation_matrix,
+            Math.PI);
+
+        this.follow_angle = (this.follow_angle + 2 * dt) % (2 * Math.PI);
 
         var movement_matrix = this.rotation_matrix;
         movement_matrix = m4.translate(this.rotation_matrix,
@@ -173,6 +200,11 @@ class Enemy extends Explodable {
         this.x += movement_matrix[12];
         this.y += movement_matrix[13];
         this.z += movement_matrix[14];
+        this.snap_into_level();
+
+        var bank_angle = Math.sin(this.follow_angle) / 4;
+        this.rotation_matrix = m4.rotate_z(this.rotation_matrix,
+            bank_angle);
     }
 
     explodable_update(dt) {

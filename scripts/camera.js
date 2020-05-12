@@ -1,4 +1,4 @@
-const CAMERA_VANTAGE = [0, 2, 12];
+const CAMERA_VANTAGE = [0, 3, 18];
 
 class Camera {
     constructor() {

@@ -63,7 +63,7 @@ class RandomEnemySpawner {
         sounds.battle_stations.play();
         sounds.formation_loop.play(true);
         this.quiet_player_sound();
-        this.formation = new Formation(200, 200, 200);
+        this.formation = new Formation(-200, -200, -100);
         this.formation_active = true;
     }
 

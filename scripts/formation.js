@@ -38,11 +38,7 @@ class FormationLeader extends Enemy {
 
     update(dt) {
         super.update(dt);
-        var rel_player = [
-            this.x - player.ship_obj.x,
-            this.y - player.ship_obj.y,
-            this.z - player.ship_obj.z,
-        ]
+        var rel_player = this.get_rel_to_player();
         var sq_dist = (
               rel_player[0] * rel_player[0]
             + rel_player[1] * rel_player[1]
