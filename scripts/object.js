@@ -140,20 +140,36 @@ class ObjBase {
         var render_z = this.z;
 
         var pl = player.ship_obj;
+        if ((pl.x - PLAYER_VIEW_DISTANCE < level_bounds.x.min)
+            && (this.x > pl.x + PLAYER_VIEW_DISTANCE)
+        ) {
+            render_x -= level_size.x;
+        }
+        if ((pl.y - PLAYER_VIEW_DISTANCE < level_bounds.y.min)
+            && (this.y > pl.y + PLAYER_VIEW_DISTANCE)
+        ) {
+            render_y -= level_size.y;
+        }
+        if ((pl.z - PLAYER_VIEW_DISTANCE < level_bounds.z.min)
+            && (this.z > pl.z + PLAYER_VIEW_DISTANCE)
+        ) {
+            render_z -= level_size.z;
+        }
+
         if ((pl.x + PLAYER_VIEW_DISTANCE > level_bounds.x.max)
             && (this.x < pl.x - PLAYER_VIEW_DISTANCE)
         ) {
-            render_x += (level_bounds.x.max - level_bounds.x.min);
+            render_x += level_size.x;
         }
         if ((pl.y + PLAYER_VIEW_DISTANCE > level_bounds.y.max)
             && (this.y < pl.y - PLAYER_VIEW_DISTANCE)
         ) {
-            render_y += (level_bounds.y.max - level_bounds.y.min);
+            render_y += level_size.y;
         }
         if ((pl.z + PLAYER_VIEW_DISTANCE > level_bounds.z.max)
             && (this.z < pl.z - PLAYER_VIEW_DISTANCE)
         ) {
-            render_z += (level_bounds.z.max - level_bounds.z.min);
+            render_z += level_size.z;
         }
 
         this.model_matrix = m4.translate(this.model_matrix,
