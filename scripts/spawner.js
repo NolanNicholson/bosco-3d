@@ -94,10 +94,24 @@ class RandomEnemySpawner {
     }
 
     spawn_formation() {
+        var unexploded_bases = [];
+        bases.forEach(base => {
+            if (!base.explosions) {
+                unexploded_bases.push(base);
+            }
+        })
+        // don't spawn a formation if there aren't any bases
+        if (!unexploded_bases.length) {
+            return;
+        }
+
         sounds.battle_stations.play();
         sounds.formation_loop.play(true);
         this.quiet_player_sound();
-        var f_base = bases[Math.floor(Math.random() * bases.length)];
+
+        var f_base = unexploded_bases[
+            Math.floor(Math.random() * unexploded_bases.length)];
+
         this.formation = new Formation(f_base.x, f_base.y, f_base.z);
         this.formation_active = true;
     }
