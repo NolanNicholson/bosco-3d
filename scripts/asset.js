@@ -319,6 +319,8 @@ var sounds = {
     asteroid_hit:       new Sound('audio/asteroid-hit.wav'),
     alert_alert:        new Sound('audio/alert.wav'),
     formation_loop:     new Sound('audio/formation-loop.wav'),
+    con_red_voice:      new Sound('audio/condition-red.wav'),
+    con_red_loop:       new Sound('audio/condition-red-loop.wav'),
 };
 
 var images = {

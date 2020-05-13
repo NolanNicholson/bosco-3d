@@ -5,6 +5,13 @@ class RandomEnemySpawner {
         this.num_enemies = 0;
         this.max_num_enemies = 4;
         this.formation_active = false;
+        this.condition_red = false;
+    }
+
+    start_condition_red() {
+        this.condition_red = true;
+        this.quiet_player_sound();
+        sounds.con_red_loop.play(true);
     }
     
     spawn_enemy() {
@@ -31,7 +38,7 @@ class RandomEnemySpawner {
         objects.push(new_enemy);
         this.new_enemy = new_enemy;
 
-        if (!this.num_enemies) {
+        if (!this.num_enemies && !this.condition_red) {
             sounds.alert_alert.play();
             this.quiet_player_sound();
             sounds.enemy_drive_loop.play(true);

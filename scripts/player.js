@@ -271,9 +271,10 @@ class Player {
 
     explode() {
         sounds.enemy_drive_loop.stop();
+        sounds.con_red_loop.stop();
         sounds.player_drive_start.stop();
         sounds.player_drive_loop.stop();
-        sounds.player_miss.play(); // TODO: this isn't the right explosion sound
+        sounds.player_miss.play();
         this.bullets.forEach(b => {
             b.deactivate();
         });

@@ -41,8 +41,11 @@ function handle_keydown(e) {
         case 80: // P key
             pause_unpause();
             break;
-        case 73: // I key
+        case 73: // I key TODO: debug
             spawner.spawn_formation();
+            break;
+        case 85: // U key TODO: debug
+            spawner.start_condition_red();
             break;
         default: {
             if (!paused) {
