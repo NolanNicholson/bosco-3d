@@ -1,8 +1,8 @@
 class RandomEnemySpawner {
     constructor() {
         this.timer = 0;
-        this.spawn_interval = 4;
         this.num_enemies = 0;
+        this.spawn_interval = 4;
         this.max_num_enemies = 4;
         this.formation_active = false;
         this.condition_red = false;
@@ -11,24 +11,26 @@ class RandomEnemySpawner {
     start_condition_red() {
         this.condition_red = true;
         this.quiet_player_sound();
-        this.spawn_interval = 2;
-        this.max_num_enemies = 6;
+        this.spawn_interval = 0.5;
+        this.max_num_enemies = 9;
         sounds.con_red_loop.play(true);
 
         sounds.con_red_voice.play(true);
     }
-    
-    spawn_enemy() {
-        //randomly spawn either a P or I-type
-        var new_type = (Math.random() > 0.5 ? 'p' : 'i');
-        var new_enemy = new Enemy(new_type);
 
+    end_condition_red() {
+        sounds.con_red_loop.stop();
+        sounds.con_red_voice.stop();
+        this.condition_red = false;
+        this.spawn_interval = 4;
+        this.max_num_enemies = 4;
+    }
+
+    position_enemy_around_player(new_enemy, spawn_z, spawn_radius) {
         var new_location_matrix = m4.translation(
             player.ship_obj.x, player.ship_obj.y, player.ship_obj.z);
+
         var spawn_angle = Math.random() * 2 * Math.PI;
-        var spawn_radius = 20;
-        //var spawn_z = (Math.random() > 0.5 ? -10 : 10);
-        var spawn_z = -10;
         new_location_matrix = m4.multiply(new_location_matrix,
             player.rotation_matrix);
         new_location_matrix = m4.translate(new_location_matrix,
@@ -38,6 +40,26 @@ class RandomEnemySpawner {
         new_enemy.x = new_location_matrix[12];
         new_enemy.y = new_location_matrix[13];
         new_enemy.z = new_location_matrix[14];
+    }
+    
+    spawn_enemy() {
+        //randomly spawn either a P or I-type
+        var new_type = (Math.random() > 0.5 ? 'p' : 'i');
+        var new_enemy = new Enemy(new_type);
+
+        var dodge = Math.random() > 0.5;
+        var spawn_radius; var spawn_z;
+
+        if (dodge) {
+            new_enemy.ai_mode = 'dodge-me';
+            var spawn_radius = 30;
+            var spawn_z = -90;
+        } else {
+            var spawn_radius = 20;
+            var spawn_z = -10;
+        }
+
+        this.position_enemy_around_player(new_enemy, spawn_z, spawn_radius);
 
         objects.push(new_enemy);
         this.new_enemy = new_enemy;
