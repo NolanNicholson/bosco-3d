@@ -97,7 +97,8 @@ class RandomEnemySpawner {
         sounds.battle_stations.play();
         sounds.formation_loop.play(true);
         this.quiet_player_sound();
-        this.formation = new Formation(-200, -200, -100);
+        var f_base = bases[Math.floor(Math.random() * bases.length)];
+        this.formation = new Formation(f_base.x, f_base.y, f_base.z);
         this.formation_active = true;
     }
 
