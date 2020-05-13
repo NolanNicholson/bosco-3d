@@ -30,6 +30,7 @@ class FormationLeader extends Enemy {
         this.explode_sound = sounds.formation_hit;
         this.worth *= 2;
         this.collider.group = 'base';
+        this.ai_mode = 'close-in';
     }
 
     explode() {
@@ -37,19 +38,6 @@ class FormationLeader extends Enemy {
 
         // phone home that the formation has expired
         spawner.end_formation();
-    }
-
-    update(dt) {
-        super.update(dt);
-        var rel_player = this.get_rel_to_player();
-        var sq_dist = (
-              rel_player[0] * rel_player[0]
-            + rel_player[1] * rel_player[1]
-            + rel_player[2] * rel_player[2]
-        );
-        if (sq_dist < 800) {
-            this.drive_speed = 20;
-        }
     }
 }
 

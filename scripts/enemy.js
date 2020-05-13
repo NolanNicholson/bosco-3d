@@ -142,6 +142,21 @@ class Enemy extends Explodable {
         this.snap_into_level();
     }
 
+    close_in(dt) {
+        this.follow_player_with_wobble(dt);
+
+        var rel_to_player = this.get_rel_to_player();
+        var dist_sq_player = (
+              rel_to_player[0] * rel_to_player[0]
+            + rel_to_player[1] * rel_to_player[1]
+            + rel_to_player[2] * rel_to_player[2]
+        );
+
+        if (dist_sq_player < 700) {
+            this.drive_speed = 20.1;
+        }
+    }
+
     follow_player_with_wobble(dt) {
         var rel_to_player = this.get_rel_to_player();
 
@@ -187,6 +202,9 @@ class Enemy extends Explodable {
 
     update(dt) {
         switch(this.ai_mode) {
+            case 'close-in':
+                this.close_in(dt);
+                break;
             case 'dodge-me':
                 this.hone_then_straight(dt);
                 break;
