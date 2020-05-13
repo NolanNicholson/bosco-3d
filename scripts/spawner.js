@@ -12,6 +12,8 @@ class RandomEnemySpawner {
         this.condition_red = true;
         this.quiet_player_sound();
         sounds.con_red_loop.play(true);
+
+        sounds.con_red_voice.play(true);
     }
     
     spawn_enemy() {
