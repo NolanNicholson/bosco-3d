@@ -27,6 +27,7 @@ class FormationLeader extends Enemy {
         }
         this.is_in_formation = true;
         this.drive_speed = 60;
+        this.explode_sound = sounds.formation_hit;
     }
 
     explode() {
@@ -57,6 +58,7 @@ class FormationFollower extends Enemy {
         this.pos_x = pos_x;
         this.pos_z = pos_z;
         this.is_in_formation = true;
+        this.explode_sound = sounds.formation_hit;
     }
 
     sync_leader() {
