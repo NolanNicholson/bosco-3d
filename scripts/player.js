@@ -272,6 +272,7 @@ class Player {
     explode() {
         sounds.enemy_drive_loop.stop();
         sounds.con_red_loop.stop();
+        sounds.con_red_voice.stop();
         sounds.player_drive_start.stop();
         sounds.player_drive_loop.stop();
         sounds.player_miss.play();

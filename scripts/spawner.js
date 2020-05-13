@@ -1,7 +1,7 @@
 class RandomEnemySpawner {
     constructor() {
         this.timer = 0;
-        this.interval = 4;
+        this.spawn_interval = 4;
         this.num_enemies = 0;
         this.max_num_enemies = 4;
         this.formation_active = false;
@@ -11,6 +11,8 @@ class RandomEnemySpawner {
     start_condition_red() {
         this.condition_red = true;
         this.quiet_player_sound();
+        this.spawn_interval = 2;
+        this.max_num_enemies = 6;
         sounds.con_red_loop.play(true);
 
         sounds.con_red_voice.play(true);
@@ -62,7 +64,8 @@ class RandomEnemySpawner {
     lose_enemy() {
         this.num_enemies--;
         console.log("lost enemy (", this.num_enemies, ")");
-        if (!this.num_enemies && player.state == 'driving') {
+        if (!this.num_enemies 
+            && !this.condition_red && player.state == 'driving') {
             sounds.enemy_drive_loop.stop();
             sounds.player_drive_loop.play(true);
         }
@@ -125,7 +128,7 @@ class RandomEnemySpawner {
         }
 
         this.timer += dt;
-        if (this.timer >= this.interval) {
+        if (this.timer >= this.spawn_interval) {
             this.spawn_enemy();
             console.log("spawned enemy (", this.num_enemies, ")");
             this.timer = 0;
