@@ -66,8 +66,39 @@ class FormationFollower extends Enemy {
         this.z = this.leader.z + (this.pos_z * 3);
     }
 
+    flee(dt) {
+        this.rotation_matrix = m4.rotate_x(this.rotation_matrix,
+            0.5 * this.pos_z * dt);
+        this.rotation_matrix = m4.rotate_y(this.rotation_matrix,
+            -0.5 * this.pos_x * dt);
+
+        var movement_matrix = m4.identity();
+        movement_matrix = m4.translate(movement_matrix,
+            this.x, this.y, this.z);
+        movement_matrix = m4.multiply(movement_matrix,
+            this.rotation_matrix);
+        movement_matrix = m4.translate(movement_matrix,
+            0, 0, -this.drive_speed * dt);
+        [this.x, this.y, this.z] = movement_matrix.slice(12, 15);
+
+        var rel_player = this.get_rel_to_player();
+        var sq_dist = (
+              rel_player[0] * rel_player[0]
+            + rel_player[1] * rel_player[1]
+            + rel_player[2] * rel_player[2]
+        );
+        if (sq_dist > 800) {
+            console.log("despawned formation member");
+            delete_object(this);
+        }
+    }
+
     update(dt) {
-        this.sync_leader();
+        if (this.leader && !this.leader.exploded) {
+            this.sync_leader();
+        } else {
+            this.flee(dt);
+        }
         this.explodable_update(dt);
     }
 }
