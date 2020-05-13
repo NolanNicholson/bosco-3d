@@ -142,19 +142,27 @@ class Enemy extends Explodable {
         this.snap_into_level();
     }
 
-    close_in(dt) {
-        this.follow_player_with_wobble(dt);
+    spy_maneuver(dt) {
+        var movement_matrix = this.rotation_matrix;
+        movement_matrix = m4.translate(this.rotation_matrix,
+            0, 0, -this.drive_speed * dt);
 
-        var rel_to_player = this.get_rel_to_player();
-        var dist_sq_player = (
-              rel_to_player[0] * rel_to_player[0]
-            + rel_to_player[1] * rel_to_player[1]
-            + rel_to_player[2] * rel_to_player[2]
-        );
+        this.x += movement_matrix[12];
+        this.y += movement_matrix[13];
+        this.z += movement_matrix[14];
 
-        if (dist_sq_player < 700) {
-            this.drive_speed = 20.1;
+        // the spy is on a timer - if it expires, it "reports intel"
+        // (i.e., counts toward triggering Condition Red)
+        this.maneuver_age += dt;
+        if (this.maneuver_age > 10) {
+            this.drive_speed = 40;
         }
+        if (this.maneuver_age > 12) {
+            spawner.spy_intel();
+            delete_object(this);
+        }
+
+        this.snap_into_level();
     }
 
     follow_player_with_wobble(dt) {
@@ -196,6 +204,21 @@ class Enemy extends Explodable {
             bank_angle);
     }
 
+    close_in(dt) {
+        this.follow_player_with_wobble(dt);
+
+        var rel_to_player = this.get_rel_to_player();
+        var dist_sq_player = (
+              rel_to_player[0] * rel_to_player[0]
+            + rel_to_player[1] * rel_to_player[1]
+            + rel_to_player[2] * rel_to_player[2]
+        );
+
+        if (dist_sq_player < 700) {
+            this.drive_speed = 20.1;
+        }
+    }
+
     explodable_update(dt) {
         super.update(dt);
     }
@@ -207,6 +230,9 @@ class Enemy extends Explodable {
                 break;
             case 'dodge-me':
                 this.hone_then_straight(dt);
+                break;
+            case 'spy':
+                this.spy_maneuver(dt);
                 break;
             default:
                 this.follow_player_with_wobble(dt);

@@ -8,6 +8,10 @@ class RandomEnemySpawner {
         this.condition_red = false;
     }
 
+    spy_intel() {
+        this.start_condition_red();
+    }
+
     start_condition_red() {
         this.condition_red = true;
         this.quiet_player_sound();
@@ -40,6 +44,35 @@ class RandomEnemySpawner {
         new_enemy.x = new_location_matrix[12];
         new_enemy.y = new_location_matrix[13];
         new_enemy.z = new_location_matrix[14];
+
+        return spawn_angle;
+    }
+
+    spawn_spy() {
+        var spy = new Enemy('spy');
+        spy.ai_mode = 'spy';
+        sounds.spy_ship_sighted.play();
+
+        var spawn_angle = this.position_enemy_around_player(spy, -30, 35);
+
+        //TODO: shouldn't need a full mmult here
+        var rel_to_player = spy.get_rel_to_player();
+        var up = m4.translate(player.rotation_matrix, 0, 1, 0).slice(12, 15);
+        spy.rotation_matrix = m4.lookAt(
+            [0, 0, 0],
+            rel_to_player,
+            up,
+        );
+        spy.rotation_matrix = m4.rotate_x(spy.rotation_matrix,
+            Math.PI / 2);
+        spy.rotation_matrix = m4.rotate_y(spy.rotation_matrix,
+            spawn_angle + Math.PI / 2);
+        spy.maneuver_age = 0;
+        spy.drive_speed = 18;
+
+        objects.push(spy);
+        this.new_enemy = spy;
+        this.num_enemies++;
     }
     
     spawn_enemy() {
@@ -52,11 +85,11 @@ class RandomEnemySpawner {
 
         if (dodge) {
             new_enemy.ai_mode = 'dodge-me';
-            var spawn_radius = 30;
             var spawn_z = -90;
+            var spawn_radius = 30;
         } else {
-            var spawn_radius = 20;
             var spawn_z = -10;
+            var spawn_radius = 20;
         }
 
         this.position_enemy_around_player(new_enemy, spawn_z, spawn_radius);
