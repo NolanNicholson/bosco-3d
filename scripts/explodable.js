@@ -35,11 +35,6 @@ class Explodable extends ObjTexture {
         }
     }
 
-    sync_collider() {
-        this.collider.pos = [this.x, this.y, this.z];
-        this.collider.rotation_matrix = this.rotation_matrix;
-    }
-
     update(dt) {
         if (this.exploded) {
             this.explosion.update(dt);

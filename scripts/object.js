@@ -108,6 +108,11 @@ class ObjBase {
     update(dt) {
     }
 
+    sync_collider() {
+        this.collider.pos = [this.x, this.y, this.z];
+        this.collider.rotation_matrix = this.rotation_matrix;
+    }
+
     bounds_check() {
         while (this.x > level_bounds.x.max) this.x -= level_size.x;
         while (this.y > level_bounds.y.max) this.y -= level_size.y;

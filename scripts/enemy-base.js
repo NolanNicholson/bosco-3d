@@ -11,13 +11,6 @@ class Part extends ObjTexture {
         super.update(dt);
     }
 
-    sync_collider() {
-        if (this.collider) {
-            this.collider.rotation_matrix = this.rotation_matrix;
-            this.collider.pos = [this.x, this.y, this.z];
-        }
-    }
-
     sync_with_parent() {
         var p = this.parent_obj;
 
@@ -33,7 +26,7 @@ class Part extends ObjTexture {
         [this.x, this.y, this.z] = new_xyz;
 
         this.scale = p.scale;
-        this.sync_collider();
+        if (this.collider) this.sync_collider();
     }
 }
 
