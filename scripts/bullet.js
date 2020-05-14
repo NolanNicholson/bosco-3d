@@ -101,12 +101,19 @@ class BaseBullet extends ObjColor {
         super(positions, colors);
 
         this.bullet_speed = 10;
+        this.age = 0;
         this.rot_angle = 0;
+        this.lifetime = 5;
+        this.type = 'base-bullet';
 
         [this.x, this.y, this.z] = [x, y, z];
+        var player_front = m4.apply_transform(
+            [0, 0, -20], player.rotation_matrix);
+        player_front = v3.plus(player_front, [player.x, player.y, player.z]);
+        player_front = v3.minus([this.x, this.y, this.z], player_front);
         this.rotation_matrix = m4.lookAt(
             [0, 0, 0],
-            this.get_rel_to_player(),
+            player_front,
             [0, 1, 0]
         );
 
@@ -122,11 +129,22 @@ class BaseBullet extends ObjColor {
         this.move(0, 0, this.bullet_speed * dt);
         this.collider.pos = [this.x, this.y, this.z];
 
-        this.rot_angle += 0.1 * dt;
-        //this.rotation_matrix = m4.rotation_x(this.rot_angle);
+        this.rot_angle += 7 * dt;
+
+        this.age += dt;
+        if (this.age >= this.lifetime) {
+            delete_object(this);
+        }
     }
 
     collision_event(other) {
         delete_object(this);
+    }
+
+    render() {
+        var old_rot_mat = this.rotation_matrix;
+        this.rotation_matrix = m4.rotation_x(this.rot_angle);
+        super.render();
+        this.rotation_matrix = old_rot_mat;
     }
 }
