@@ -162,8 +162,11 @@ class RandomEnemySpawner {
         if (this.condition == 'yellow') {
             this.num_in_wave--;
             console.log("Left in wave:", this.num_in_wave);
-            if (this.num_in_wave) {
+            if (this.num_in_wave > 0) {
                 this.schedule_spawn();
+            } else {
+                console.log("spawn infinitely later");
+                this.schedule_spawn(Infinity);
             }
         } else if (this.condition == 'red') {
             this.schedule_spawn();
@@ -177,6 +180,11 @@ class RandomEnemySpawner {
             && this.condition != 'red' && player.state == 'driving') {
             sounds.enemy_drive_loop.stop();
             sounds.player_drive_loop.play(true);
+        }
+        if (this.condition == 'yellow'
+            && !this.num_enemies
+            && this.num_in_wave <= 0) {
+            this.set_condition('green');
         }
     }
 
@@ -225,10 +233,11 @@ class RandomEnemySpawner {
                 }
                 break;
             case 'yellow':
-                this.spawn_interval = 4;
+                this.spawn_interval = 2;
                 this.max_num_enemies = 4;
                 this.num_in_wave = 6;
-                this.schedule_spawn();
+                this.schedule_spawn(1.5);
+                this.con_yellow_start_timer = Infinity;
                 switch (old_con) {
                     case 'green': // green to yellow - "Alert! Alert!"
                         sounds.alert_alert.play();
@@ -239,7 +248,7 @@ class RandomEnemySpawner {
                 }
                 break;
             case 'green':
-                this.max_num_enemies = 0;
+                this.con_yellow_start_timer = this.timer + 4;
                 switch (old_con) {
                     case 'red':
                         this.sound_manager.end_condition_red();
@@ -249,8 +258,9 @@ class RandomEnemySpawner {
         }
     }
 
-    schedule_spawn() {
-        this.spawn_timer = this.timer + this.spawn_interval;
+    schedule_spawn(time) {
+        time = time || this.spawn_interval;
+        this.spawn_timer = this.timer + time;
     }
 
     update(dt) {
@@ -268,10 +278,10 @@ class RandomEnemySpawner {
         if (this.timer >= this.con_yellow_start_timer &&
             this.condition == 'green') {
             this.set_condition('yellow');
-            this.con_yellow_start_timer = Math.infinity;
         }
 
         if (this.condition != 'green' && this.timer >= this.spawn_timer) {
+            console.log(this.timer, this.spawn_timer);
             this.spawn_enemy();
         }
     }
