@@ -229,15 +229,19 @@ function draw_condition(x, y) {
         }
     } else {
         ctx_hud.drawImage(images.condition.img, x, y);
-        if (spawner.condition_red) {
-            if (blink) {
-                ctx_hud.drawImage(images.con_red.img, x, y + 12);
-            }
+        switch (spawner.condition) {
+            case 'red':
+                if (blink) {
+                    ctx_hud.drawImage(images.con_red.img, x, y + 12);
+                }
+                break;
+            case 'yellow':
+                ctx_hud.drawImage(images.con_yellow.img, x, y + 12);
+                break;
+            case 'green':
+                ctx_hud.drawImage(images.con_green.img, x, y + 12);
+                break;
         }
-        else if (spawner.num_enemies)
-            ctx_hud.drawImage(images.con_yellow.img, x, y + 12);
-        else
-            ctx_hud.drawImage(images.con_green.img, x, y + 12);
     }
 }
 

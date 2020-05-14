@@ -141,7 +141,7 @@ class Player extends ObjTexture {
     update_exploding(dt) {
         this.explosion.update(dt);
         if (this.explosion.age > this.explosion.max_age) {
-            spawner.end_condition_red();
+            spawner.set_condition('green');
             this.state = 'exploded';
             this.explosion_time = 0;
         }

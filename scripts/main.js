@@ -42,7 +42,7 @@ function handle_keydown(e) {
             spawner.spawn_formation();
             break;
         case 85: // U key TODO: debug
-            spawner.start_condition_red();
+            spawner.set_condition('red');
             break;
         case 89: // Y key TODO: debug
             spawner.spawn_spy();

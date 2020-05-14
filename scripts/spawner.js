@@ -1,15 +1,70 @@
+class SoundManager {
+    quiet_player_sound() {
+        sounds.player_drive_start.stop();
+        sounds.player_drive_loop.stop();
+        if (sounds.player_drive_start.source &&
+            sounds.player_drive_start.source.onended) {
+            sounds.player_drive_start.source.onended = null;
+        }
+    }
+
+    start_condition_red() {
+        if (player.state == 'driving') {
+            spawner.sound_manager.quiet_player_sound();
+        }
+        sounds.con_red_loop.play(true);
+        sounds.con_red_voice.play(true);
+    }
+
+    end_condition_red() {
+        sounds.con_red_loop.stop();
+        sounds.con_red_voice.stop();
+    }
+
+    update_pan() {
+        var panner;
+        if (spawner.formation_active)
+            panner = spawner.formation.leader;
+        else {
+            if (!spawner.new_enemy) return 0;
+            else panner = spawner.new_enemy;
+        }
+
+        var relative_enemy_position = panner.get_rel_to_player();
+
+        // rotate the relative enemy position to the player's field of view
+        var sound_xyz = m4.apply_transform(relative_enemy_position,
+            m4.inverse(player.rotation_matrix));
+
+        var x = sound_xyz[0]; var z = sound_xyz[2];
+        var pan = (x / Math.sqrt(x*x + z*z));
+
+        if (this.formation_active) {
+            sounds.formation_loop.pan(pan);
+        } else {
+            sounds.enemy_drive_loop.pan(pan);
+        }
+    }
+}
+
+
 class RandomEnemySpawner {
     constructor() {
+        this.sound_manager = new SoundManager();
         this.reset_level();
     }
 
     reset_level() {
         this.timer = 0;
         this.num_enemies = 0;
-        this.spawn_interval = 4;
         this.max_num_enemies = 4;
+        this.condition = 'green';
         this.formation_active = false;
-        this.condition_red = false;
+
+        this.con_yellow_start_timer = 4;
+
+        this.num_formations = 0; // number of ended formation attacks
+        this.fleed_spies = 0; // number of spy ships that got away
 
         if (objects) {
             var to_delete = [];
@@ -27,27 +82,10 @@ class RandomEnemySpawner {
     }
 
     spy_intel() {
-        this.start_condition_red();
-    }
-
-    start_condition_red() {
-        if (!this.condition_red && player.state == 'driving') {
-            this.condition_red = true;
-            this.quiet_player_sound();
-            this.spawn_interval = 0.5;
-            this.max_num_enemies = 9;
-
-            sounds.con_red_loop.play(true);
-            sounds.con_red_voice.play(true);
+        this.fleed_spies++;
+        if (this.fleed_spies >= 2) {
+            this.set_condition('red');
         }
-    }
-
-    end_condition_red() {
-        sounds.con_red_loop.stop();
-        sounds.con_red_voice.stop();
-        this.condition_red = false;
-        this.spawn_interval = 4;
-        this.max_num_enemies = 4;
     }
 
     position_enemy_around_player(new_enemy, spawn_z, spawn_radius) {
@@ -113,30 +151,30 @@ class RandomEnemySpawner {
         objects.push(new_enemy);
         this.new_enemy = new_enemy;
 
-        if (!this.num_enemies && !this.condition_red) {
-            sounds.alert_alert.play();
-            this.quiet_player_sound();
+        if (!this.num_enemies && this.condition != 'red') {
+            this.sound_manager.quiet_player_sound();
             sounds.enemy_drive_loop.play(true);
         }
 
         this.num_enemies++;
-    }
-
-    quiet_player_sound() {
-        sounds.player_drive_start.stop();
-        sounds.player_drive_loop.stop();
-        if (sounds.player_drive_start.source &&
-            sounds.player_drive_start.source.onended) {
-            sounds.player_drive_start.source.onended = null;
+        console.log("spawned enemy (", this.num_enemies, ")");
+        
+        if (this.condition == 'yellow') {
+            this.num_in_wave--;
+            console.log("Left in wave:", this.num_in_wave);
+            if (this.num_in_wave) {
+                this.schedule_spawn();
+            }
+        } else if (this.condition == 'red') {
+            this.schedule_spawn();
         }
-
     }
 
     lose_enemy() {
         this.num_enemies--;
         console.log("lost enemy (", this.num_enemies, ")");
         if (!this.num_enemies 
-            && !this.condition_red && player.state == 'driving') {
+            && this.condition != 'red' && player.state == 'driving') {
             sounds.enemy_drive_loop.stop();
             sounds.player_drive_loop.play(true);
         }
@@ -156,7 +194,7 @@ class RandomEnemySpawner {
 
         sounds.battle_stations.play();
         sounds.formation_loop.play(true);
-        this.quiet_player_sound();
+        this.sound_manager.quiet_player_sound();
 
         var f_base = unexploded_bases[
             Math.floor(Math.random() * unexploded_bases.length)];
@@ -173,35 +211,53 @@ class RandomEnemySpawner {
         }
     }
 
-    get_active_pan() {
-        var panner;
-        if (this.formation_active)
-            panner = this.formation.leader;
-        else {
-            if (!this.new_enemy) return 0;
-            else panner = this.new_enemy;
+    set_condition(new_con) {
+        var old_con = this.condition;
+        this.condition = new_con;
+        switch (new_con) {
+            case 'red':
+                this.spawn_interval = 0.5;
+                this.max_num_enemies = 9;
+                this.schedule_spawn();
+                switch (old_con) {
+                    case 'red': break; // red to red - do nothing
+                    default: this.sound_manager.start_condition_red();
+                }
+                break;
+            case 'yellow':
+                this.spawn_interval = 4;
+                this.max_num_enemies = 4;
+                this.num_in_wave = 6;
+                this.schedule_spawn();
+                switch (old_con) {
+                    case 'green': // green to yellow - "Alert! Alert!"
+                        sounds.alert_alert.play();
+                        break;
+                    case 'red':
+                        this.sound_manager.end_condition_red();
+                        break;
+                }
+                break;
+            case 'green':
+                this.max_num_enemies = 0;
+                switch (old_con) {
+                    case 'red':
+                        this.sound_manager.end_condition_red();
+                        break;
+                }
+                break;
         }
+    }
 
-        var relative_enemy_position = panner.get_rel_to_player();
-
-        // rotate the relative enemy position to the player's field of view
-        var sound_xyz = m4.apply_transform(relative_enemy_position,
-            m4.inverse(player.rotation_matrix));
-
-        var x = sound_xyz[0]; var z = sound_xyz[2];
-        return (x / Math.sqrt(x*x + z*z));
-
+    schedule_spawn() {
+        this.spawn_timer = this.timer + this.spawn_interval;
     }
 
     update(dt) {
-        var pan = this.get_active_pan();
-        if (this.formation_active) {
-            sounds.formation_loop.pan(pan);
-        } else {
-            sounds.enemy_drive_loop.pan(pan);
-        }
+        this.timer += dt;
+        this.sound_manager.update_pan();
 
-        //don't spawn, or update spawn timer, unless the player is driving
+        //don't spawn unless the player is driving
         //and we have less than the maximum number of enemies
         if (player.state != 'driving' ||
             this.num_enemies >= this.max_num_enemies ||
@@ -209,11 +265,14 @@ class RandomEnemySpawner {
             return;
         }
 
-        this.timer += dt;
-        if (this.timer >= this.spawn_interval) {
+        if (this.timer >= this.con_yellow_start_timer &&
+            this.condition == 'green') {
+            this.set_condition('yellow');
+            this.con_yellow_start_timer = Math.infinity;
+        }
+
+        if (this.condition != 'green' && this.timer >= this.spawn_timer) {
             this.spawn_enemy();
-            console.log("spawned enemy (", this.num_enemies, ")");
-            this.timer = 0;
         }
     }
 }
