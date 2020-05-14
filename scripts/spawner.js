@@ -60,6 +60,7 @@ class RandomEnemySpawner {
         this.max_num_enemies = 4;
         this.condition = 'green';
         this.formation_active = false;
+        this.num_yellows = 0;
 
         this.con_yellow_start_timer = this.get_yellow_start_timer();
 
@@ -169,7 +170,6 @@ class RandomEnemySpawner {
         
         if (this.condition == 'yellow') {
             this.num_in_wave--;
-            console.log("Left in wave:", this.num_in_wave);
             if (this.num_in_wave > 0) {
                 this.spawn_interval = this.get_yellow_spawn_interval();
                 this.schedule_spawn();
@@ -242,6 +242,28 @@ class RandomEnemySpawner {
         }
     }
 
+    special_yellow_start() {
+        // never do anything special on the first yellow
+        if (this.num_yellows <= 1) return;
+
+        var round_no = 1;
+        // odds are calculated based on the round number,
+        // and on the number of Condition Yellows triggered so far
+        var odds = (this.num_yellows - 3 + round_no / 2) * 0.2;
+        if (odds > 0.75) odds = 0.75;
+        if (odds < 0) odds = 0;
+
+        if (Math.random() < odds) {
+            if (Math.random() > 0.5) {
+                this.spawn_formation();
+            } else {
+                this.spawn_spy();
+            }
+            return true;
+        }
+        return false;
+    }
+
     set_condition(new_con) {
         var old_con = this.condition;
         this.condition = new_con;
@@ -257,12 +279,15 @@ class RandomEnemySpawner {
                 break;
             case 'yellow':
                 this.max_num_enemies = 4;
-                this.num_in_wave = 6;
+                this.num_in_wave = Math.floor(Math.random() * 4) + 3;
                 this.schedule_spawn(1.5);
                 this.con_yellow_start_timer = Infinity;
                 switch (old_con) {
                     case 'green': // green to yellow - "Alert! Alert!"
-                        sounds.alert_alert.play();
+                        this.num_yellows++;
+                        if (!this.special_yellow_start()) {
+                            sounds.alert_alert.play();
+                        }
                         break;
                     case 'red':
                         this.sound_manager.end_condition_red();
@@ -303,7 +328,6 @@ class RandomEnemySpawner {
         }
 
         if (this.condition != 'green' && this.timer >= this.spawn_timer) {
-            console.log(this.timer, this.spawn_timer);
             this.spawn_enemy();
         }
     }
