@@ -65,19 +65,6 @@ class Enemy extends Explodable {
         super.explode();
     }
 
-    move(dx_local, dy_local, dz_local) {
-        //Moves the object. dx_local, dy_local, and dz_local are all
-        //within the object's own frame of reference, so the rotation
-        //matrix is applied.
-        var movement = [dx_local, dy_local, dz_local];
-        movement = m4.apply_transform(movement, this.rotation_matrix);
-        this.x += movement[0];
-        this.y += movement[1];
-        this.z += movement[2];
-
-        this.snap_into_level();
-    }
-
     get_rel_to(x, y, z) {
         var rel_to_player = v3.minus([this.x, this.y, this.z], [x, y, z]);
 
@@ -94,15 +81,6 @@ class Enemy extends Explodable {
 
     get_rel_to_player() {
         return this.get_rel_to(player.x, player.y, player.z);
-    }
-
-    snap_into_level() {
-        while (this.x > level_bounds.x.max) this.x -= level_size.x;
-        while (this.y > level_bounds.y.max) this.y -= level_size.y;
-        while (this.z > level_bounds.z.max) this.z -= level_size.z;
-        while (this.x < level_bounds.x.min) this.x += level_size.x;
-        while (this.y < level_bounds.y.min) this.y += level_size.y;
-        while (this.z < level_bounds.z.min) this.z += level_size.z;
     }
 
     hone_then_straight(dt) {
@@ -164,8 +142,6 @@ class Enemy extends Explodable {
             spawner.spy_intel();
             delete_object(this);
         }
-
-        this.snap_into_level();
     }
 
     follow_player_with_wobble(dt) {

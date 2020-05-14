@@ -154,17 +154,6 @@ class Player extends ObjTexture {
         }
     }
 
-    move(dx_local, dy_local, dz_local) {
-        //Moves the object. dx_local, dy_local, and dz_local are all
-        //within the object's own frame of reference, so the rotation
-        //matrix is applied.
-        var movement = [dx_local, dy_local, dz_local];
-        movement = m4.apply_transform(movement, this.rotation_matrix);
-        this.x += movement[0];
-        this.y += movement[1];
-        this.z += movement[2];
-    }
-
     update_driving(dt) {
         this.yaw_target = (this.yawing_left - this.yawing_right) * Math.PI / 6;
         this.pitch_target = (this.pitching_up - this.pitching_down)

@@ -113,22 +113,25 @@ class ObjBase {
     }
 
     bounds_check() {
-        var bounds = level_bounds;
+        while (this.x > level_bounds.x.max) this.x -= level_size.x;
+        while (this.y > level_bounds.y.max) this.y -= level_size.y;
+        while (this.z > level_bounds.z.max) this.z -= level_size.z;
+        while (this.x < level_bounds.x.min) this.x += level_size.x;
+        while (this.y < level_bounds.y.min) this.y += level_size.y;
+        while (this.z < level_bounds.z.min) this.z += level_size.z;
+    }
 
-        if (this.x > bounds.x.max)
-            this.x -= (bounds.x.max - bounds.x.min);
-        if (this.x < bounds.x.min)
-            this.x += (bounds.x.max - bounds.x.min);
+    move(dx_local, dy_local, dz_local) {
+        //Moves the object. dx_local, dy_local, and dz_local are all
+        //within the object's own frame of reference, so the rotation
+        //matrix is applied.
+        var movement = [dx_local, dy_local, dz_local];
+        movement = m4.apply_transform(movement, this.rotation_matrix);
+        this.x += movement[0];
+        this.y += movement[1];
+        this.z += movement[2];
 
-        if (this.y > bounds.y.max)
-            this.y -= (bounds.y.max - bounds.y.min);
-        if (this.y < bounds.y.min)
-            this.y += (bounds.y.max - bounds.y.min);
-
-        if (this.z > bounds.z.max)
-            this.z -= (bounds.z.max - bounds.z.min);
-        if (this.z < bounds.z.min)
-            this.z += (bounds.z.max - bounds.z.min);
+        this.bounds_check();
     }
 
     prep_model_matrix() {
