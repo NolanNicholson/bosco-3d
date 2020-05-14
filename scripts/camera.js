@@ -110,24 +110,17 @@ class Camera {
     }
 
     get_view_matrix_player(player) {
+        var player_pos =
+            [player.ship_obj.x, player.ship_obj.y, player.ship_obj.z];
+
         // The camera follows behind (and slightly above) the player
-        var camera_pos= m4.identity();
-        camera_pos= m4.translate(camera_pos,
-            player.ship_obj.x, player.ship_obj.y, player.ship_obj.z);
-        camera_pos= m4.multiply(camera_pos,
-            player.rotation_matrix);
-        camera_pos= m4.translate(camera_pos,
-            ...CAMERA_VANTAGE);
+        var camera_pos = CAMERA_VANTAGE;
+        camera_pos = m4.apply_transform(camera_pos, player.rotation_matrix);
+        camera_pos = v3.plus(camera_pos, player_pos);
 
-        var up = m4.identity();
-        up = m4.multiply(up, player.rotation_matrix);
-        up = m4.translate(up, 0, 1, 0);
+        var up = m4.apply_transform([0, 1, 0], player.rotation_matrix);
 
-        var camera_matrix = m4.lookAt(
-            [camera_pos[12], camera_pos[13], camera_pos[14]],
-            [player.ship_obj.x, player.ship_obj.y, player.ship_obj.z],
-            [up[12], up[13], up[14]]
-        );
+        var camera_matrix = m4.lookAt(camera_pos, player_pos, up);
         var view_matrix = m4.inverse(camera_matrix);
         return view_matrix;
     }

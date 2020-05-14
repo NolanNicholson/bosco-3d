@@ -69,7 +69,7 @@ class Enemy extends Explodable {
         //Moves the object. dx_local, dy_local, and dz_local are all
         //within the object's own frame of reference, so the rotation
         //matrix is applied.
-        var movement = [0, 0, -this.drive_speed * dt];
+        var movement = [dx_local, dy_local, dz_local];
         movement = m4.apply_transform(movement, this.rotation_matrix);
         this.x += movement[0];
         this.y += movement[1];

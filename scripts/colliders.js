@@ -83,13 +83,10 @@ class ColliderPrism extends Collider {
     get_relative_point(other_pos) {
         //gets a point's coordinates in the prism's own
         //frame of reference, relative to its center
-        var point_relative = m4.identity();
-        point_relative = m4.multiply(point_relative,
-            this.inv_rot);
-        point_relative = m4.translate(point_relative,
-            ...v3.minus(other_pos, this.pos));
 
-        return [point_relative[12], point_relative[13], point_relative[14]];
+        var point_relative = v3.minus(other_pos, this.pos);
+        point_relative = m4.apply_transform(point_relative, this.inv_rot);
+        return point_relative;
     }
 
     point_within(pr) {
@@ -150,25 +147,25 @@ class ColliderPrism extends Collider {
             for (var y_sign = -1; y_sign <= 1; y_sign += 2) {
                 for (var z_sign = -1; z_sign <= 1; z_sign += 2) {
                     // Get each point in THIS prism's frame of reference
-                    var point_other = m4.identity();
-                    point_other = m4.multiply(point_other,
-                        this.inv_rot);
-                    point_other = m4.translate(point_other,
-                        ...relative_pos);
-                    point_other = m4.multiply(point_other,
-                        other.rotation_matrix);
-                    point_other = m4.translate(point_other,
+                    var point_other = [
                         x_sign * other.r_x,
                         y_sign * other.r_y,
                         z_sign * other.r_z
-                    );
+                    ];
+                    point_other = m4.apply_transform(point_other,
+                        other.rotation_matrix);
+                    point_other = m4.apply_transform(point_other,
+                        relative_pos);
+                    point_other = m4.apply_transform(point_other,
+                        this.inv_rot);
+
                     // Update the observed max/mins
-                    x_min = Math.min(point_other[12], x_min);
-                    x_max = Math.max(point_other[12], x_max);
-                    y_min = Math.min(point_other[13], y_min);
-                    y_max = Math.max(point_other[13], y_max);
-                    z_min = Math.min(point_other[14], z_min);
-                    z_max = Math.max(point_other[14], z_max);
+                    x_min = Math.min(point_other[0], x_min);
+                    x_max = Math.max(point_other[0], x_max);
+                    y_min = Math.min(point_other[1], y_min);
+                    y_max = Math.max(point_other[1], y_max);
+                    z_min = Math.min(point_other[2], z_min);
+                    z_max = Math.max(point_other[2], z_max);
                 }
             }
         }
