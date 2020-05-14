@@ -65,6 +65,19 @@ class Enemy extends Explodable {
         super.explode();
     }
 
+    move(dx_local, dy_local, dz_local) {
+        //Moves the object. dx_local, dy_local, and dz_local are all
+        //within the object's own frame of reference, so the rotation
+        //matrix is applied.
+        var movement = [0, 0, -this.drive_speed * dt];
+        movement = m4.apply_transform(movement, this.rotation_matrix);
+        this.x += movement[0];
+        this.y += movement[1];
+        this.z += movement[2];
+
+        this.snap_into_level();
+    }
+
     get_rel_to(x, y, z) {
         var rel_to_player = v3.minus([this.x, this.y, this.z], [x, y, z]);
 
@@ -103,15 +116,17 @@ class Enemy extends Explodable {
         );
 
         if (!this.maneuver_completed) {
-            var in_front_of_player = v3.plus(
-                m4.translate(player.rotation_matrix,
-                    0, 0, -10).slice(12, 15),
+            //get the location of a point in front of the player
+            var in_front_of_player = [0, 0, -15];
+            in_front_of_player = m4.apply_transform(
+                in_front_of_player, player.rotation_matrix);
+            in_front_of_player = v3.plus(in_front_of_player,
                 [player.ship_obj.x, player.ship_obj.y, player.ship_obj.z]);
+
             var rel_to_front = this.get_rel_to(...in_front_of_player);
             if (dist_sq_player > 600) {
-                //TODO: shouldn't need a full mmult here
-                var up = m4.translate(
-                    player.rotation_matrix, 0, 1, 0).slice(12, 15);
+                //get "up" in the player's frame of reference
+                var up = m4.apply_transform([0, 1, 0], player.rotation_matrix);
 
                 this.rotation_matrix = m4.lookAt(
                     [0, 0, 0],
@@ -133,23 +148,12 @@ class Enemy extends Explodable {
             delete_object(this);
         }
 
-        var movement_matrix = this.rotation_matrix;
-        movement_matrix = m4.translate(this.rotation_matrix,
-            0, 0, -this.drive_speed * dt);
-        this.x += movement_matrix[12];
-        this.y += movement_matrix[13];
-        this.z += movement_matrix[14];
-        this.snap_into_level();
+        this.move(0, 0, -this.drive_speed * dt);
     }
 
     spy_maneuver(dt) {
-        var movement_matrix = this.rotation_matrix;
-        movement_matrix = m4.translate(this.rotation_matrix,
-            0, 0, -this.drive_speed * dt);
-
-        this.x += movement_matrix[12];
-        this.y += movement_matrix[13];
-        this.z += movement_matrix[14];
+        // the spy just moves forward in a straight line - no rotation changes
+        this.move(0, 0, -this.drive_speed * dt);
 
         // the spy is on a timer - if it expires, it "reports intel"
         // (i.e., counts toward triggering Condition Red)
@@ -176,8 +180,7 @@ class Enemy extends Explodable {
         // only wobble if close to the player
         var wobble = dist_sq_player < 100 ? this.follow_wobble : 0;
 
-        //TODO: shouldn't need a full mmult here
-        var up = m4.translate(player.rotation_matrix, 0, 1, 0).slice(12, 15);
+        var up = m4.apply_transform([0, 1, 0], player.rotation_matrix);
 
         this.rotation_matrix = m4.lookAt(
             [0, 0, 0],
@@ -189,15 +192,11 @@ class Enemy extends Explodable {
 
         this.follow_angle = (this.follow_angle + 2 * dt) % (2 * Math.PI);
 
-        var movement_matrix = this.rotation_matrix;
-        movement_matrix = m4.translate(this.rotation_matrix,
+        this.move(
             wobble * Math.cos(this.follow_angle) * dt,
             wobble * Math.sin(this.follow_angle) * dt,
-            -this.drive_speed * dt);
-        this.x += movement_matrix[12];
-        this.y += movement_matrix[13];
-        this.z += movement_matrix[14];
-        this.snap_into_level();
+            -this.drive_speed * dt
+        );
 
         var bank_angle = Math.sin(this.follow_angle) / 4;
         this.rotation_matrix = m4.rotate_z(this.rotation_matrix,

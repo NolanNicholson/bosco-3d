@@ -89,15 +89,11 @@ class PlayerBullet extends ObjColor {
     update(dt) {
         var dz = this.bullet_speed * dt;
 
-        //use a movement matrix to get new coordinates
-        var movement_matrix = m4.identity();
-        movement_matrix = m4.translate(movement_matrix,this.x, this.y, this.z);
-        movement_matrix = m4.multiply(movement_matrix, this.rotation_matrix);
-        movement_matrix = m4.translate(movement_matrix,
-            0, 0, -dz);
-        this.x = movement_matrix[12];
-        this.y = movement_matrix[13];
-        this.z = movement_matrix[14];
+        // get the new bullet position
+        var new_xyz = [0, 0, -dz];
+        new_xyz = m4.apply_transform(new_xyz, this.rotation_matrix);
+        new_xyz = v3.plus(new_xyz, [this.x, this.y, this.z]);
+        [this.x, this.y, this.z] = new_xyz;
 
         // update collider position to bullet's new position
         this.collider.pos = [this.x, this.y, this.z];
