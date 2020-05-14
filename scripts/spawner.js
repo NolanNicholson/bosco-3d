@@ -191,8 +191,8 @@ class RandomEnemySpawner {
 
         this.timer += dt;
         if (this.timer >= this.spawn_interval) {
-            //this.spawn_enemy();
-            //console.log("spawned enemy (", this.num_enemies, ")");
+            this.spawn_enemy();
+            console.log("spawned enemy (", this.num_enemies, ")");
             this.timer = 0;
         }
     }

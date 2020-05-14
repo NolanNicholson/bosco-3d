@@ -103,7 +103,7 @@ class BaseBullet extends ObjColor {
         this.bullet_speed = 10;
         this.age = 0;
         this.rot_angle = 0;
-        this.lifetime = 5;
+        this.lifetime = 6;
         this.type = 'base-bullet';
 
         [this.x, this.y, this.z] = [x, y, z];
@@ -122,6 +122,9 @@ class BaseBullet extends ObjColor {
         this.collider = new ColliderPoint(0, 0, 0);
         this.collider.group = 'base';
         all_colliders.push(this);
+
+        //update to "push" it immediately out of the cannon's center
+        this.update(0.5);
     }
 
     update(dt) {
