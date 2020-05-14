@@ -65,14 +65,7 @@ class FormationFollower extends Enemy {
         this.rotation_matrix = m4.rotate_y(this.rotation_matrix,
             -0.5 * this.pos_x * dt);
 
-        var movement_matrix = m4.identity();
-        movement_matrix = m4.translate(movement_matrix,
-            this.x, this.y, this.z);
-        movement_matrix = m4.multiply(movement_matrix,
-            this.rotation_matrix);
-        movement_matrix = m4.translate(movement_matrix,
-            0, 0, -this.drive_speed * dt);
-        [this.x, this.y, this.z] = movement_matrix.slice(12, 15);
+        this.move(0, 0, -this.drive_speed * dt);
 
         var rel_player = this.get_rel_to_player();
         var sq_dist = (

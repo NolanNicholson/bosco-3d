@@ -158,6 +158,17 @@ class Player {
         }
     }
 
+    move(dx_local, dy_local, dz_local) {
+        //Moves the object. dx_local, dy_local, and dz_local are all
+        //within the object's own frame of reference, so the rotation
+        //matrix is applied.
+        var movement = [dx_local, dy_local, dz_local];
+        movement = m4.apply_transform(movement, this.rotation_matrix);
+        this.ship_obj.x += movement[0];
+        this.ship_obj.y += movement[1];
+        this.ship_obj.z += movement[2];
+    }
+
     update_driving(dt) {
         this.yaw_target = (this.yawing_left - this.yawing_right) * Math.PI / 6;
         this.pitch_target = (this.pitching_up - this.pitching_down)
@@ -187,28 +198,16 @@ class Player {
                 this.yaw * this.yaw_speed * dt);
         }
 
-        //use a movement matrix to get new ship coordinates
-        var movement_matrix = m4.identity();
-
-        movement_matrix = m4.translate(movement_matrix,
-            this.ship_obj.x, this.ship_obj.y, this.ship_obj.z);
-
-        movement_matrix = m4.multiply(movement_matrix, this.rotation_matrix);
-
-        // Drive the ship forward, and strafe it if applicable
-        movement_matrix = m4.translate(movement_matrix,
-            0, 0, -this.drive_speed * dt);
+        // Determine local motion, then move.
         if (this.strafing) {
             var ss = this.strafe_speed * dt;
-            var move_x = this.yawing_right - this.yawing_left;
-            var move_y = this.pitching_up - this.pitching_down;
-            movement_matrix = m4.translate(movement_matrix,
-                ss * move_x, ss * move_y, 0);
+            var dx = ss * (this.yawing_right - this.yawing_left);
+            var dy = ss * (this.pitching_up - this.pitching_down);
+        } else {
+            var dx = 0; var dy = 0;
         }
-
-        this.ship_obj.x = movement_matrix[12];
-        this.ship_obj.y = movement_matrix[13];
-        this.ship_obj.z = movement_matrix[14];
+        var dz = -this.drive_speed * dt;
+        this.move(dx, dy, dz);
 
         //update active bullets
         this.bullets.forEach(b => {

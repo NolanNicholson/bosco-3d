@@ -31,19 +31,17 @@ class RandomEnemySpawner {
     }
 
     position_enemy_around_player(new_enemy, spawn_z, spawn_radius) {
-        var new_location_matrix = m4.translation(
-            player.ship_obj.x, player.ship_obj.y, player.ship_obj.z);
-
         var spawn_angle = Math.random() * 2 * Math.PI;
-        new_location_matrix = m4.multiply(new_location_matrix,
-            player.rotation_matrix);
-        new_location_matrix = m4.translate(new_location_matrix,
-            spawn_radius * Math.cos(spawn_angle),
-            spawn_radius * Math.sin(spawn_angle), spawn_z);
 
-        new_enemy.x = new_location_matrix[12];
-        new_enemy.y = new_location_matrix[13];
-        new_enemy.z = new_location_matrix[14];
+        var new_xyz = [
+            spawn_radius * Math.cos(spawn_angle),
+            spawn_radius * Math.sin(spawn_angle),
+            spawn_z
+        ];
+        new_xyz = m4.apply_transform(new_xyz, player.rotation_matrix);
+        new_xyz = v3.plus(new_xyz,
+            [player.ship_obj.x, player.ship_obj.y, player.ship_obj.z]);
+        [new_enemy.x, new_enemy.y, new_enemy.z] = new_xyz;
 
         return spawn_angle;
     }
@@ -55,9 +53,8 @@ class RandomEnemySpawner {
 
         var spawn_angle = this.position_enemy_around_player(spy, -30, 35);
 
-        //TODO: shouldn't need a full mmult here
         var rel_to_player = spy.get_rel_to_player();
-        var up = m4.translate(player.rotation_matrix, 0, 1, 0).slice(12, 15);
+        var up = m4.apply_transform([0, 1, 0], player.rotation_matrix);
         spy.rotation_matrix = m4.lookAt(
             [0, 0, 0],
             rel_to_player,
@@ -166,17 +163,13 @@ class RandomEnemySpawner {
             else panner = this.new_enemy;
         }
 
-        var relative_enemy_position = [
-            panner.x - player.ship_obj.x,
-            panner.y - player.ship_obj.y,
-            panner.z - player.ship_obj.z
-        ];
+        var relative_enemy_position = panner.get_rel_to_player();
 
         // rotate the relative enemy position to the player's field of view
-        var mat = m4.translate(m4.inverse(player.rotation_matrix),
-            ...relative_enemy_position);
+        var sound_xyz = m4.apply_transform(relative_enemy_position,
+            m4.inverse(player.rotation_matrix));
 
-        var x = mat[12]; var z = mat[14];
+        var x = sound_xyz[0]; var z = sound_xyz[2];
         return (x / Math.sqrt(x*x + z*z));
 
     }
