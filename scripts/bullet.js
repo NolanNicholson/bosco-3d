@@ -46,7 +46,7 @@ class PlayerBullet extends ObjColor {
         }
         super(positions, colors);
 
-        this.player = player;
+        this.owner = player;
         this.life_distance = 60;
 
         this.collider = new ColliderPoint(0, 0, 0);
@@ -59,17 +59,9 @@ class PlayerBullet extends ObjColor {
         all_colliders.push(this);
         this.distance = 0;
         this.bullet_speed = 100;
-        this.x = this.player.ship_obj.x;
-        this.y = this.player.ship_obj.y;
-        this.z = this.player.ship_obj.z;
 
-        this.rotation_matrix = m4.identity();
-        this.rotation_matrix = m4.multiply(this.rotation_matrix,
-            this.player.rotation_matrix);
-        /*
-        this.rotation_matrix = m4.rotate_x(this.rotation_matrix,
-            this.player.pitch);
-            */
+        [this.x, this.y, this.z] = [player.x, player.y, player.z];
+        this.rotation_matrix = player.rotation_matrix;
     }
 
     deactivate() {

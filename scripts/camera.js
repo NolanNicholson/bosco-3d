@@ -104,14 +104,13 @@ class Camera {
     }
 
     follow_player(dt, player) {
-        this.x = player.ship_obj.x + CAMERA_VANTAGE[0];
-        this.y = player.ship_obj.y + CAMERA_VANTAGE[1];
-        this.z = player.ship_obj.z + CAMERA_VANTAGE[2];
+        this.x = player.x + CAMERA_VANTAGE[0];
+        this.y = player.y + CAMERA_VANTAGE[1];
+        this.z = player.z + CAMERA_VANTAGE[2];
     }
 
     get_view_matrix_player(player) {
-        var player_pos =
-            [player.ship_obj.x, player.ship_obj.y, player.ship_obj.z];
+        var player_pos = [player.x, player.y, player.z];
 
         // The camera follows behind (and slightly above) the player
         var camera_pos = CAMERA_VANTAGE;

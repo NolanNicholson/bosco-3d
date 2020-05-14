@@ -114,7 +114,7 @@ class HUDPoints {
         this.colors = [];
 
         // add player (light blinks black/white)
-        var ship_pos = this.normalized_loc(player.ship_obj);
+        var ship_pos = this.normalized_loc(player);
         this.positions.push(...ship_pos);
         var blink = Date.now() / 400 % 1 > 0.4;
         this.colors.push(...(blink ? hud_colors.white : hud_colors.black));

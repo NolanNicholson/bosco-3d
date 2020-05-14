@@ -93,8 +93,7 @@ class Enemy extends Explodable {
     }
 
     get_rel_to_player() {
-        return this.get_rel_to(
-            player.ship_obj.x, player.ship_obj.y, player.ship_obj.z);
+        return this.get_rel_to(player.x, player.y, player.z);
     }
 
     snap_into_level() {
@@ -121,7 +120,7 @@ class Enemy extends Explodable {
             in_front_of_player = m4.apply_transform(
                 in_front_of_player, player.rotation_matrix);
             in_front_of_player = v3.plus(in_front_of_player,
-                [player.ship_obj.x, player.ship_obj.y, player.ship_obj.z]);
+                [player.x, player.y, player.z]);
 
             var rel_to_front = this.get_rel_to(...in_front_of_player);
             if (dist_sq_player > 600) {

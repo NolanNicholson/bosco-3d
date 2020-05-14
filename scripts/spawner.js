@@ -39,8 +39,7 @@ class RandomEnemySpawner {
             spawn_z
         ];
         new_xyz = m4.apply_transform(new_xyz, player.rotation_matrix);
-        new_xyz = v3.plus(new_xyz,
-            [player.ship_obj.x, player.ship_obj.y, player.ship_obj.z]);
+        new_xyz = v3.plus(new_xyz, [player.x, player.y, player.z]);
         [new_enemy.x, new_enemy.y, new_enemy.z] = new_xyz;
 
         return spawn_angle;

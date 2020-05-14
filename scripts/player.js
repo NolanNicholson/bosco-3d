@@ -133,6 +133,10 @@ class Player {
                 this.update_driving(dt);
                 break;
         }
+
+        this.x = this.ship_obj.x;
+        this.y = this.ship_obj.y;
+        this.z = this.ship_obj.z;
     }
 
     update_spawning(dt) {

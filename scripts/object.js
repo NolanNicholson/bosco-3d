@@ -134,40 +134,38 @@ class ObjBase {
     prep_model_matrix() {
         this.model_matrix = m4.identity();
 
-
         var render_x = this.x;
         var render_y = this.y;
         var render_z = this.z;
 
-        var pl = player.ship_obj;
-        if ((pl.x - PLAYER_VIEW_DISTANCE < level_bounds.x.min)
-            && (this.x > pl.x + PLAYER_VIEW_DISTANCE)
+        if ((player.x - PLAYER_VIEW_DISTANCE < level_bounds.x.min)
+            && (this.x > player.x + PLAYER_VIEW_DISTANCE)
         ) {
             render_x -= level_size.x;
         }
-        if ((pl.y - PLAYER_VIEW_DISTANCE < level_bounds.y.min)
-            && (this.y > pl.y + PLAYER_VIEW_DISTANCE)
+        if ((player.y - PLAYER_VIEW_DISTANCE < level_bounds.y.min)
+            && (this.y > player.y + PLAYER_VIEW_DISTANCE)
         ) {
             render_y -= level_size.y;
         }
-        if ((pl.z - PLAYER_VIEW_DISTANCE < level_bounds.z.min)
-            && (this.z > pl.z + PLAYER_VIEW_DISTANCE)
+        if ((player.z - PLAYER_VIEW_DISTANCE < level_bounds.z.min)
+            && (this.z > player.z + PLAYER_VIEW_DISTANCE)
         ) {
             render_z -= level_size.z;
         }
 
-        if ((pl.x + PLAYER_VIEW_DISTANCE > level_bounds.x.max)
-            && (this.x < pl.x - PLAYER_VIEW_DISTANCE)
+        if ((player.x + PLAYER_VIEW_DISTANCE > level_bounds.x.max)
+            && (this.x < player.x - PLAYER_VIEW_DISTANCE)
         ) {
             render_x += level_size.x;
         }
-        if ((pl.y + PLAYER_VIEW_DISTANCE > level_bounds.y.max)
-            && (this.y < pl.y - PLAYER_VIEW_DISTANCE)
+        if ((player.y + PLAYER_VIEW_DISTANCE > level_bounds.y.max)
+            && (this.y < player.y - PLAYER_VIEW_DISTANCE)
         ) {
             render_y += level_size.y;
         }
-        if ((pl.z + PLAYER_VIEW_DISTANCE > level_bounds.z.max)
-            && (this.z < pl.z - PLAYER_VIEW_DISTANCE)
+        if ((player.z + PLAYER_VIEW_DISTANCE > level_bounds.z.max)
+            && (this.z < player.z - PLAYER_VIEW_DISTANCE)
         ) {
             render_z += level_size.z;
         }
@@ -219,9 +217,9 @@ class ObjTexture extends ObjBase {
 
         // check distance to player
         var rel_player = [
-            player.ship_obj.x - this.model_matrix[12],
-            player.ship_obj.y - this.model_matrix[13],
-            player.ship_obj.z - this.model_matrix[14],
+            player.x - this.model_matrix[12],
+            player.y - this.model_matrix[13],
+            player.z - this.model_matrix[14],
         ];
         var dist_to_player_sq = (
             rel_player[0] * rel_player[0]
