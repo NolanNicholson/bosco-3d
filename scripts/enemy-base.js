@@ -25,27 +25,16 @@ class Part extends ObjTexture {
         this.rotation_matrix = m4.multiply(
             p.rotation_matrix, this.rel_rotation);
 
-        this.x = p.x + this.rel_position[0];
-        this.y = p.y + this.rel_position[1];
-        this.z = p.z + this.rel_position[2];
+        //get new coordinates
+        var new_xyz = this.rel_position;
+        new_xyz = m4.apply_transform(new_xyz, p.rotation_matrix);
+        new_xyz = v3.scalar_mult(new_xyz, p.scale);
+        new_xyz = v3.plus(new_xyz, [p.x, p.y, p.z]);
+        [this.x, this.y, this.z] = new_xyz;
 
-        var movement_matrix = m4.identity();
-        movement_matrix = m4.translate(movement_matrix, p.x, p.y, p.z);
-        movement_matrix = m4.scale(movement_matrix,
-            p.scale, p.scale, p.scale);
-        movement_matrix = m4.multiply(movement_matrix, p.rotation_matrix);
-        movement_matrix = m4.translate(movement_matrix,
-            this.rel_position[0], this.rel_position[1], this.rel_position[2]);
-        movement_matrix = m4.multiply(movement_matrix, this.rel_rotation);
-
-        this.x = movement_matrix[12];
-        this.y = movement_matrix[13];
-        this.z = movement_matrix[14];
         this.scale = p.scale;
-
         this.sync_collider();
     }
-
 }
 
 class BaseCrystal extends Part {

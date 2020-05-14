@@ -98,6 +98,15 @@ var v3 = {
             a[0] * b[1] - a[1] * b[0]
         ];
     },
+
+    scalar_mult: function(v, s) {
+        //multiply vector v by scalar s
+        var result = []
+        for (var i = 0; i < 3; i++) {
+            result.push(v[i] * s);
+        }
+        return result;
+    },
 }
 
 var m3 = {
