@@ -112,6 +112,20 @@ class RandomEnemySpawner {
         return spawn_angle;
     }
 
+    report_base_destroyed(base) {
+        var base_i = bases.indexOf(base);
+        if (base_i != -1) {
+            bases.splice(base_i, 1);
+        }
+        if (!bases.length) {
+            this.win_level();
+        }
+    }
+
+    win_level() {
+        sounds.level_win.play();
+    }
+
     spawn_spy() {
         var spy = new Enemy('spy');
         spy.ai_mode = 'spy';
@@ -200,25 +214,15 @@ class RandomEnemySpawner {
     }
 
     spawn_formation() {
-        var unexploded_bases = [];
-        bases.forEach(base => {
-            if (!base.explosions) {
-                unexploded_bases.push(base);
-            }
-        })
         // don't spawn a formation if there aren't any bases
-        if (!unexploded_bases.length) {
-            return;
-        }
+        if (!bases.length) return;
 
         sounds.battle_stations.play();
         sounds.formation_loop.play(true);
         this.sound_manager.quiet_player_sound();
         sounds.enemy_drive_loop.stop();
 
-        var f_base = unexploded_bases[
-            Math.floor(Math.random() * unexploded_bases.length)];
-
+        var f_base = bases[Math.floor(Math.random() * bases.length)];
         this.formation = new Formation(f_base.x, f_base.y, f_base.z);
         this.formation_active = true;
     }

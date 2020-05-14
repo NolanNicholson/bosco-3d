@@ -317,13 +317,13 @@ class EnemyBase {
         this.explosions[4].relocate(this.x, this.y, this.z);
 
         sounds.mine_hit.play();
+        spawner.report_base_destroyed(this);
     }
 
     destroy() {
         //then, remove this object from the list
         var obj_index = objects.indexOf(this);
         if (obj_index != -1) objects.splice(obj_index, 1);
-
     }
 
     render() {

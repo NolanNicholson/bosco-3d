@@ -122,11 +122,9 @@ class HUDPoints {
 
         // add enemy bases
         bases.forEach(base_obj => {
-            if (!base_obj.explosions) {
-                this.positions.push(...this.normalized_loc(base_obj));
-                this.colors.push(...hud_colors.green);
-                this.num_vertices++;
-            }
+            this.positions.push(...this.normalized_loc(base_obj));
+            this.colors.push(...hud_colors.green);
+            this.num_vertices++;
         });
 
         // add formation (if there is one)
