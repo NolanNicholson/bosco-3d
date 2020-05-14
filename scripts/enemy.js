@@ -65,24 +65,6 @@ class Enemy extends Explodable {
         super.explode();
     }
 
-    get_rel_to(x, y, z) {
-        var rel_to_player = v3.minus([this.x, this.y, this.z], [x, y, z]);
-
-        // adjust the relative coordinates to loop over the level bounds
-        if (Math.abs(rel_to_player[0]) > level_size.x / 2)
-            rel_to_player[0] -= Math.sign(rel_to_player[0]) * level_size.x;
-        if (Math.abs(rel_to_player[1]) > level_size.y / 2)
-            rel_to_player[1] -= Math.sign(rel_to_player[1]) * level_size.y;
-        if (Math.abs(rel_to_player[2]) > level_size.z / 2)
-            rel_to_player[2] -= Math.sign(rel_to_player[2]) * level_size.z;
-
-        return rel_to_player;
-    }
-
-    get_rel_to_player() {
-        return this.get_rel_to(player.x, player.y, player.z);
-    }
-
     hone_then_straight(dt) {
         var rel_to_player = this.get_rel_to_player();
 

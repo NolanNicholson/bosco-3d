@@ -29,7 +29,7 @@ class Player extends ObjTexture {
         this.max_bullets = 8;
         this.bullets = [];
         for (var i = 0; i < this.max_bullets; i++) {
-            this.bullets.push(new PlayerBullet(this));
+            this.bullets.push(new PlayerBullet());
         }
 
         //collider information (self, bullets)

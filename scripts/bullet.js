@@ -37,18 +37,15 @@ function prism(w, h, d) {
 }
 
 class PlayerBullet extends ObjColor {
-    constructor(player) {
+    constructor() {
         var positions = prism(0.2, 0.2, 0.8);
-
         var colors = [];
         for (var i = 0; i < 36; i++) {
             colors.push(1, 1, 1);
         }
         super(positions, colors);
 
-        this.owner = player;
         this.life_distance = 60;
-
         this.collider = new ColliderPoint(0, 0, 0);
         this.type = 'player_bullet';
         this.active = false;
@@ -79,15 +76,9 @@ class PlayerBullet extends ObjColor {
     }
 
     update(dt) {
+        // advance forward and sync collider
         var dz = this.bullet_speed * dt;
-
-        // get the new bullet position
-        var new_xyz = [0, 0, -dz];
-        new_xyz = m4.apply_transform(new_xyz, this.rotation_matrix);
-        new_xyz = v3.plus(new_xyz, [this.x, this.y, this.z]);
-        [this.x, this.y, this.z] = new_xyz;
-
-        // update collider position to bullet's new position
+        this.move(0, 0, -dz);
         this.collider.pos = [this.x, this.y, this.z];
 
         //update lifetime
@@ -96,5 +87,46 @@ class PlayerBullet extends ObjColor {
             this.deactivate();
         }
 
+    }
+}
+
+class BaseBullet extends ObjColor {
+    constructor(x, y, z) {
+        // set up model - a prism
+        var positions = prism(0.4, 0.4, 1.6);
+        var colors = [];
+        for (var i = 0; i < 36; i++) {
+            colors.push(1, 1, 1);
+        }
+        super(positions, colors);
+
+        this.bullet_speed = 10;
+        this.rot_angle = 0;
+
+        [this.x, this.y, this.z] = [x, y, z];
+        this.rotation_matrix = m4.lookAt(
+            [0, 0, 0],
+            this.get_rel_to_player(),
+            [0, 1, 0]
+        );
+
+        objects.push(this);
+
+        this.collider = new ColliderPoint(0, 0, 0);
+        this.collider.group = 'base';
+        all_colliders.push(this);
+    }
+
+    update(dt) {
+        // advance forward
+        this.move(0, 0, this.bullet_speed * dt);
+        this.collider.pos = [this.x, this.y, this.z];
+
+        this.rot_angle += 0.1 * dt;
+        //this.rotation_matrix = m4.rotation_x(this.rot_angle);
+    }
+
+    collision_event(other) {
+        delete_object(this);
     }
 }

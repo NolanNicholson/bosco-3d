@@ -78,6 +78,10 @@ var v3 = {
         ];
     },
 
+    len_sq: function(a) {
+        return (a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
+    },
+
     divide: function(v, s) {
         return [ v[0]/s, v[1]/s, v[2]/s ];
     },

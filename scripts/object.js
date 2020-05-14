@@ -121,6 +121,24 @@ class ObjBase {
         while (this.z < level_bounds.z.min) this.z += level_size.z;
     }
 
+    get_rel_to(x, y, z) {
+        var rel_to_player = v3.minus([this.x, this.y, this.z], [x, y, z]);
+
+        // adjust the relative coordinates to loop over the level bounds
+        if (Math.abs(rel_to_player[0]) > level_size.x / 2)
+            rel_to_player[0] -= Math.sign(rel_to_player[0]) * level_size.x;
+        if (Math.abs(rel_to_player[1]) > level_size.y / 2)
+            rel_to_player[1] -= Math.sign(rel_to_player[1]) * level_size.y;
+        if (Math.abs(rel_to_player[2]) > level_size.z / 2)
+            rel_to_player[2] -= Math.sign(rel_to_player[2]) * level_size.z;
+
+        return rel_to_player;
+    }
+
+    get_rel_to_player() {
+        return this.get_rel_to(player.x, player.y, player.z);
+    }
+
     move(dx_local, dy_local, dz_local) {
         //Moves the object. dx_local, dy_local, and dz_local are all
         //within the object's own frame of reference, so the rotation
@@ -240,4 +258,17 @@ class ObjTexture extends ObjBase {
         gl.bindTexture(gl.TEXTURE_2D, this.texture_asset.texture);
         this.model_asset.render(this.model_matrix);
     }
+}
+
+function delete_object(o) {
+    var collider_list = all_colliders;
+    var object_list = objects;
+
+    var collider_index = collider_list.indexOf(o);
+    if (collider_index != -1) collider_list.splice(collider_index, 1);
+
+    var obj_index = object_list.indexOf(o);
+    if (obj_index != -1) object_list.splice(obj_index, 1);
+
+    delete o;
 }

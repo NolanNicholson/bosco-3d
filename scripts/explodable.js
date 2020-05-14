@@ -1,16 +1,3 @@
-function delete_object(o) {
-    var collider_list = all_colliders;
-    var object_list = objects;
-
-    var collider_index = collider_list.indexOf(o);
-    if (collider_index != -1) collider_list.splice(collider_index, 1);
-
-    var obj_index = object_list.indexOf(o);
-    if (obj_index != -1) object_list.splice(obj_index, 1);
-
-    delete o;
-}
-
 class Explodable extends ObjTexture {
     constructor(model, texture) {
         super(model, texture);

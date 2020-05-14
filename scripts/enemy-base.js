@@ -106,6 +106,8 @@ class BaseCannon extends Part {
         this.explosion = false;
         this.is_corner = true;
         this.type = 'base_cannon';
+
+        this.shoot_timer = 0;
     }
 
     collision_event(other) {
@@ -132,6 +134,17 @@ class BaseCannon extends Part {
         }
     }
 
+    update_cannon(dt) {
+        this.shoot_timer -= dt;
+        if (this.shoot_timer <= 0) {
+            //TODO: shoot bullets
+            console.log("POW");
+            this.shoot_timer = 0.5;
+
+            var base_bullet = new BaseBullet(this.x, this.y, this.z);
+        }
+    }
+
     update(dt) {
         super.update(dt);
         if (this.explosion) {
@@ -142,6 +155,10 @@ class BaseCannon extends Part {
             if (this.explosion.age >= this.explosion.max_age) {
                 this.explosion = false;
             }
+        } else {
+            var rel_to_player = this.get_rel_to_player();
+            var dist_sq_to_player = v3.len_sq(rel_to_player);
+            if (dist_sq_to_player < 3000) this.update_cannon(dt);
         }
     }
 
