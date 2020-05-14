@@ -19,6 +19,10 @@ var base_data = [
     { x: -200, y: -100, z: -250, ry: 0.125 },
 ]
 
+var player = new Player();
+var player_start_position = [200, 4, 50];
+[player.x, player.y, player.z] = player_start_position;
+
 var bases = [];
 base_data.forEach(base_params => {
     var new_b = new EnemyBase();
@@ -34,11 +38,50 @@ base_data.forEach(base_params => {
 });
 
 function random_loc_in_level() {
-    return [
-        Math.random() * level_size.x + level_bounds.x.min,
-        Math.random() * level_size.y + level_bounds.y.min,
-        Math.random() * level_size.z + level_bounds.z.min
+    var margin = 10;
+    var loc = [
+        Math.random() * (level_size.x - 2*margin) + level_bounds.x.min + margin,
+        Math.random() * (level_size.y - 2*margin) + level_bounds.y.min + margin,
+        Math.random() * (level_size.z - 2*margin) + level_bounds.z.min + margin,
     ];
+    return loc;
+}
+
+var placed_objs = [];
+function collides_with_placed_objs(obj) {
+    for (var i = 0; i < placed_objs.length; i++) {
+        var other = placed_objs[i];
+        if (obj.collider.collides(other.collider)) return true;
+    }
+    return false;
+}
+
+function too_close(obj, other, sq_radius) {
+    var rel = obj.get_rel_to(other.x, other.y, other.z);
+    var sqdist = v3.len_sq(rel);
+    return (sqdist < sq_radius);
+}
+
+function too_close_bases_player(obj) {
+    // check bases
+    for (var i = 0; i < bases.length; i++) {
+        var base = bases[i];
+        if (too_close(obj, base, base.scale * base.scale * 100)) {
+            return true;
+        }
+    }
+    // check player
+    if (too_close(obj, player, 1000)) return true;
+    // OK
+    return false;
+}
+
+function place_obj(obj) {
+    do {
+        [obj.x, obj.y, obj.z] = random_loc_in_level();
+        obj.sync_collider();
+    } while (collides_with_placed_objs(obj) || too_close_bases_player(obj));
+    placed_objs.push(obj);
 }
 
 var asteroids = [];
@@ -46,17 +89,14 @@ var num_asteroids = 200;
 for (var i = 0; i < num_asteroids; i++) {
     var scale = Math.random() * 8 + 1;
     var ast = new Asteroid(scale);
-    [ast.x, ast.y, ast.z] = random_loc_in_level();
+    place_obj(ast);
     asteroids.push(ast);
 }
 
 var mines = [];
-var obj_mine;
 var num_mines = 100;
-var theta;
 for (var i = 0; i < num_mines; i++) {
-    obj_mine = new CosmoMine();
-    [obj_mine.x, obj_mine.y, obj_mine.z] = random_loc_in_level();
+    var obj_mine = new CosmoMine();
+    place_obj(obj_mine);
     mines.push(obj_mine);
 }
-
