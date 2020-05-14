@@ -61,9 +61,9 @@ class RandomEnemySpawner {
         this.condition = 'green';
         this.formation_active = false;
 
-        this.con_yellow_start_timer = 4;
+        this.con_yellow_start_timer = this.get_yellow_start_timer();
 
-        this.num_formations = 0; // number of ended formation attacks
+        this.defeated_formations = 0; // number of ended formation attacks
         this.fleed_spies = 0; // number of spy ships that got away
 
         if (objects) {
@@ -79,6 +79,14 @@ class RandomEnemySpawner {
                 delete_object(o);
             });
         }
+    }
+
+    get_yellow_start_timer() {
+        var delay = Math.random() * 2 + 3;
+        return this.timer + delay;
+    }
+    get_yellow_spawn_interval() {
+        return Math.random() * 2 + 1;
     }
 
     spy_intel() {
@@ -163,6 +171,7 @@ class RandomEnemySpawner {
             this.num_in_wave--;
             console.log("Left in wave:", this.num_in_wave);
             if (this.num_in_wave > 0) {
+                this.spawn_interval = this.get_yellow_spawn_interval();
                 this.schedule_spawn();
             } else {
                 console.log("spawn infinitely later");
@@ -177,7 +186,9 @@ class RandomEnemySpawner {
         this.num_enemies--;
         console.log("lost enemy (", this.num_enemies, ")");
         if (!this.num_enemies 
-            && this.condition != 'red' && player.state == 'driving') {
+            && this.condition != 'red'
+            && !this.formation_active
+            && player.state == 'driving') {
             sounds.enemy_drive_loop.stop();
             sounds.player_drive_loop.play(true);
         }
@@ -203,6 +214,7 @@ class RandomEnemySpawner {
         sounds.battle_stations.play();
         sounds.formation_loop.play(true);
         this.sound_manager.quiet_player_sound();
+        sounds.enemy_drive_loop.stop();
 
         var f_base = unexploded_bases[
             Math.floor(Math.random() * unexploded_bases.length)];
@@ -214,8 +226,19 @@ class RandomEnemySpawner {
     end_formation() {
         this.formation_active = false;
         sounds.formation_loop.stop();
-        if (player.state == 'driving') {
-            sounds.player_drive_loop.play(true);
+
+        // If enough formations are defeated, Condition Red is triggered.
+        this.defeated_formations++;
+        if (this.defeated_formations == 4) {
+            this.set_condition('red');
+        } else {
+            if (player.state == 'driving') {
+                if (this.num_enemies) {
+                    sounds.enemy_drive_loop.play(true);
+                } else {
+                    sounds.player_drive_loop.play(true);
+                }
+            }
         }
     }
 
@@ -233,7 +256,6 @@ class RandomEnemySpawner {
                 }
                 break;
             case 'yellow':
-                this.spawn_interval = 2;
                 this.max_num_enemies = 4;
                 this.num_in_wave = 6;
                 this.schedule_spawn(1.5);
@@ -248,7 +270,7 @@ class RandomEnemySpawner {
                 }
                 break;
             case 'green':
-                this.con_yellow_start_timer = this.timer + 4;
+                this.con_yellow_start_timer = this.get_yellow_start_timer();
                 switch (old_con) {
                     case 'red':
                         this.sound_manager.end_condition_red();
