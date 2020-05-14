@@ -1,11 +1,29 @@
 class RandomEnemySpawner {
     constructor() {
+        this.reset_level();
+    }
+
+    reset_level() {
         this.timer = 0;
         this.num_enemies = 0;
         this.spawn_interval = 4;
         this.max_num_enemies = 4;
         this.formation_active = false;
         this.condition_red = false;
+
+        if (objects) {
+            var to_delete = [];
+            objects.forEach(o => {
+                switch (o.type) {
+                    case 'enemy':
+                    case 'base-bullet':
+                        to_delete.push(o); break;
+                }
+            });
+            to_delete.forEach(o => {
+                delete_object(o);
+            });
+        }
     }
 
     spy_intel() {
@@ -13,13 +31,15 @@ class RandomEnemySpawner {
     }
 
     start_condition_red() {
-        this.condition_red = true;
-        this.quiet_player_sound();
-        this.spawn_interval = 0.5;
-        this.max_num_enemies = 9;
-        sounds.con_red_loop.play(true);
+        if (!this.condition_red && player.state == 'driving') {
+            this.condition_red = true;
+            this.quiet_player_sound();
+            this.spawn_interval = 0.5;
+            this.max_num_enemies = 9;
 
-        sounds.con_red_voice.play(true);
+            sounds.con_red_loop.play(true);
+            sounds.con_red_voice.play(true);
+        }
     }
 
     end_condition_red() {

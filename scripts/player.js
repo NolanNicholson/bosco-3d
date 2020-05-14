@@ -224,6 +224,7 @@ class Player extends ObjTexture {
         sounds.blast_off.play();
         this.spawn_timer = 0;
         this.state = 'spawning';
+        spawner.reset_level();
 
         //spawning costs a life
         lives--;
