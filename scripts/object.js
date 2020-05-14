@@ -100,16 +100,12 @@ function setup_textured_object(program_holder, positions, texcoords) {
 class ObjBase {
     constructor() {
         this.x = 0; this.y = 0; this.z = 0;
-        this.r_vx = 0; this.r_vy = 0; this.r_vz = 0;
         this.scale = 1;
         this.model_matrix = m4.identity();
         this.rotation_matrix = m4.identity();
     }
 
     update(dt) {
-        this.rotation_matrix = m4.rotate_x(this.rotation_matrix, this.r_vx * dt);
-        this.rotation_matrix = m4.rotate_y(this.rotation_matrix, this.r_vy * dt);
-        this.rotation_matrix = m4.rotate_z(this.rotation_matrix, this.r_vz * dt);
     }
 
     bounds_check() {

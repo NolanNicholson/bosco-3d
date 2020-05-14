@@ -86,6 +86,10 @@ class FormationFollower extends Enemy {
             this.flee(dt);
         }
         this.explodable_update(dt);
+
+        // cosmetic rotation for E-Type missile spin
+        if (this.r_vz)
+            this.r_z += this.r_vz * dt;
     }
 }
 

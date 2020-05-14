@@ -43,8 +43,10 @@ class Enemy extends Explodable {
         all_colliders.push(this);
 
         //the E-Type enemy is a missile, so let's give it a spin effect
-        if (enemy_type == 'e')
+        if (enemy_type == 'e') {
             this.r_vz = 4;
+            this.r_z = 0;
+        }
 
         this.type = 'enemy';
         this.explosion_properties = {
@@ -194,5 +196,20 @@ class Enemy extends Explodable {
                 this.follow_player_with_wobble(dt);
         }
         this.explodable_update(dt);
+
+        // cosmetic rotation for E-Type missile spin
+        if (this.r_vz)
+            this.r_z += this.r_vz * dt;
+    }
+
+    render() {
+        if (this.r_vz) {
+            var orig_rotation = this.rotation_matrix;
+            this.rotation_matrix = m4.rotate_z(this.rotation_matrix, this.r_z);
+            super.render();
+            this.rotation_matrix = orig_rotation;
+        } else {
+            super.render();
+        }
     }
 }
