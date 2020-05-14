@@ -277,10 +277,11 @@ var m4 = {
     apply_transform: function(v, m) {
         //applies a transform represented by the 4x4 matrix m
         //to the point represented by the 3x1 vector v
-        //TODO: this doesn't need to use a full matrix multiplication
-        var m_v = m4.translation(...v);
-        var m_result = m4.multiply(m, m_v);
-        return m_result.slice(12, 15);
+        return [
+            v[0] * m[0] + v[1] * m[4] + v[2] * m[ 8] + m[12],
+            v[0] * m[1] + v[1] * m[5] + v[2] * m[ 9] + m[13],
+            v[0] * m[2] + v[1] * m[6] + v[2] * m[10] + m[14],
+        ];
     },
 
     identity: function() {
