@@ -213,7 +213,7 @@ class ObjTexture extends ObjBase {
     }
 
     render() {
-        super.prep_model_matrix();
+        this.prep_model_matrix();
 
         // check distance to player
         var rel_player = [

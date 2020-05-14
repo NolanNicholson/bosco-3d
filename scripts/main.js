@@ -9,7 +9,7 @@ var lives = 3;
 // Define test objects
 var obj_starfield = new Starfield();
 
-var player = new Player(models.player, textures.player);
+var player = new Player();
 var player_start_position = [200, 4, 50];
 
 var spawner = new RandomEnemySpawner();

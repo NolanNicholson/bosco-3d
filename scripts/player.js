@@ -1,10 +1,10 @@
 const PLAYER_DRIVE_SPEED = 20;
 
-class Player {
-    constructor(ship_model_asset, ship_texture_asset) {
-        this.type = 'player';
+class Player extends ObjTexture {
+    constructor() {
+        super(models.player, textures.player);
 
-        this.ship_obj = new ObjTexture(ship_model_asset, ship_texture_asset);
+        this.type = 'player';
 
         //state: one of 'none', 'spawning', 'driving', 'exploding', 'exploded'
         this.state = 'none';
@@ -24,10 +24,6 @@ class Player {
         this.tack_anim_speed = 0.1;
         this.pitch_speed = 2;
         this.yaw_speed = 2;
-
-        //assets
-        this.ship_model_asset = ship_model_asset;
-        this.ship_texture_asset = ship_texture_asset;
 
         //bullet info
         this.max_bullets = 8;
@@ -133,10 +129,6 @@ class Player {
                 this.update_driving(dt);
                 break;
         }
-
-        this.x = this.ship_obj.x;
-        this.y = this.ship_obj.y;
-        this.z = this.ship_obj.z;
     }
 
     update_spawning(dt) {
@@ -168,9 +160,9 @@ class Player {
         //matrix is applied.
         var movement = [dx_local, dy_local, dz_local];
         movement = m4.apply_transform(movement, this.rotation_matrix);
-        this.ship_obj.x += movement[0];
-        this.ship_obj.y += movement[1];
-        this.ship_obj.z += movement[2];
+        this.x += movement[0];
+        this.y += movement[1];
+        this.z += movement[2];
     }
 
     update_driving(dt) {
@@ -221,7 +213,7 @@ class Player {
         });
 
         //update collider
-        this.collider.pos = [this.ship_obj.x, this.ship_obj.y, this.ship_obj.z];
+        this.collider.pos = [this.x, this.y, this.z];
         this.collider.rotation_matrix = this.rotation_matrix;
 
         this.collider.rotation_matrix = m4.rotate_x(
@@ -229,7 +221,7 @@ class Player {
         this.collider.rotation_matrix = m4.rotate_z(
             this.collider.rotation_matrix, this.yaw);
 
-        this.ship_obj.bounds_check();
+        this.bounds_check();
     }
 
     spawn() {
@@ -238,10 +230,8 @@ class Player {
         this.pitch = 0; this.yaw = 0;
         this.pitch_target = 0; this.yaw_target = 0;
 
-        this.ship_obj.x = player_start_position[0];
-        this.ship_obj.y = player_start_position[1];
-        this.ship_obj.z = player_start_position[2];
-        this.collider.pos = [this.ship_obj.x, this.ship_obj.y, this.ship_obj.z];
+        [this.x, this.y, this.z] = player_start_position;
+        this.collider.pos = [this.x, this.y, this.z];
         sounds.blast_off.play();
         this.spawn_timer = 0;
         this.state = 'spawning';
@@ -285,15 +275,23 @@ class Player {
         });
         this.state = 'exploding';
         this.explosion = new Explosion(this.explosion_properties);
-        this.explosion.relocate(
-            this.ship_obj.x, this.ship_obj.y, this.ship_obj.z);
+        this.explosion.relocate(this.x, this.y, this.z);
+    }
+
+    prep_model_matrix() {
+        var model_matrix = m4.identity();
+        model_matrix = m4.translate(model_matrix, this.x, this.y, this.z);
+
+        //ship's actual rotation
+        model_matrix = m4.multiply(model_matrix, this.rotation_matrix);
+
+        //(purely cosmetic) pitch/yaw rotations
+        model_matrix = m4.rotate_x(model_matrix, this.pitch * 0.7);
+        model_matrix = m4.rotate_z(model_matrix, this.yaw);
+        this.model_matrix = model_matrix;
     }
 
     render() {
-        var model_matrix = m4.identity();
-        model_matrix = m4.translate(model_matrix,
-            this.ship_obj.x, this.ship_obj.y, this.ship_obj.z);
-
         switch (this.state) {
             case 'exploding':
                 this.explosion.render();
@@ -302,15 +300,7 @@ class Player {
                 //do nothing
                 break;
             default:
-                //ship's actual rotation
-                model_matrix = m4.multiply(model_matrix, this.rotation_matrix);
-
-                //(purely cosmetic) pitch/yaw rotations
-                model_matrix = m4.rotate_x(model_matrix, this.pitch * 0.7);
-                model_matrix = m4.rotate_z(model_matrix, this.yaw);
-
-                gl.bindTexture(gl.TEXTURE_2D, this.ship_texture_asset.texture);
-                this.ship_model_asset.render(model_matrix);
+                super.render();
         }
 
         //update active bullets
