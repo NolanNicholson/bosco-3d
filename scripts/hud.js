@@ -190,18 +190,38 @@ function draw_minimap() {
     hudpoints.render(model_matrix);
 }
 
-function draw_digit(ctx, digit, x, y) {
+function draw_letter(ctx, ch, x, y, color) {
+    var letter_num = ch.toUpperCase().charCodeAt(0) - 65;
+    var sx = 8 * (letter_num % 10);
+    var sy = 8 * (1 + Math.floor(letter_num / 10));
+
+    ctx.fillStyle = color || '#dedede';
+    ctx.fillRect(x, y, 8, 8);
+    ctx.drawImage(images.text_atlas.img,
+        sx, sy, 8, 8,
+        x, y, 8, 8);
+}
+
+function draw_word(ctx, word, x, y, color) {
+    for (var i = 0; i < word.length; i++) {
+        draw_letter(ctx, word.charAt(i), x + 8*i, y, color);
+    }
+}
+
+function draw_digit(ctx, digit, x, y, color) {
+    ctx.fillStyle = color || '#dedede';
+    ctx.fillRect(x, y, 8, 8);
     ctx.drawImage(images.text_atlas.img,
         digit*8, 0, 8, 8,
         x, y, 8, 8);
 }
 
-function draw_number_r(ctx, num, x, y) {
+function draw_number_r(ctx, num, x, y, color) {
     //Draws a right-justified number.
     //x, y denotes the coordinates of the final digit.
     drew_anything = false; // so that "0" gets drawn
     while (num > 0 || !drew_anything) {
-        draw_digit(ctx, num % 10, x, y);
+        draw_digit(ctx, num % 10, x, y, color);
         num = Math.floor(num / 10);
         x -= 8;
         drew_anything = true;
@@ -250,6 +270,7 @@ function draw_lives(x, y, left_justified) {
 function draw_hud() {
     resize_hud();
     draw_minimap();
+    var landscape = (canv_hud.height > canv_hud.width);
 
     var x_l = 4;
     var x_r = canv_hud.width - 4;
@@ -257,15 +278,20 @@ function draw_hud() {
     var y_b = canv_hud.height - 4;
 
     var x_nums = 56 + x_l;
+
     ctx_hud.drawImage(images.hud_hiscore.img,   x_l,    y_t);
     draw_number_r(ctx_hud, hiscore,             x_nums, y_t + 8);
     ctx_hud.drawImage(images.hud_1up.img,       x_l,    y_t + 16);
     draw_number_r(ctx_hud, score,               x_nums, y_t + 24);
     draw_condition(x_l, y_t + 36);
 
-    if (canv_hud.height > canv_hud.width) { // landscape 
+    if (landscape) {
         draw_lives(x_l, y_b - 32, true);
-    } else { // portrait
+        draw_word(ctx_hud, 'ROUND', x_l, y_b - 8, '#979797');
+        draw_number_r(ctx_hud, round + 1, x_nums, y_b - 8, '#979797');
+    } else {
         draw_lives(x_r - 16, y_b - 32, false);
+        draw_word(ctx_hud, 'ROUND', x_r - 64, y_b - 8, '#979797');
+        draw_number_r(ctx_hud, round + 1, x_r - 8, y_b - 8, '#979797');
     }
 }
