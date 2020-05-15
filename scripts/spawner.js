@@ -358,6 +358,7 @@ class RandomEnemySpawner {
                 this.level_win_sound_timer = Infinity;
             }
             if (this.level_win_advance_timer <= 0) {
+                round++;
                 load_level();
                 this.level_win_advance_timer = Infinity;
             }

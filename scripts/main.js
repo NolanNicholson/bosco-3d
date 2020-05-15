@@ -5,6 +5,7 @@ const PLAYER_VIEW_DIST_SQ = PLAYER_VIEW_DISTANCE * PLAYER_VIEW_DISTANCE;
 var hiscore = 20000;
 var score = 0;
 var lives = 3;
+var round = 0;
 
 var spawner = new RandomEnemySpawner();
 var camera = new Camera();
