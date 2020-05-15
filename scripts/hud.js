@@ -190,15 +190,10 @@ function draw_minimap() {
     hudpoints.render(model_matrix);
 }
 
-const digits = [
-    images.hud_0, images.hud_1,
-    images.hud_2, images.hud_3,
-    images.hud_4, images.hud_5,
-    images.hud_6, images.hud_7,
-    images.hud_8, images.hud_9,
-];
 function draw_digit(ctx, digit, x, y) {
-    ctx.drawImage(digits[digit].img, x, y);
+    ctx.drawImage(images.text_atlas.img,
+        digit*8, 0, 8, 8,
+        x, y, 8, 8);
 }
 
 function draw_number_r(ctx, num, x, y) {
