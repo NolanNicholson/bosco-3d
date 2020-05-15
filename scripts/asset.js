@@ -294,7 +294,7 @@ var models = {
 models.player.base_transform = m4.rotate_z(
     models.player.base_transform, -0.1);
 models.base_core_side.base_transform = m4.translate(
-    models.base_core_side.base_transform, 0, 0, 4);
+    models.base_core_side.base_transform, 0, 0, 3.5);
 
 // Load wireframe model assets
 var wireframes = {

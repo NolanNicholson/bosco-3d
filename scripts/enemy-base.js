@@ -52,39 +52,74 @@ class BaseCoreDoor extends Part {
         this.rotation_speed = 1;
         this.collider = new ColliderMulti();
         this.collider.components = [
-            new ColliderPrism(0, 0, 0, 2, 5, 1),
-            new ColliderPrism(0, 0, 0, 2, 5, 1),
+            new ColliderPrism(0, 0, 0, 3, 5, 1),
+            new ColliderPrism(0, 0, 0, 3, 5, 1),
         ];
         this.collider.group = 'base';
         this.type = 'base_core_door';
+
+        this.spawn_missile_timer = 0;
     }
 
     sync_collider() {
-        var rot = this.parent_obj.rotation_matrix;
-        rot = m4.multiply(rot, this.rel_rotation);
+        var pos;
+        pos = m4.apply_transform(
+            [0, 0, 5], this.rotation_matrix);
+        pos = v3.plus(pos, [this.x, this.y, this.z]);
+
         var comps = this.collider.components;
+        comps[0].pos = pos;
+        comps[0].rotation_matrix = this.rotation_matrix;
 
-        var pos_a = m4.translation(this.x, this.y, this.z);
-        pos_a = m4.multiply(pos_a, rot);
+        pos = m4.apply_transform(
+            [0, 0, -5], this.rotation_matrix);
+        pos = v3.plus(pos, [this.x, this.y, this.z]);
 
-        var pos_b;
-        pos_b = pos_a;
-        pos_b = m4.translate(pos_b, 0, 0, 5);
+        comps[1].pos = pos;
+        comps[1].rotation_matrix = this.rotation_matrix;
+    }
 
-        comps[0].pos = [pos_b[12], pos_b[13], pos_b[14]];
-        comps[0].rotation_matrix = rot;
+    spawn_missile(y_sign) {
+        var new_enemy = new Enemy('e');
+        new_enemy.ai_mode = 'dodge-me';
+        new_enemy.collider.group = 'base';
+        new_enemy.drive_speed *= 2;
 
-        pos_b = pos_a;
-        pos_b = m4.translate(pos_b, 0, 0, -5);
+        var rot = this.rotation_matrix;
+        rot = m4.rotate_x(rot, -Math.PI / 2 * y_sign);
+        new_enemy.rotation_matrix = rot;
 
-        comps[1].pos = [pos_b[12], pos_b[13], pos_b[14]];
-        comps[1].rotation_matrix = rot;
+        [new_enemy.x, new_enemy.y, new_enemy.z] = [this.x, this.y, this.z];
+        objects.push(new_enemy);
+        this.spawn_missile_timer = 1.5;
+    }
+
+    spawn_missile_check(dt) {
+        // minimum delay between missile launches
+        if (this.spawn_missile_timer > 0) {
+            this.spawn_missile_timer -= dt;
+            return;
+        } else {
+            var rel_to_player = this.get_rel_to_player();
+            // quit if the player is too far away
+            if (v3.len_sq(rel_to_player) > 3000) return;
+
+            var inv_rot = m4.inverse(this.rotation_matrix);
+            var rel_coord = m4.apply_transform(rel_to_player, inv_rot);
+            // quit if the player is off to either side
+            if (Math.abs(rel_coord[0]) > 4 * this.scale) return;
+            if (Math.abs(rel_coord[2]) > 4 * this.scale) return;
+            this.spawn_missile(Math.sign(rel_coord[1]));
+        }
     }
 
     update(dt) {
         super.update(dt);
         this.rel_rotation = m4.rotate_x(this.rel_rotation,
             this.rotation_speed * dt);
+        this.rotation_matrix = m4.multiply(this.rel_rotation,
+            this.parent_obj.rotation_matrix);
+        this.spawn_missile_check(dt);
     }
 
     collision_event(other) {
@@ -166,7 +201,7 @@ class BaseCannon extends Part {
 class BaseCoreSide extends Part {
     constructor(parent_obj) {
         super(parent_obj, models.base_core_side, textures.base_core_side);
-        this.collider = new ColliderPrism(0, 0, 0, 4, 4, 6);
+        this.collider = new ColliderPrism(0, 0, 0, 3, 6, 6);
         this.type = 'base-core-side';
         this.collider.group = 'base';
 
