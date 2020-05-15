@@ -131,6 +131,15 @@ class Player extends ObjTexture {
         }
     }
 
+    victory() {
+        this.bullets.forEach(b => {
+            b.deactivate();
+        });
+        this.pitch = 0;
+        this.yaw = 0;
+        this.state = 'victory';
+    }
+
     update_spawning(dt) {
         this.spawn_timer += dt;
         if (this.spawn_timer >= this.spawn_time) {

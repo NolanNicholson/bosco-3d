@@ -123,7 +123,20 @@ class RandomEnemySpawner {
     }
 
     win_level() {
-        sounds.level_win.play();
+        this.condition = 'green';
+        player.victory();
+        console.log(player.state);
+
+        sounds.enemy_drive_loop.stop();
+        sounds.formation_loop.stop();
+        sounds.con_red_voice.stop();
+        sounds.con_red_loop.stop();
+        this.sound_manager.quiet_player_sound();
+
+        //TODO: delay before sound
+        this.won_level = true;
+        this.level_win_sound_timer = 1.5;
+        this.level_win_advance_timer = 3;
     }
 
     spawn_spy() {
@@ -314,7 +327,7 @@ class RandomEnemySpawner {
         this.spawn_timer = this.timer + time;
     }
 
-    update(dt) {
+    update_main(dt) {
         this.timer += dt;
         this.sound_manager.update_pan();
 
@@ -333,6 +346,19 @@ class RandomEnemySpawner {
 
         if (this.condition != 'green' && this.timer >= this.spawn_timer) {
             this.spawn_enemy();
+        }
+    }
+
+    update(dt) {
+        if (this.won_level) {
+            this.level_win_sound_timer -= dt;
+            this.level_win_advance_timer -= dt;
+            if (this.level_win_sound_timer <= 0) {
+                sounds.level_win.play();
+                this.level_win_sound_timer = Infinity;
+            }
+        } else {
+            this.update_main(dt);
         }
     }
 }
