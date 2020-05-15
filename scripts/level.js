@@ -20,6 +20,7 @@ function random_loc_in_level() {
     return loc;
 }
 
+/*
 var rotmat = m4.identity();
 rotmat = m4.rotate_x(rotmat, -Math.PI / 6);
 
@@ -37,8 +38,8 @@ orion = [
 for (var i = 0; i < orion.length; i++) {
     coord = orion[i];
     coord = m4.apply_transform(coord, rotmat);
-    console.log(coord);
 }
+*/
 
 const LEVELS = [
     { // ROUND 1: Close triangle

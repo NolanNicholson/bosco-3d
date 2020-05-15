@@ -210,7 +210,6 @@ class ColliderMulti {
     }
 
     collides(other) {
-        //console.log("hi", this.components[0].pos);
         for (var i = 0; i < this.components.length; i++) {
             if (this.components[i].collides(other)) return true;
         }
@@ -230,7 +229,6 @@ function collider_rmax(c) {
 
 function cmp_collider(c1, c2) {
     // compare two objects based on their colliders' x coordinates (for sorting)
-    //console.log(c1.type, c2.type);
     return c1.collider.pos[0] - c2.collider.pos[0];
 }
 
@@ -248,7 +246,7 @@ function collision_check(c1, c2) {
     if (c1.collider.collides(c2.collider)) {
         c1.collider.has_collided = true;
         c2.collider.has_collided = true;
-        console.log(c1.type, c2.type);
+        console.log("collision:", c1.type, c2.type);
         c1.collision_event(c2);
         c2.collision_event(c1);
     }

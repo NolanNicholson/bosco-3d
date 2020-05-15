@@ -37,7 +37,7 @@ function handle_keydown(e) {
         case 89: // Y key TODO: debug
             spawner.spawn_spy();
             break;
-        case 74: // J key TODO: debug
+        case 57: // 9 key TODO: debug
             spawner.win_level();
             break;
         default: {

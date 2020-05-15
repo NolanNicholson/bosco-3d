@@ -193,7 +193,6 @@ class RandomEnemySpawner {
         }
 
         this.num_enemies++;
-        console.log("spawned enemy (", this.num_enemies, ")");
         
         if (this.condition == 'yellow') {
             this.num_in_wave--;
@@ -201,7 +200,6 @@ class RandomEnemySpawner {
                 this.spawn_interval = this.get_yellow_spawn_interval();
                 this.schedule_spawn();
             } else {
-                console.log("spawn infinitely later");
                 this.schedule_spawn(Infinity);
             }
         } else if (this.condition == 'red') {
@@ -211,7 +209,6 @@ class RandomEnemySpawner {
 
     lose_enemy() {
         this.num_enemies--;
-        console.log("lost enemy (", this.num_enemies, ")");
         if (!this.num_enemies 
             && this.condition != 'red'
             && !this.formation_active
