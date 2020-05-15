@@ -34,7 +34,6 @@ class Player extends ObjTexture {
 
         //collider information (self, bullets)
         this.collider = new ColliderPrism(0, 0, 0, 1.2, 0.5, 0.9);
-        all_colliders.push(this);
 
         //explosion info
         this.explosion_properties = {
@@ -135,8 +134,6 @@ class Player extends ObjTexture {
         this.bullets.forEach(b => {
             b.deactivate();
         });
-        this.pitch = 0;
-        this.yaw = 0;
         this.state = 'victory';
     }
 
@@ -159,7 +156,7 @@ class Player extends ObjTexture {
     update_exploded(dt) {
         this.explosion_time += dt;
         if (this.explosion_time >= this.explosion_timer) {
-            this.spawn();
+            this.spawn(true);
         }
     }
 
@@ -222,7 +219,9 @@ class Player extends ObjTexture {
         this.bounds_check();
     }
 
-    spawn() {
+    spawn(died) {
+        died = died || false;
+
         //reset current rotation, pitch, and yaw
         this.rotation_matrix = m4.identity();
         this.pitch = 0; this.yaw = 0;
@@ -235,9 +234,10 @@ class Player extends ObjTexture {
         this.state = 'spawning';
         spawner.reset_level();
 
-        //spawning costs a life
-        lives--;
-        console.log(lives);
+        // update lives if this spawn was the result of a death
+        if (died) {
+            lives--;
+        }
     }
 
     takeoff() {

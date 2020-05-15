@@ -6,18 +6,7 @@ var hiscore = 20000;
 var score = 0;
 var lives = 3;
 
-// Define test objects
-var obj_starfield = new Starfield();
-
 var spawner = new RandomEnemySpawner();
-
-// List of objects to be updated and rendered
-var objects = [
-    player, obj_starfield,
-    ...bases,
-    ...mines, ...asteroids,
-];
-
 var camera = new Camera();
 var viewproj;
 
@@ -47,6 +36,9 @@ function handle_keydown(e) {
         case 89: // Y key TODO: debug
             spawner.spawn_spy();
             break;
+        case 74: // J key TODO: debug
+            spawner.win_level();
+            break;
         default: {
             if (!paused) {
                 player.handle_keydown(e);
@@ -65,7 +57,7 @@ window.addEventListener("keyup", handle_keyup);
 function start_game() {
     gl.disable(gl.SCISSOR_TEST);
     then = 0;
-    player.spawn();
+    load_level();
     requestAnimationFrame(drawScene);
 }
 

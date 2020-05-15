@@ -61,6 +61,7 @@ class RandomEnemySpawner {
         this.condition = 'green';
         this.formation_active = false;
         this.num_yellows = 0;
+        this.won_level = false;
 
         this.con_yellow_start_timer = this.get_yellow_start_timer();
 
@@ -125,7 +126,6 @@ class RandomEnemySpawner {
     win_level() {
         this.condition = 'green';
         player.victory();
-        console.log(player.state);
 
         sounds.enemy_drive_loop.stop();
         sounds.formation_loop.stop();
@@ -136,7 +136,7 @@ class RandomEnemySpawner {
         //TODO: delay before sound
         this.won_level = true;
         this.level_win_sound_timer = 1.5;
-        this.level_win_advance_timer = 3;
+        this.level_win_advance_timer = 3.5;
     }
 
     spawn_spy() {
@@ -356,6 +356,10 @@ class RandomEnemySpawner {
             if (this.level_win_sound_timer <= 0) {
                 sounds.level_win.play();
                 this.level_win_sound_timer = Infinity;
+            }
+            if (this.level_win_advance_timer <= 0) {
+                load_level();
+                this.level_win_advance_timer = Infinity;
             }
         } else {
             this.update_main(dt);
