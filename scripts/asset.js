@@ -121,7 +121,7 @@ class Model_SolidColor {
 
 class Logo {
     constructor(obj_filename) {
-        this.program_holder = program_holder_single_color;
+        this.age = 0;
 
         //fetch the object file
         var me = this;
@@ -164,10 +164,7 @@ class Logo {
             logo_positions.push(positions[i] * 0.55);
             logo_positions.push(-positions[i + 2] * 0.55);
         }
-        console.log(logo_positions);
-
         [this.logo_vao, this.logo_nv] = this.vao_from_2d_pos(logo_positions)
-        console.log(this.logo_nv);
 
         var bg_positions = [
             -1, 1, -1, -1, 1, -1, 1, -1, 1, 1, -1, 1];
@@ -180,28 +177,43 @@ class Logo {
             player.rotation_matrix, Math.PI * -0.02 * dt);
         player.rotation_matrix = m4.rotate_y(
             player.rotation_matrix, Math.PI * -0.01 * dt);
+
+        this.age += dt;
     }
 
     render() {
         gl.disable(gl.CULL_FACE);
         gl.useProgram(program_holder_logo.program);
-        gl.bindVertexArray(this.logo_vao);
 
-        gl.stencilOp(gl.KEEP, gl.KEEP, gl.REPLACE);
-        gl.stencilFunc(gl.ALWAYS, 1, 0xff);
+        // Enable stencil writing, disable depth/color writing
         gl.stencilMask(0xff);
         gl.depthMask(false);
         gl.colorMask(false, false, false, false);
 
+        // Draw the logo geometry to the stencil buffer as 0xff
+        gl.stencilFunc(gl.ALWAYS, 0xff, 0xff);
+        gl.stencilOp(gl.REPLACE, gl.REPLACE, gl.REPLACE);
+        gl.bindVertexArray(this.logo_vao);
         gl.drawArrays(gl.TRIANGLES, 0, this.logo_nv);
 
+        // Draw a rectangle covering the whole screen as invert
+        gl.useProgram(program_holder_logo_inv.program);
+        gl.stencilFunc(gl.ALWAYS, 1, 0xff);
+        gl.stencilOp(gl.INVERT, gl.INVERT, gl.INVERT);
         gl.bindVertexArray(this.bg_vao);
+        gl.drawArrays(gl.TRIANGLES, 0, this.bg_nv);
 
-        gl.stencilFunc(gl.NOTEQUAL, 1, 0xff);
+        // Disable stencil writing, enable depth/color writing
+        gl.useProgram(program_holder_logo.program);
         gl.stencilMask(0x00);
         gl.depthMask(true);
         gl.colorMask(true, true, true, true);
 
+        // Draw a rectangle covering the whole screen
+        // with the desired colors
+        gl.stencilFunc(gl.EQUAL, 0, 0xff);
+
+        gl.bindVertexArray(this.bg_vao);
         gl.drawArrays(gl.TRIANGLES, 0, this.bg_nv);
         gl.flush();
         gl.enable(gl.CULL_FACE);
