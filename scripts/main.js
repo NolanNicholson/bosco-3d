@@ -55,10 +55,10 @@ function handle_keyup(e) {
 window.addEventListener("keydown", handle_keydown);
 window.addEventListener("keyup", handle_keyup);
 
-function start_game() {
+function finish_loading() {
     gl.disable(gl.SCISSOR_TEST);
     then = 0;
-    load_level();
+    start_title_screen();
     requestAnimationFrame(drawScene);
 }
 
@@ -74,7 +74,7 @@ function confirm_asset_loaded() {
     assets_loaded++;
     if (assets_loaded == total_assets) {
         console.log("Assets loaded");
-        start_game();
+        finish_loading();
     }
 }
 

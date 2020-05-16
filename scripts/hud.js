@@ -84,9 +84,11 @@ class HUDPoints {
         var num_points = 64;
         this.positions = [];
         this.colors = [];
+        var default_color = hud_colors.dark_purple.slice(0, 3);
+        console.log(default_color);
         for (var i = 0; i < 32; i++) {
             this.positions.push(0, 0, 0);
-            this.colors.push(0, 0, 0);
+            this.colors.push(...default_color);
         }
 
         // set up VAO and buffers (DYNAMIC_DRAW so we can move points around)
@@ -142,7 +144,9 @@ class HUDPoints {
     }
 
     render(model_matrix) {
-        this.update_points();
+        if (game_state == 'main-game') {
+            this.update_points();
+        }
         gl.useProgram(this.program_holder.program);
         gl.bindVertexArray(this.vao);
         var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;
@@ -286,11 +290,11 @@ function draw_hud() {
     draw_condition(x_l, y_t + 36);
 
     if (landscape) {
-        draw_lives(x_l, y_b - 32, true);
+        if (game_state == 'main-game') draw_lives(x_l, y_b - 32, true);
         draw_word(ctx_hud, 'ROUND', x_l, y_b - 8, '#979797');
         draw_number_r(ctx_hud, round + 1, x_nums, y_b - 8, '#979797');
     } else {
-        draw_lives(x_r - 16, y_b - 32, false);
+        if (game_state == 'main-game') draw_lives(x_r - 16, y_b - 32, false);
         draw_word(ctx_hud, 'ROUND', x_r - 64, y_b - 8, '#979797');
         draw_number_r(ctx_hud, round + 1, x_r - 8, y_b - 8, '#979797');
     }
