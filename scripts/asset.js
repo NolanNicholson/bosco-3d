@@ -119,6 +119,96 @@ class Model_SolidColor {
     }
 }
 
+class Logo {
+    constructor(obj_filename) {
+        this.program_holder = program_holder_single_color;
+
+        //fetch the object file
+        var me = this;
+        fetch(obj_filename)
+        .then(response => response.text())
+        .then((obj_string) => {
+            var obj_file = loadOBJFromString(obj_string);
+            var positions = obj_file.vertices;
+            me.load_data(positions);
+            confirm_asset_loaded();
+        });
+    }
+
+    vao_from_2d_pos(positions) {
+        //create and bind a VAO
+        var vao = gl.createVertexArray();
+        gl.bindVertexArray(vao);
+
+        //supply position data to a new buffer
+        var positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER,
+            new Float32Array(positions), gl.STATIC_DRAW);
+
+        //set the position attribute up to receive buffer data
+        var pos_loc = program_holder_logo.locations.positionAttributeLocation;
+        gl.enableVertexAttribArray(pos_loc);
+        gl.vertexAttribPointer(pos_loc,
+            2 /*size*/, gl.FLOAT /*type*/, false /*normalize*/,
+            0 /*stride*/, 0 /*offset*/);
+
+        var num_verts = positions.length / 2;
+        return [ vao, num_verts ];
+    }
+
+    load_data(positions) {
+        // first, need to convert from 3D points to 2D points
+        var logo_positions = [];
+        for (var i = 0; i < positions.length; i += 3) {
+            logo_positions.push(positions[i] * 0.55);
+            logo_positions.push(-positions[i + 2] * 0.55);
+        }
+        console.log(logo_positions);
+
+        [this.logo_vao, this.logo_nv] = this.vao_from_2d_pos(logo_positions)
+        console.log(this.logo_nv);
+
+        var bg_positions = [
+            -1, 1, -1, -1, 1, -1, 1, -1, 1, 1, -1, 1];
+        [this.bg_vao, this.bg_nv] = this.vao_from_2d_pos(bg_positions);
+    }
+
+    update(dt) {
+        // (cosmetic) rotation of the player so that the stars move
+        player.rotation_matrix = m4.rotate_x(
+            player.rotation_matrix, Math.PI * -0.02 * dt);
+        player.rotation_matrix = m4.rotate_y(
+            player.rotation_matrix, Math.PI * -0.01 * dt);
+    }
+
+    render() {
+        gl.disable(gl.CULL_FACE);
+        gl.useProgram(program_holder_logo.program);
+        gl.bindVertexArray(this.logo_vao);
+
+        gl.stencilOp(gl.KEEP, gl.KEEP, gl.REPLACE);
+        gl.stencilFunc(gl.ALWAYS, 1, 0xff);
+        gl.stencilMask(0xff);
+        gl.depthMask(false);
+        gl.colorMask(false, false, false, false);
+
+        gl.drawArrays(gl.TRIANGLES, 0, this.logo_nv);
+
+        gl.bindVertexArray(this.bg_vao);
+
+        gl.stencilFunc(gl.NOTEQUAL, 1, 0xff);
+        gl.stencilMask(0x00);
+        gl.depthMask(true);
+        gl.colorMask(true, true, true, true);
+
+        gl.drawArrays(gl.TRIANGLES, 0, this.bg_nv);
+        gl.flush();
+        gl.enable(gl.CULL_FACE);
+    }
+}
+
+
 class Model_Wireframe {
     constructor(obj_filename) {
         this.program_holder = program_holder_single_color;
@@ -289,6 +379,7 @@ var models = {
     asteroid1:      new Model("models/asteroid1.obj"),
     asteroid2:      new Model("models/asteroid2.obj"),
     cube:           new Model_SolidColor("models/cube.obj"),
+    logo:           new Logo("models/logo.obj"),
 }
 
 // Manual adjustments to some models
