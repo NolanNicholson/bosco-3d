@@ -133,7 +133,6 @@ class RandomEnemySpawner {
         sounds.con_red_loop.stop();
         this.sound_manager.quiet_player_sound();
 
-        //TODO: delay before sound
         this.won_level = true;
         this.level_win_sound_timer = 1.5;
         this.level_win_advance_timer = 3.5;

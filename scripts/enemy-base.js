@@ -40,6 +40,7 @@ class BaseCrystal extends Part {
     collision_event(other) {
         switch(other.type) {
             case 'player_bullet':
+            case 'player':
                 this.parent_obj.explode();
                 break;
         }
@@ -123,7 +124,13 @@ class BaseCoreDoor extends Part {
     }
 
     collision_event(other) {
-        //none - the door is impervious
+        // the door is impervious to everything except the player
+        // (but the player destroys the whole base)
+        switch(other.type) {
+            case 'player':
+                this.parent_obj.explode();
+                break;
+        }
     }
 }
 
@@ -135,30 +142,72 @@ class BaseCannon extends Part {
         this.is_corner = true;
         this.type = 'base_cannon';
 
+        this.collider = new ColliderSphere(0, 0, 0, 7);
+        this.collider.group = 'base';
+
         this.shoot_timer = 0;
+
+        this.collider_transform = false;
+    }
+
+    explode() {
+        sounds.base_cannon_hit.play();
+        score += 200;
+        this.exploded = true;
+        this.explosion = new Explosion({
+            size: 3 * this.parent_obj.scale,
+        });
+        this.explosion.x = this.x;
+        this.explosion.y = this.y;
+        this.explosion.z = this.z;
+        if (this.is_corner)
+            this.model_asset = models.base_ball_d_c;
+        else
+            this.model_asset = models.base_ball_d_s;
+        this.texture_asset = textures.base_ball_d;
+
+        // update collider
+        this.collider = new ColliderPrism(0, 0, 0,
+            this.scale / 2, this.scale * 1.2, this.scale * 1.2);
+        if (this.is_corner) {
+            var rel_rot = m4.rotation_y(Math.PI / 4);
+            var rel_pos = [0, 0, this.scale / 2];
+        } else {
+            var rel_rot = m4.identity();
+            var rel_pos = [-this.scale / 2, 0, 0];
+        }
+        this.collider_transform = { rel_rot: rel_rot, rel_pos: rel_pos };
+
+        //communicate damage to the main base
+        this.parent_obj.damage();
+    }
+
+    sync_collider() {
+        if (this.collider_transform) {
+            var rel_pos = this.collider_transform.rel_pos;
+            var rel_rot = this.collider_transform.rel_rot;
+
+            rel_pos = m4.apply_transform(rel_pos, this.rotation_matrix);
+
+            this.collider.pos = v3.plus(
+                [this.x, this.y, this.z], rel_pos);
+            this.collider.rotation_matrix = m4.multiply(
+                this.rotation_matrix, rel_rot);
+        } else {
+            super.sync_collider();
+        }
     }
 
     collision_event(other) {
-        if (!this.exploded) {
-            switch(other.type) {
-                case 'player_bullet':
-                    sounds.base_cannon_hit.play();
-                    this.exploded = true;
-                    this.explosion = new Explosion({
-                        size: 3 * this.parent_obj.scale,
-                    });
-                    this.explosion.x = this.x;
-                    this.explosion.y = this.y;
-                    this.explosion.z = this.z;
-                    if (this.is_corner)
-                        this.model_asset = models.base_ball_d_c;
-                    else
-                        this.model_asset = models.base_ball_d_s;
-                    this.texture_asset = textures.base_ball_d;
-
-                    //communicate damage to the main base
-                    this.parent_obj.damage();
-            }
+        switch(other.type) {
+            case 'player':
+                // getting hit by the player destroys the whole base
+                this.parent_obj.explode();
+                break;
+            default:
+                if (!this.exploded) {
+                    this.explode();
+                }
         }
     }
 
@@ -208,7 +257,13 @@ class BaseCoreSide extends Part {
     }
 
     collision_event(other) {
-        //none - the core sides are impervious
+        // the core sides are impervious to everything except the player
+        // (but the player destroys the whole base)
+        switch(other.type) {
+            case 'player':
+                this.parent_obj.explode();
+                break;
+        }
     }
 }
 
@@ -225,12 +280,8 @@ class EnemyBase {
 
         // set up the base cannons
         this.balls = []
-        var ball;
         for (var i = 0; i < 6; i++) {
-            ball = new BaseCannon(this);
-            ball.collider = new ColliderSphere(0, 0, 0, 7);
-            ball.collider.group = 'base';
-            this.balls.push(ball);
+            this.balls.push(new BaseCannon(this));
         }
         this.balls[0].rel_position = [-5, 0,  0];
         this.balls[1].rel_position = [ 5, 0,  0];
@@ -329,6 +380,8 @@ class EnemyBase {
     }
 
     explode() {
+        score += 1500;
+
         //first, remove colliders
         this.colliders.forEach(coll => {
             var i_coll = all_colliders.indexOf(coll);
