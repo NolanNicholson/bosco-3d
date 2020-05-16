@@ -283,6 +283,7 @@ var models = {
     base_ball_d_c:  new Model("models/base_ball_destroyed_corner.obj"),
     base_ball_d_s:  new Model("models/base_ball_destroyed_side.obj"),
     base_arm:       new Model("models/base_arm.obj"),
+    base_arm_d:     new Model("models/base_arm_destroyed.obj"),
     base_crystal:   new Model("models/base_crystal.obj"),
     cosmo_mine:     new Model("models/cosmo_mine.obj"),
     asteroid1:      new Model("models/asteroid1.obj"),

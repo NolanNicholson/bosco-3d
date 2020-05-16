@@ -7,10 +7,6 @@ class Part extends ObjTexture {
         this.type = 'part';
     }
 
-    update(dt) {
-        super.update(dt);
-    }
-
     sync_with_parent() {
         var p = this.parent_obj;
 
@@ -135,11 +131,11 @@ class BaseCoreDoor extends Part {
 }
 
 class BaseCannon extends Part {
-    constructor(parent_obj) {
+    constructor(parent_obj, is_corner) {
         super(parent_obj, models.base_ball, textures.base_ball);
         this.exploded = false;
         this.explosion = false;
-        this.is_corner = true;
+        this.is_corner = is_corner
         this.type = 'base_cannon';
 
         this.collider = new ColliderSphere(0, 0, 0, 7);
@@ -148,6 +144,13 @@ class BaseCannon extends Part {
         this.shoot_timer = 0;
 
         this.collider_transform = false;
+
+        if (is_corner) {
+            this.arm = new Part(this, models.base_arm, textures.base_core_side);
+            //this.arm = new Part(this, models.base_arm_d, textures.base_ball_d);
+            this.arm.rel_position = [1, 0, 2];
+            this.arm.rel_rotation = m4.rotation_y(Math.PI);
+        }
     }
 
     explode() {
@@ -177,6 +180,12 @@ class BaseCannon extends Part {
             var rel_pos = [-this.scale / 2, 0, 0];
         }
         this.collider_transform = { rel_rot: rel_rot, rel_pos: rel_pos };
+
+        // update arm appearance
+        if (this.arm) {
+            this.arm.model_asset = models.base_arm_d;
+            this.arm.texture_asset = textures.base_ball_d;
+        }
 
         //communicate damage to the main base
         this.parent_obj.damage();
@@ -237,6 +246,10 @@ class BaseCannon extends Part {
                 if (dist_sq_to_player < 3000) this.update_cannon(dt);
             }
         }
+
+        if (this.arm) {
+            this.arm.sync_with_parent();
+        }
     }
 
     render() {
@@ -244,6 +257,9 @@ class BaseCannon extends Part {
             this.explosion.render();
         }
         super.render();
+        if (this.arm) {
+            this.arm.render();
+        }
     }
 }
 
@@ -281,7 +297,8 @@ class EnemyBase {
         // set up the base cannons
         this.balls = []
         for (var i = 0; i < 6; i++) {
-            this.balls.push(new BaseCannon(this));
+            var is_corner = (i > 1);
+            this.balls.push(new BaseCannon(this, is_corner));
         }
         this.balls[0].rel_position = [-5, 0,  0];
         this.balls[1].rel_position = [ 5, 0,  0];
@@ -289,8 +306,6 @@ class EnemyBase {
         this.balls[3].rel_position = [ 2.5, 0, -4.5];
         this.balls[4].rel_position = [-2.5, 0,  4.5];
         this.balls[5].rel_position = [ 2.5, 0,  4.5];
-        this.balls[0].is_corner = false;
-        this.balls[1].is_corner = false;
         this.balls[0].rel_rotation = m4.rotation_z(Math.PI);
 
         // some of the base cannons need to be rotated
@@ -302,19 +317,6 @@ class EnemyBase {
                 this.balls[i].rel_rotation, Math.PI);
         });
 
-        // set up the "arms" that connect the cannons
-        this.arms = []
-        for (var i = 0; i < 4; i++) {
-            this.arms.push(new Part(this,
-                models.base_arm, textures.base_core_side));
-        }
-        this.arms[0].rel_position = [4, 0, -2];
-        this.arms[1].rel_position = [4, 0, 2];
-        this.arms[2].rel_position = [-4, 0, -2];
-        this.arms[3].rel_position = [-4, 0, 2];
-        this.arms[1].rel_rotation = m4.rotation_x(Math.PI);
-        this.arms[2].rel_rotation = m4.rotation_x(Math.PI);
-
         // set up the core crystal
         this.crystal = new BaseCrystal(this);
 
@@ -323,7 +325,6 @@ class EnemyBase {
         this.parts = [
             ...this.core_sides,
             ...this.balls,
-            ...this.arms,
             this.crystal,
             this.crystal_guard,
         ];
