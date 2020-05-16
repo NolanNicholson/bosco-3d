@@ -122,16 +122,8 @@ void main() {
 }
 `;
 
-var src_fs_explosion = `#version 300 es
-
-precision mediump float;
-in vec4 v_color;
-out vec4 outColor;
-
-void main() {
-    outColor = v_color;
-}
-`;
+//src_fs_explosion doesn't exist; the explosion program
+//uses src_fs_color for its fragment shader
 
 var src_vs_shrapnel = `#version 300 es
 
@@ -168,16 +160,8 @@ void main() {
 }
 `;
 
-var src_fs_shrapnel = `#version 300 es
-
-precision mediump float;
-in vec4 v_color;
-out vec4 outColor;
-
-void main() {
-    outColor = v_color;
-}
-`;
+//src_fs_shrapnel doesn't exist; the explosion program
+//uses src_fs_color for its fragment shader
 
 var src_vs_texture = `#version 300 es
 
@@ -273,7 +257,7 @@ var program_holder_single_color = new ProgramHolder(
 
 //explosion: for the core "cloud" of an explosion
 var program_holder_explosion = new ProgramHolder(
-    gl, src_vs_explosion, src_fs_explosion,
+    gl, src_vs_explosion, src_fs_color,
     {
         attribs: {
         },
@@ -289,7 +273,7 @@ var program_holder_explosion = new ProgramHolder(
 
 //shrapnel: for flickering bits of shrapnel on the edge of an explosion
 var program_holder_shrapnel = new ProgramHolder(
-    gl, src_vs_shrapnel, src_fs_shrapnel,
+    gl, src_vs_shrapnel, src_fs_color,
     {
         attribs: {
         },
