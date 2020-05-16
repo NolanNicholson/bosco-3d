@@ -55,7 +55,8 @@ class BaseCoreDoor extends Part {
         this.collider.group = 'base';
         this.type = 'base_core_door';
 
-        this.spawn_missile_timer = 0;
+        // 0.01, not 0, so that missiles don't fire on level load
+        this.spawn_missile_timer = 0.01;
     }
 
     sync_collider() {
