@@ -85,7 +85,6 @@ class HUDPoints {
         this.positions = [];
         this.colors = [];
         var default_color = hud_colors.dark_purple.slice(0, 3);
-        console.log(default_color);
         for (var i = 0; i < 32; i++) {
             this.positions.push(0, 0, 0);
             this.colors.push(...default_color);

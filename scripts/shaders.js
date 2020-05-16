@@ -204,6 +204,29 @@ void main() {
 }
 `;
 
+var src_vs_logo = `#version 300 es
+
+in vec2 a_position;
+out vec4 v_color;
+
+void main() {
+    gl_Position = vec4(a_position.xy, 0.0, 1.0);
+    v_color = vec4(1.0, 0.0, 0.0, 1);
+}
+`;
+
+var src_fs_logo = `#version 300 es
+
+precision mediump float;
+
+in vec4 v_color;
+out vec4 outColor;
+
+void main() {
+    outColor = v_color;
+}
+`;
+
 class ProgramHolder {
     constructor(gl, vs_source, fs_source, params) {
         this.gl = gl;
@@ -300,6 +323,18 @@ var program_holder_texture = new ProgramHolder(
             uViewProjMatrixLoc: "u_matrix_viewproj",
             uViewMatrixLoc: "u_matrix_view",
             uProjMatrixLoc: "u_matrix_projection",
+        }
+    });
+
+
+// logo: for the game's main logo
+var program_holder_logo = new ProgramHolder(
+    gl, src_vs_logo, src_fs_logo,
+    {
+        attribs: {
+            positionAttributeLocation: "a_position",
+        },
+        uniforms: {
         }
     });
 
