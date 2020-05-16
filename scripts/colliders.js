@@ -154,8 +154,7 @@ class ColliderPrism extends Collider {
                     ];
                     point_other = m4.apply_transform(point_other,
                         other.rotation_matrix);
-                    point_other = m4.apply_transform(point_other,
-                        relative_pos);
+                    point_other = v3.plus(point_other, relative_pos);
                     point_other = m4.apply_transform(point_other,
                         this.inv_rot);
 
