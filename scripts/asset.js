@@ -161,8 +161,8 @@ class Logo {
         // first, need to convert from 3D points to 2D points
         var logo_positions = [];
         for (var i = 0; i < positions.length; i += 3) {
-            logo_positions.push(positions[i] * 0.55);
-            logo_positions.push(-positions[i + 2] * 0.55);
+            logo_positions.push(positions[i] * 0.5);
+            logo_positions.push(-positions[i + 2] * 0.5);
         }
         [this.logo_vao, this.logo_nv] = this.vao_from_2d_pos(logo_positions)
 
@@ -181,7 +181,26 @@ class Logo {
         this.age += dt;
     }
 
+    get_rsq(viewport) {
+        var width = viewport[2]; var height = viewport[3];
+        var max_r_sq = width*width + height*height;
+
+        var progress = 0.5 * (this.age - 1);
+        progress = Math.max(0, Math.min(progress, 1));
+        return progress * progress * max_r_sq;
+    }
+
     render() {
+        var viewport = getMainViewport(gl.canvas, main_view_sizer);
+        var r_sq = this.get_rsq(viewport);
+
+        [program_holder_logo, program_holder_logo_inv].forEach(ph => {
+            gl.useProgram(ph.program);
+            gl.uniform1f(ph.locations.uRadiusSqLoc, r_sq);
+            gl.uniform1f(ph.locations.uXCenterLoc, viewport[2] / 2);
+            gl.uniform1f(ph.locations.uYCenterLoc, viewport[3] / 2);
+        });
+
         gl.disable(gl.CULL_FACE);
         gl.useProgram(program_holder_logo.program);
 

@@ -216,23 +216,37 @@ void main() {
 var src_fs_logo = `#version 300 es
 
 precision mediump float;
+
+uniform float u_rsq, u_xc, u_yc;
 out vec4 outColor;
+
+bool circ() {
+    float x_c = gl_FragCoord.x - u_xc;
+    float y_c = gl_FragCoord.y - u_yc;
+    return (x_c * x_c + y_c * y_c > u_rsq);
+}
 
 void main() {
     vec4 red = vec4(1, 0, 0, 1);
     vec4 gray = vec4(0.592, 0.592, 0.592, 1);
-    outColor = gl_FragCoord.x > 175.0 ? red : gray;
+    outColor = circ() ? gray : red;
 }
 `;
 
 var src_fs_logo_inv = `#version 300 es
 
 precision mediump float;
-out vec4 outColor;
+
+uniform float u_rsq, u_xc, u_yc;
+
+bool circ() {
+    float x_c = gl_FragCoord.x - u_xc;
+    float y_c = gl_FragCoord.y - u_yc;
+    return (x_c * x_c + y_c * y_c > u_rsq);
+}
 
 void main() {
-    if (gl_FragCoord.x < 175.0) discard;
-    outColor = vec4(1, 1, 1, 1);
+    if (circ()) discard;
 }
 `;
 
@@ -344,6 +358,9 @@ var program_holder_logo = new ProgramHolder(
             positionAttributeLocation: "a_position",
         },
         uniforms: {
+            uRadiusSqLoc: "u_rsq",
+            uXCenterLoc: "u_xc",
+            uYCenterLoc: "u_yc",
         }
     });
 
@@ -355,6 +372,9 @@ var program_holder_logo_inv = new ProgramHolder(
             positionAttributeLocation: "a_position",
         },
         uniforms: {
+            uRadiusSqLoc: "u_rsq",
+            uXCenterLoc: "u_xc",
+            uYCenterLoc: "u_yc",
         }
     });
 
