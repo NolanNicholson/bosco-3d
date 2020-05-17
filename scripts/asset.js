@@ -199,6 +199,7 @@ class Logo {
         var r_sq = this.get_rsq(viewport);
 
         var logo_x = Math.max(0, 2 - 0.7 * this.age);
+        var logo_y = Math.max(0, 0.7 * (this.age - 8));
 
         // prepare matrix for correcting the logo's aspect ratio
         var aspect = w / h;
@@ -208,7 +209,7 @@ class Logo {
             mat = m4.scaling(scale / aspect, scale * 0.9, 1);
         else
             mat = m4.scaling(scale, scale * aspect * 0.9, 1);
-        mat = m4.translate(mat, logo_x, 0, 0);
+        mat = m4.translate(mat, logo_x, logo_y, 0);
 
         [program_holder_logo, program_holder_logo_inv].forEach(ph => {
             gl.useProgram(ph.program);
