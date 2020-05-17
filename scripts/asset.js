@@ -199,7 +199,7 @@ class Logo {
         var r_sq = this.get_rsq(viewport);
 
         var logo_x = Math.max(0, 2 - 0.7 * this.age);
-        var logo_y = Math.max(0, 0.7 * (this.age - 8));
+        var logo_y = Math.max(0, 0.7 * (this.age - 11));
 
         // prepare matrix for correcting the logo's aspect ratio
         var aspect = w / h;
@@ -215,6 +215,7 @@ class Logo {
             gl.useProgram(ph.program);
             gl.uniformMatrix4fv(ph.locations.uMatrixLoc, false, mat);
             gl.uniform1f(ph.locations.uRadiusSqLoc, r_sq);
+            gl.uniform1f(ph.locations.uTimeLoc, this.age);
             gl.uniform1f(ph.locations.uXCenterLoc, w / 2);
             gl.uniform1f(ph.locations.uYCenterLoc, h / 2 + viewport[1]);
         });

@@ -218,7 +218,7 @@ var src_fs_logo = `#version 300 es
 
 precision mediump float;
 
-uniform float u_rsq, u_xc, u_yc;
+uniform float u_t, u_rsq, u_xc, u_yc;
 out vec4 outColor;
 
 bool circ() {
@@ -229,8 +229,21 @@ bool circ() {
 
 void main() {
     vec4 red = vec4(1, 0, 0, 1);
+    vec4 purple = vec4(0.592, 0, 0.871, 1);
+    vec4 white = vec4(0.871, 0.871, 0.871, 1);
     vec4 gray = vec4(0.592, 0.592, 0.592, 1);
-    outColor = circ() ? gray : red;
+
+    if (circ()) outColor = gray;
+    else if (u_t < 5.5 || u_t > 9.45) outColor = red;
+    else {
+        float x_loc = (gl_FragCoord.x - u_xc) / (2.0 * u_xc);
+        float x_t = x_loc - ((u_t - 6.0) * 3.0);
+        x_t = mod(x_t, 1.0);
+
+        if (x_t < 0.08) outColor = purple;
+        else if (x_t < 0.16) outColor = white;
+        else outColor = red;
+    }
 }
 `;
 
@@ -238,7 +251,7 @@ var src_fs_logo_inv = `#version 300 es
 
 precision mediump float;
 
-uniform float u_rsq, u_xc, u_yc;
+uniform float u_t, u_rsq, u_xc, u_yc;
 
 bool circ() {
     float x_c = gl_FragCoord.x - u_xc;
@@ -360,6 +373,7 @@ var program_holder_logo = new ProgramHolder(
         },
         uniforms: {
             uMatrixLoc: "u_transform",
+            uTimeLoc: "u_t",
             uRadiusSqLoc: "u_rsq",
             uXCenterLoc: "u_xc",
             uYCenterLoc: "u_yc",
@@ -375,6 +389,7 @@ var program_holder_logo_inv = new ProgramHolder(
         },
         uniforms: {
             uMatrixLoc: "u_transform",
+            uTimeLoc: "u_t",
             uRadiusSqLoc: "u_rsq",
             uXCenterLoc: "u_xc",
             uYCenterLoc: "u_yc",
