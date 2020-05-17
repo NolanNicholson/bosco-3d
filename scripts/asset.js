@@ -178,6 +178,9 @@ class Logo {
         player.rotation_matrix = m4.rotate_y(
             player.rotation_matrix, Math.PI * -0.01 * dt);
 
+        [player.x, player.y, player.z] = m4.apply_transform(
+            [0, 10, 55], player.rotation_matrix);
+
         this.age += dt;
     }
 
@@ -198,7 +201,8 @@ class Logo {
             gl.useProgram(ph.program);
             gl.uniform1f(ph.locations.uRadiusSqLoc, r_sq);
             gl.uniform1f(ph.locations.uXCenterLoc, viewport[2] / 2);
-            gl.uniform1f(ph.locations.uYCenterLoc, viewport[3] / 2);
+            gl.uniform1f(ph.locations.uYCenterLoc,
+                viewport[3] / 2 + viewport[1]);
         });
 
         gl.disable(gl.CULL_FACE);

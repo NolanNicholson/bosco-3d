@@ -10,8 +10,14 @@ function handle_keydown_title_screen(e) {
 }
 
 function start_title_screen() {
+    [player.x, player.y, player.z] = [0, 7, 50];
+    var base = new EnemyBase();
+    [base.x, base.y, base.z] = [0, 0, 0];
+    base.rotation_matrix = m4.rotation_x(Math.PI * 0.5);
+    base.scale = 1;
     objects = [
         obj_starfield,
+        base,
         models.logo,
     ];
     game_state = 'title-screen';
