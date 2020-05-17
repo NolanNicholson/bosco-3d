@@ -21,11 +21,15 @@ precision mediump float;
 
 in vec2 v_texcoord;
 uniform sampler2D u_texture;
+uniform vec4 u_color;
 
 out vec4 outColor;
 
 void main() {
-    outColor = texture(u_texture, v_texcoord);
+    vec4 tex = texture(u_texture, v_texcoord);
+    if (tex.x == 0.0) discard;
+    outColor = u_color * tex;
+
 }
 `;
 
@@ -39,6 +43,7 @@ var program_holder_text = new ProgramHolder(
         },
         uniforms: {
             uMatrixLoc: "u_matrix",
+            uColorLoc: "u_color",
         }
     });
 
@@ -57,7 +62,7 @@ class TextRenderer {
 
         // position buffer just contains a rectangle
         var positions = [
-            -1, 1, -1, -1, 1, -1, 1, -1, 1, 1, -1, 1];
+            0, 1, 0, 0, 1, 0, 1, 0, 1, 1, 0, 1];
         var positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
         gl.bufferData(gl.ARRAY_BUFFER,
@@ -82,13 +87,60 @@ class TextRenderer {
         this.num_vertices = positions.length / 2;
     }
 
-    render() {
+    get_tex_coords(str, index) {
+        var w = 1 / 10;
+        var h = 1 / 4;
+
+        // process digits
+        var cc = str.charCodeAt(index);
+        if (cc >= 48 && cc <= 57) {
+            var y = 0;
+            var x = w * (cc - 48);
+        }
+        // process letters
+        else if ((cc >= 65 && cc <= 90) || (cc >= 97 && cc <= 122)) {
+            if (cc >= 97) cc -= 32; // to upper case
+            cc -= 65;
+            var y = (1 + Math.floor(cc / 10)) * h;
+            var x = (cc % 10) * w;
+        }
+
+        return [ x, y, x, y+h, x+w, y+h, x+w, y+h, x+w, y, x, y ];
+    }
+
+    get_matrix(x, y) {
+        var mat = m4.identity();
+        mat = m4.scale(mat, 0.2, 0.2, 0.2);
+        mat = m4.translate(mat, x - 5, y, 0);
+        return mat;
+    }
+
+    render_char(str, ind, x, y, color) {
+        // set up
         gl.bindTexture(gl.TEXTURE_2D, textures.text_atlas.texture);
         gl.useProgram(this.ph.program);
         gl.bindVertexArray(this.vao);
-        var uMatrixLoc = this.ph.locations.uMatrixLoc;
-        gl.uniformMatrix4fv(uMatrixLoc, false, m4.identity());
+
+        // change texture coordinates
+        var st = this.get_tex_coords(str, ind);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.texCoordBuffer);
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(st), 0, 0);
+
+        // supply transformation matrix
+        var mat = this.get_matrix(x, y);
+        var locs = this.ph.locations;
+        gl.uniformMatrix4fv(locs.uMatrixLoc, false, mat);
+        gl.uniform4fv(locs.uColorLoc, color);
+
+        // draw
         gl.drawArrays(gl.TRIANGLES, 0, this.num_vertices);
+    }
+
+    render(str, x, y, color) {
+        color = color || [1, 1, 1, 1];
+        for (var i = 0; i < str.length; i++) {
+            this.render_char(str, i, x + i, y, color);
+        }
     }
 }
 
