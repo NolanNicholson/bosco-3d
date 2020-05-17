@@ -188,7 +188,7 @@ class Logo {
         var width = viewport[2]; var height = viewport[3];
         var max_r_sq = width*width + height*height;
 
-        var progress = 0.5 * (this.age - 4);
+        var progress = 1 * (this.age - 4);
         progress = Math.max(0, Math.min(progress, 1));
         return progress * progress * max_r_sq;
     }
@@ -202,12 +202,12 @@ class Logo {
 
         // prepare matrix for correcting the logo's aspect ratio
         var aspect = w / h;
-        var scale = 1;
+        var scale = 1.05;
         var mat;
         if (aspect > 1)
-            mat = m4.scaling(scale / aspect, scale, 1);
+            mat = m4.scaling(scale / aspect, scale * 0.9, 1);
         else
-            mat = m4.scaling(scale, scale * aspect, 1);
+            mat = m4.scaling(scale, scale * aspect * 0.9, 1);
         mat = m4.translate(mat, logo_x, 0, 0);
 
         [program_holder_logo, program_holder_logo_inv].forEach(ph => {
