@@ -58,7 +58,7 @@ window.addEventListener("keyup", handle_keyup);
 function finish_loading() {
     gl.disable(gl.SCISSOR_TEST);
     then = 0;
-    start_title_screen();
+    title_screen.start();
     requestAnimationFrame(drawScene);
 }
 
