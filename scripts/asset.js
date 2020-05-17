@@ -167,7 +167,7 @@ class Logo {
         [this.logo_vao, this.logo_nv] = this.vao_from_2d_pos(logo_positions)
 
         var bg_positions = [
-            -2, 2, -2, -2, 2, -2, 2, -2, 2, 2, -2, 2];
+            -1, 1, -1, -1, 1, -1, 1, -1, 1, 1, -1, 1];
         [this.bg_vao, this.bg_nv] = this.vao_from_2d_pos(bg_positions);
     }
 
@@ -188,7 +188,7 @@ class Logo {
         var width = viewport[2]; var height = viewport[3];
         var max_r_sq = width*width + height*height;
 
-        var progress = 0.5 * (this.age - 1);
+        var progress = 0.5 * (this.age - 4);
         progress = Math.max(0, Math.min(progress, 1));
         return progress * progress * max_r_sq;
     }
@@ -198,13 +198,17 @@ class Logo {
         var w; var h; [w, h] = [viewport[2], viewport[3]];
         var r_sq = this.get_rsq(viewport);
 
+        var logo_x = Math.max(0, 2 - 0.7 * this.age);
+
+        // prepare matrix for correcting the logo's aspect ratio
         var aspect = w / h;
-        var scale = 0.9;
-        if (aspect > 1) {
-            var mat = m4.scaling(scale, scale * aspect, 1);
-        } else {
-            var mat = m4.scaling(scale / aspect, scale, 1);
-        }
+        var scale = 1;
+        var mat;
+        if (aspect > 1)
+            mat = m4.scaling(scale / aspect, scale, 1);
+        else
+            mat = m4.scaling(scale, scale * aspect, 1);
+        mat = m4.translate(mat, logo_x, 0, 0);
 
         [program_holder_logo, program_holder_logo_inv].forEach(ph => {
             gl.useProgram(ph.program);
@@ -227,6 +231,13 @@ class Logo {
         gl.stencilOp(gl.REPLACE, gl.REPLACE, gl.REPLACE);
         gl.bindVertexArray(this.logo_vao);
         gl.drawArrays(gl.TRIANGLES, 0, this.logo_nv);
+
+        // Reset the transformation matrix
+        mat = m4.identity();
+        [program_holder_logo, program_holder_logo_inv].forEach(ph => {
+            gl.useProgram(ph.program);
+            gl.uniformMatrix4fv(ph.locations.uMatrixLoc, false, mat);
+        });
 
         // Draw a rectangle covering the whole screen as invert
         gl.useProgram(program_holder_logo_inv.program);
