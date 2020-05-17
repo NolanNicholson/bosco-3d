@@ -269,19 +269,20 @@ class Logo {
         if (this.age > 3) {
             gl.disable(gl.DEPTH_TEST);
             var white = [0.871, 0.871, 0.871, 1];
+            var logo_ty = -logo_y * text_renderer.vh_char;
 
-            //TODO: move text up with logo
-            if (this.age > 9.5) {
-                var t_y = Math.floor(text_renderer.vh_char * -0.5);
-                text_renderer.render(
-                    "Star Destroyer", 'center', t_y, white);
-            }
-
-            var t_y = Math.floor(text_renderer.vh_char * 0.7);
+            var t_y = Math.floor(text_renderer.vh_char * 0.7) + logo_ty;
             text_renderer.render(
                 "Original © 1981 Namco",   'center', t_y, white);
             text_renderer.render(
                 "3D Version By N.Nicholson", 'center', t_y+2, white);
+
+            //render "STAR DESTROYER" after a certain time
+            if (this.age > 9.5) {
+                var t_y = Math.floor(text_renderer.vh_char * -0.5) + logo_ty;
+                text_renderer.render(
+                    "Star Destroyer", 'center', t_y, white);
+            }
 
             gl.enable(gl.DEPTH_TEST);
         }
