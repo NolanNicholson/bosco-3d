@@ -207,9 +207,10 @@ void main() {
 var src_vs_logo = `#version 300 es
 
 in vec2 a_position;
+uniform mat4 u_transform;
 
 void main() {
-    gl_Position = vec4(a_position.xy, 0.0, 1.0);
+    gl_Position = u_transform * vec4(a_position.xy, 0.0, 1.0);
 }
 `;
 
@@ -358,6 +359,7 @@ var program_holder_logo = new ProgramHolder(
             positionAttributeLocation: "a_position",
         },
         uniforms: {
+            uMatrixLoc: "u_transform",
             uRadiusSqLoc: "u_rsq",
             uXCenterLoc: "u_xc",
             uYCenterLoc: "u_yc",
@@ -372,6 +374,7 @@ var program_holder_logo_inv = new ProgramHolder(
             positionAttributeLocation: "a_position",
         },
         uniforms: {
+            uMatrixLoc: "u_transform",
             uRadiusSqLoc: "u_rsq",
             uXCenterLoc: "u_xc",
             uYCenterLoc: "u_yc",

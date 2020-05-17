@@ -167,7 +167,7 @@ class Logo {
         [this.logo_vao, this.logo_nv] = this.vao_from_2d_pos(logo_positions)
 
         var bg_positions = [
-            -1, 1, -1, -1, 1, -1, 1, -1, 1, 1, -1, 1];
+            -2, 2, -2, -2, 2, -2, 2, -2, 2, 2, -2, 2];
         [this.bg_vao, this.bg_nv] = this.vao_from_2d_pos(bg_positions);
     }
 
@@ -195,14 +195,23 @@ class Logo {
 
     render() {
         var viewport = getMainViewport(gl.canvas, main_view_sizer);
+        var w; var h; [w, h] = [viewport[2], viewport[3]];
         var r_sq = this.get_rsq(viewport);
+
+        var aspect = w / h;
+        var scale = 0.9;
+        if (aspect > 1) {
+            var mat = m4.scaling(scale, scale * aspect, 1);
+        } else {
+            var mat = m4.scaling(scale / aspect, scale, 1);
+        }
 
         [program_holder_logo, program_holder_logo_inv].forEach(ph => {
             gl.useProgram(ph.program);
+            gl.uniformMatrix4fv(ph.locations.uMatrixLoc, false, mat);
             gl.uniform1f(ph.locations.uRadiusSqLoc, r_sq);
-            gl.uniform1f(ph.locations.uXCenterLoc, viewport[2] / 2);
-            gl.uniform1f(ph.locations.uYCenterLoc,
-                viewport[3] / 2 + viewport[1]);
+            gl.uniform1f(ph.locations.uXCenterLoc, w / 2);
+            gl.uniform1f(ph.locations.uYCenterLoc, h / 2 + viewport[1]);
         });
 
         gl.disable(gl.CULL_FACE);
