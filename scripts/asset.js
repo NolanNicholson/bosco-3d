@@ -23,7 +23,7 @@ class Texture {
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-            //generate mipmap
+
             confirm_asset_loaded();
         });
     }
@@ -194,6 +194,7 @@ class Logo {
     }
 
     render() {
+        gl.enable(gl.STENCIL_TEST);
         var viewport = getMainViewport(gl.canvas, main_view_sizer);
         var w; var h; [w, h] = [viewport[2], viewport[3]];
         var r_sq = this.get_rsq(viewport);
@@ -262,6 +263,28 @@ class Logo {
         gl.drawArrays(gl.TRIANGLES, 0, this.bg_nv);
         gl.flush();
         gl.enable(gl.CULL_FACE);
+        gl.disable(gl.STENCIL_TEST);
+
+        // Draw NAMCO + Nolan authorship text
+        if (this.age > 3) {
+            gl.disable(gl.DEPTH_TEST);
+            var white = [0.871, 0.871, 0.871, 1];
+
+            //TODO: move text up with logo
+            if (this.age > 9.5) {
+                var t_y = Math.floor(text_renderer.vh_char * -0.5);
+                text_renderer.render(
+                    "Star Destroyer", 'center', t_y, white);
+            }
+
+            var t_y = Math.floor(text_renderer.vh_char * 0.7);
+            text_renderer.render(
+                "Original © 1981 Namco",   'center', t_y, white);
+            text_renderer.render(
+                "3D Version By N.Nicholson", 'center', t_y+2, white);
+
+            gl.enable(gl.DEPTH_TEST);
+        }
     }
 }
 

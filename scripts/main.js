@@ -185,8 +185,6 @@ function drawScene(now) {
             });
         }
 
-        text_renderer.render("bosconian", 0, 0, [0, 1, 1, 1]);
-
         // Draw HUD
         draw_hud();
     }

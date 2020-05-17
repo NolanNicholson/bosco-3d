@@ -85,33 +85,60 @@ class TextRenderer {
             0 /*stride*/, 0 /*offset*/);
 
         this.num_vertices = positions.length / 2;
+
+        // screen dimensions
+        this.resize();
     }
 
     get_tex_coords(str, index) {
         var w = 1 / 10;
         var h = 1 / 4;
+        var x;
+        var y;
 
         // process digits
         var cc = str.charCodeAt(index);
         if (cc >= 48 && cc <= 57) {
-            var y = 0;
-            var x = w * (cc - 48);
+            y = 0;
+            x = cc - 48;
         }
         // process letters
         else if ((cc >= 65 && cc <= 90) || (cc >= 97 && cc <= 122)) {
             if (cc >= 97) cc -= 32; // to upper case
             cc -= 65;
-            var y = (1 + Math.floor(cc / 10)) * h;
-            var x = (cc % 10) * w;
+            y = (1 + Math.floor(cc / 10));
+            x = (cc % 10);
         }
+        else { //special chars
+            switch(cc) {
+                case 46:  x = 6; y = 3; break;  // '.'
+                case 169: x = 8; y = 3; break;  // '©'
+            }
+        }
+
+        x *= w;
+        y *= h;
+
+        // hack to minimize floating-point texture coordinate errors
+        x += 0.00001 * w;
+        y += 0.00001 * h;
+        h *= 0.999;
 
         return [ x, y, x, y+h, x+w, y+h, x+w, y+h, x+w, y, x, y ];
     }
 
+    resize() {
+        var viewport = getMainViewport(canvas, main_view_sizer);
+        var vw = viewport[2]; var vh = viewport[3];
+        var char_scale = (Math.min(vw, vh) > 360 ? 32 : 16);
+        this.vw_char = vw / char_scale;
+        this.vh_char = vh / char_scale;
+        this.scale = m4.scaling( 1 / this.vw_char, 1 / this.vh_char, 1);
+    }
+
     get_matrix(x, y) {
-        var mat = m4.identity();
-        mat = m4.scale(mat, 0.2, 0.2, 0.2);
-        mat = m4.translate(mat, x - 5, y, 0);
+        var mat = this.scale;
+        mat = m4.translate(mat, x, -y, 0);
         return mat;
     }
 
@@ -137,7 +164,11 @@ class TextRenderer {
     }
 
     render(str, x, y, color) {
+        if (x == 'center') {
+            x = -str.length / 2;
+        }
         color = color || [1, 1, 1, 1];
+        var x0 = x;
         for (var i = 0; i < str.length; i++) {
             this.render_char(str, i, x + i, y, color);
         }

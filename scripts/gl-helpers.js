@@ -34,6 +34,8 @@ function resizeCanvasToDisplaySize(canvas, multiplier) {
         canvas.width  = width;
         canvas.height = height;
 
+        text_renderer.resize();
+
         return true;
     }
     return false;

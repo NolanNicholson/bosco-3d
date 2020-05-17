@@ -23,11 +23,9 @@ function start_title_screen() {
     game_state = 'title-screen';
     window.addEventListener("keydown", handle_keydown_title_screen);
 
-    gl.enable(gl.STENCIL_TEST);
 }
 
 function end_title_screen() {
-    gl.disable(gl.STENCIL_TEST);
     window.removeEventListener("keydown", handle_keydown_title_screen);
     game_state = 'main-game';
     load_level();
