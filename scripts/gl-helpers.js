@@ -6,7 +6,8 @@ function createShader(gl, type, source) {
     if (success) {
         return shader;
     } else {
-        console.log(gl.getShaderInfoLog(shader));
+        var typestr = type == gl.FRAGMENT_SHADER ? "FS" : "VS";
+        console.error(typestr, gl.getShaderInfoLog(shader));
         gl.deleteShader(shader);
     }
 }

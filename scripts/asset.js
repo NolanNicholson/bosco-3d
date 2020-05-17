@@ -415,6 +415,7 @@ var textures = {
     base_crystal:   new Texture("models/base_crystal_tex.png"),
     cosmo_mine:     new Texture("models/cosmo_mine_tex.png"),
     asteroid:       new Texture("models/asteroid_tex.png"),
+    text_atlas:     new Texture("hud/text-atlas2.png"),
 }
 
 // Load model assets
