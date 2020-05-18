@@ -35,14 +35,18 @@ class HiScores {
         }
     }
 
+    get_ranking(score) {
+        // get ranking of a score compared with current scores
+        var index = 4;
+        while (index > 0 && score > this.scores[index - 1]) index--;
+        return index;
+    }
+
     push(name, score) {
         // don't do anything if it didn't make the high score
         if (score < this.scores[4]) return;
 
-        // get ranking
-        var index = 4;
-        while (index > 0 && score > this.scores[index - 1]) index--;
-
+        var index = this.get_ranking(score);
         this.names = this.names.slice(0, index).concat(
             name, this.names.slice(index, 4));
         this.scores = this.scores.slice(0, index).concat(

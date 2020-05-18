@@ -1,7 +1,8 @@
 var game_state;
 
-class TitleDisplay {
-    constructor() {
+class DisplayScreen {
+    constructor(owner) {
+        this.owner = owner;
         this.white = [0.871, 0.871, 0.871, 1];
         this.cyan = [0, 1, 1, 1];
         this.red = [1, 0, 0, 1];
@@ -36,7 +37,7 @@ class TitleDisplay {
             player.rotation_matrix, Math.PI * -0.01 * dt);
 
         if (this.age >= this.duration) {
-            title_screen.advance();
+            this.owner.advance();
         }
     }
 
@@ -44,9 +45,9 @@ class TitleDisplay {
     }
 }
 
-class LogoDisplay extends TitleDisplay {
-    constructor() {
-        super();
+class LogoDisplay extends DisplayScreen {
+    constructor(owner) {
+        super(owner);
         this.duration = 15;
     }
 
@@ -95,9 +96,9 @@ class LogoDisplay extends TitleDisplay {
     }
 }
 
-class ControlsDisplay extends TitleDisplay {
-    constructor() {
-        super();
+class ControlsDisplay extends DisplayScreen {
+    constructor(owner) {
+        super(owner);
         this.duration = 10;
     }
 
@@ -209,9 +210,9 @@ class ScoreTableCosmoMine extends ScoreTableTemplateObj {
     }
 }
 
-class ScoreTableDisplay extends TitleDisplay {
-    constructor() {
-        super();
+class ScoreTableDisplay extends DisplayScreen {
+    constructor(owner) {
+        super(owner);
         this.duration = 15;
     }
 
@@ -248,9 +249,9 @@ class DemoBase extends EnemyBase {
     }
 }
 
-class ScoreTable2Display extends TitleDisplay {
-    constructor() {
-        super();
+class ScoreTable2Display extends DisplayScreen {
+    constructor(owner) {
+        super(owner);
         this.duration = 10;
     }
 
@@ -297,9 +298,9 @@ class ScoreTable2Display extends TitleDisplay {
     }
 }
 
-class HighScoreDisplay extends TitleDisplay {
-    constructor() {
-        super();
+class HighScoreDisplay extends DisplayScreen {
+    constructor(owner) {
+        super(owner);
         this.duration = 5;
     }
 
@@ -322,16 +323,17 @@ class HighScoreDisplay extends TitleDisplay {
         for (var i = 0; i < 5; i++) {
             var y = 2 + 2 * i;
             var score = String(scores[i]);
+            while (score.length < 7) score = " " + score;
             text_renderer.render( ranks[i], -10, y, this.cyan);
-            text_renderer.render(    score, - 4, y, this.cyan);
+            text_renderer.render(    score, - 6, y, this.cyan);
             text_renderer.render( names[i],   7, y, this.cyan);
         }
     }
 }
 
-class GameOverDisplay extends TitleDisplay {
-    constructor() {
-        super();
+class GameOverDisplay extends DisplayScreen {
+    constructor(owner) {
+        super(owner);
         this.duration = 3;
     }
 
@@ -340,9 +342,9 @@ class GameOverDisplay extends TitleDisplay {
     }
 }
 
-class SpaceRecordDisplay extends TitleDisplay {
-    constructor() {
-        super();
+class SpaceRecordDisplay extends DisplayScreen {
+    constructor(owner) {
+        super(owner);
         this.duration = 6;
         this.orange = [255, 0x66/255, 0, 1];
         this.blue = [0, 0x66/255, 0xdc/255, 1];
@@ -369,15 +371,62 @@ class SpaceRecordDisplay extends TitleDisplay {
     }
 }
 
+class EnterInitialsDisplay extends DisplayScreen {
+    constructor(owner) {
+        super(owner);
+        this.duration = 3;
+        this.green = [0, 0xBF/255, 0, 1];
+    }
+
+    render() {
+        text_renderer.render("Enter your initials!", 'center', -9, this.red);
+        text_renderer.render("Score", -8, -6, this.white);
+        text_renderer.render("Name", 3, -6, this.white);
+        text_renderer.render("Best 5", 'center', -1, this.red);
+        text_renderer.render("Score", -4, 1, this.white);
+        text_renderer.render("Name", 5, 1, this.white);
+
+        var new_score_index = hi_scores.get_ranking(score);
+        var ranks = ["1st", "2nd", "3rd", "4th", "5th"];
+
+        // draw the five ranked scores
+        for (var i = 0; i < 5; i++) {
+            var color = (i == new_score_index ? this.green : this.cyan);
+
+            // splice the new name and score into the list of high scores
+            var line_score; var line_name;
+            if (i < new_score_index) {
+                line_score = hi_scores.scores[i];
+                line_name = hi_scores.names[i];
+            } else if (i == new_score_index) {
+                line_score = score;
+                line_name = "aaa";
+            } else {
+                line_score = hi_scores.scores[i - 1];
+                line_name = hi_scores.names[i - 1];
+            }
+
+            line_score = String(line_score);
+            while (line_score.length < 7) line_score = " " + line_score;
+
+            var y = 3 + 2 * i;
+            text_renderer.render(ranks[i], -9, y, color);
+            text_renderer.render(line_score, -6, y, color);
+            text_renderer.render(line_name, 6, y, color);
+        }
+    }
+}
+
 //title screen
-class TitleScreen {
+class TitleSequence {
     constructor() {
         this.screens = [
-            new LogoDisplay(),
-            new ControlsDisplay(),
-            new ScoreTableDisplay(),
-            new ScoreTable2Display(),
-            new HighScoreDisplay(),
+            new EnterInitialsDisplay(this), //TODO remove this
+            new LogoDisplay(this),
+            new ControlsDisplay(this),
+            new ScoreTableDisplay(this),
+            new ScoreTable2Display(this),
+            new HighScoreDisplay(this),
         ];
     }
 
@@ -417,4 +466,46 @@ class TitleScreen {
     }
 }
 
-var title_screen = new TitleScreen();
+class GameOverSequence {
+    constructor() {
+        this.screens = {
+            game_over:      new GameOverDisplay(this),
+            enter_initials: new EnterInitialsDisplay(this),
+            record:         new SpaceRecordDisplay(this),
+        };
+    }
+
+    handle_keydown(e) {
+        title_screen.start();
+    }
+
+    start() {
+        this.phase = 0;
+        if (score > hi_scores.scores[0]) {
+            this.screens.record.start();
+        } else {
+            this.screens.game_over.start();
+        }
+    }
+
+    advance() {
+        this.phase++;
+        switch (this.phase) {
+            case 1:
+                if (score > hi_scores.scores[4]) {
+                    this.screens.enter_initials.start();
+                } else {
+                    title_screen.start();
+                }
+                break;
+            case 2:
+                title_screen.start();
+        }
+    }
+
+    end() {
+    }
+}
+
+var title_screen = new TitleSequence();
+var game_over_screen = new GameOverSequence();

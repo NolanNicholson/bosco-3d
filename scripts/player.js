@@ -224,7 +224,7 @@ class Player extends ObjTexture {
 
         // if the player died and is out of lives, go to GAME OVER instead
         if (died && lives <= 0) {
-            title_screen.start();
+            game_over_screen.start();
             return;
         }
 
