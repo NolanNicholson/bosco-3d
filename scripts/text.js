@@ -88,6 +88,9 @@ class TextRenderer {
 
         // screen dimensions
         this.resize();
+
+        // custom scaling
+        this.custom_scale = m4.identity();
     }
 
     get_tex_coords(str, index) {
@@ -140,6 +143,7 @@ class TextRenderer {
 
     get_matrix(x, y) {
         var mat = this.scale;
+        var mat = m4.multiply(mat, this.custom_scale);
         mat = m4.translate(mat, x, -y, 0);
         return mat;
     }

@@ -5,11 +5,15 @@ class TitleDisplay {
         this.white = [0.871, 0.871, 0.871, 1];
         this.cyan = [0, 1, 1, 1];
         this.red = [1, 0, 0, 1];
-        this.max_age = 1;
+        this.duration = 1;
     }
 
     start() {
         this.age = 0;
+        objects = [
+            this,
+            obj_starfield,
+        ];
     }
 
     display_typed_header(txt) {
@@ -31,7 +35,7 @@ class TitleDisplay {
         player.rotation_matrix = m4.rotate_y(
             player.rotation_matrix, Math.PI * -0.01 * dt);
 
-        if (this.age >= this.max_age) {
+        if (this.age >= this.duration) {
             title_screen.advance();
         }
     }
@@ -43,7 +47,7 @@ class TitleDisplay {
 class LogoDisplay extends TitleDisplay {
     constructor() {
         super();
-        this.max_age = 15;
+        this.duration = 15;
     }
 
     start() {
@@ -53,11 +57,7 @@ class LogoDisplay extends TitleDisplay {
         [base.x, base.y, base.z] = [0, 0, 0];
         base.rotation_matrix = m4.rotation_x(Math.PI * 0.5);
         base.scale = 1;
-        objects = [
-            this,
-            obj_starfield,
-            base,
-        ];
+        objects.push(base);
         models.logo.age = 0;
     }
 
@@ -98,7 +98,7 @@ class LogoDisplay extends TitleDisplay {
 class ControlsDisplay extends TitleDisplay {
     constructor() {
         super();
-        this.max_age = 10;
+        this.duration = 10;
     }
 
     start() {
@@ -212,7 +212,7 @@ class ScoreTableCosmoMine extends ScoreTableTemplateObj {
 class ScoreTableDisplay extends TitleDisplay {
     constructor() {
         super();
-        this.max_age = 15;
+        this.duration = 15;
     }
 
     start() {
@@ -227,11 +227,7 @@ class ScoreTableDisplay extends TitleDisplay {
             new ScoreTableEnemy(  'e', [  0, -8, z], 11, " E-Type", "70 pts"),
             new ScoreTableEnemy('spy', [- x, -8, z], 13, " Spy Ship", "Mystery"),
         ]
-        objects = [
-            this,
-            obj_starfield,
-            ...this.enemies,
-        ];
+        objects.push(...this.enemies);
         all_colliders = [];
     }
 
@@ -255,7 +251,7 @@ class DemoBase extends EnemyBase {
 class ScoreTable2Display extends TitleDisplay {
     constructor() {
         super();
-        this.max_age = 10;
+        this.duration = 10;
     }
 
     start() {
@@ -267,12 +263,7 @@ class ScoreTable2Display extends TitleDisplay {
         this.base.rotation_matrix = m4.rotate_x(
             player.rotation_matrix, Math.PI * 0.25);
         this.base.scale = 3;
-
-        objects = [
-            this,
-            obj_starfield,
-            this.base,
-        ]
+        objects.push(this.base);
 
         this.phase = 0;
     }
@@ -309,15 +300,11 @@ class ScoreTable2Display extends TitleDisplay {
 class HighScoreDisplay extends TitleDisplay {
     constructor() {
         super();
-        this.max_age = 5;
+        this.duration = 5;
     }
 
     start() {
         super.start();
-        objects = [
-            this,
-            obj_starfield,
-        ];
     }
 
     render() {
@@ -342,10 +329,40 @@ class HighScoreDisplay extends TitleDisplay {
     }
 }
 
+class SpaceRecordDisplay extends TitleDisplay {
+    constructor() {
+        super();
+        this.duration = 6;
+        this.orange = [255, 0x66/255, 0, 1];
+        this.blue = [0, 0x66/255, 0xdc/255, 1];
+    }
+
+    start() {
+        super.start();
+        sounds.high_score.play();
+    }
+
+    render() {
+        text_renderer.render("CONGRATULATIONS!!", 'center', -9, this.red);
+        text_renderer.render("the high score", 'center', -5, this.orange);
+        text_renderer.render("of the day", 'center', -3, this.orange);
+        text_renderer.render("go for the", 'center', 6, this.blue);
+        text_renderer.render("space record now", 'center', 8, this.blue);
+
+        if (this.age % 0.6 > 0.3) {
+            var scale = 4;
+            text_renderer.custom_scale = m4.scaling(scale, scale, scale);
+            text_renderer.render(String(score), 'center', 0.75, this.white);
+            text_renderer.custom_scale = m4.identity();
+        }
+    }
+}
+
 //title screen
 class TitleScreen {
     constructor() {
         this.screens = [
+            new SpaceRecordDisplay(),
             new LogoDisplay(),
             new ControlsDisplay(),
             new ScoreTableDisplay(),

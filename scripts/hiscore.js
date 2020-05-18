@@ -43,15 +43,10 @@ class HiScores {
         var index = 4;
         while (index > 0 && score > this.scores[index - 1]) index--;
 
-        console.log(index);
-
-        //console.log(this.names, this.scores);
-        console.log(this.names);
         this.names = this.names.slice(0, index).concat(
             name, this.names.slice(index, 4));
         this.scores = this.scores.slice(0, index).concat(
             score, this.scores.slice(index, 4));
-        console.log(this.names);
 
         this.save();
     }
@@ -68,5 +63,3 @@ class HiScores {
 
 var hi_scores = new HiScores();
 hi_scores.load();
-
-console.log("High Scores:", hi_scores.names, hi_scores.scores);

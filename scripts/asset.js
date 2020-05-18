@@ -327,6 +327,7 @@ var sounds = {
     con_red_voice:      new Sound('audio/condition-red.wav'),
     con_red_loop:       new Sound('audio/condition-red-loop.wav'),
     level_win:          new Sound('audio/level-win.wav'),
+    high_score:         new Sound('audio/high-score.wav'),
 };
 
 var images = {
