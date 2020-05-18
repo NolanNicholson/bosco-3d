@@ -245,6 +245,67 @@ class ScoreTableDisplay extends TitleDisplay {
     }
 }
 
+class DemoBase extends EnemyBase {
+    report_self_destroyed() {
+        // don't report demo base's destruction to the spawner,
+        // or it will try to advance the level
+    }
+}
+
+class ScoreTable2Display extends TitleDisplay {
+    constructor() {
+        super();
+        this.max_age = 10;
+    }
+
+    start() {
+        super.start();
+
+        // this screen shows an enemy base
+        this.base = new DemoBase();
+        [this.base.x, this.base.y, this.base.z] = [0, 0, 0];
+        this.base.rotation_matrix = m4.rotate_x(
+            player.rotation_matrix, Math.PI * 0.25);
+        this.base.scale = 3;
+
+        objects = [
+            this,
+            obj_starfield,
+            this.base,
+        ]
+
+        this.phase = 0;
+    }
+
+    update(dt) {
+        super.update(dt);
+        [player.x, player.y, player.z] = m4.apply_transform(
+            [0, 10, 55], player.rotation_matrix);
+
+        if (this.phase == 0 && this.age > 2) {
+            this.phase++;
+            this.base.balls[0].explode();
+        }
+        else if (this.phase == 1 && this.age > 5) {
+            this.phase++;
+            this.base.explode();
+        }
+    }
+
+    render() {
+        text_renderer.render('Score Table', 'center', -8, this.cyan);
+
+        if (this.age > 6) {
+            text_renderer.render('Enemy Base', 'center', 8, this.white);
+            text_renderer.render('1500 pts', 'center', 10, this.white);
+        }
+        else if (this.age > 3) {
+            text_renderer.render('Cannon', 'center', 8, this.white);
+            text_renderer.render('200 pts', 'center', 10, this.white);
+        }
+    }
+}
+
 class HighScoreDisplay extends TitleDisplay {
     constructor() {
         super();
@@ -283,16 +344,17 @@ class HighScoreDisplay extends TitleDisplay {
 //title screen
 class TitleScreen {
     constructor() {
-        this.age = 0;
         this.screens = [
-            //new LogoDisplay(),
-            //new ControlsDisplay(),
+            new LogoDisplay(),
+            new ControlsDisplay(),
             new ScoreTableDisplay(),
-            //new HighScoreDisplay(),
+            new ScoreTable2Display(),
+            new HighScoreDisplay(),
         ];
     }
 
     start() {
+        this.age = 0;
         game_state = 'title-screen';
         window.addEventListener("keydown", this.handle_keydown);
 

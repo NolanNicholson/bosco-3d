@@ -407,6 +407,10 @@ class EnemyBase {
         this.explosions[4].relocate(this.x, this.y, this.z);
 
         sounds.mine_hit.play();
+        this.report_self_destroyed();
+    }
+
+    report_self_destroyed() {
         spawner.report_base_destroyed(this);
     }
 
