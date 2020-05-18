@@ -81,7 +81,6 @@ class HUDPoints {
         this.program_holder = program_holder_color;
 
         //dummy data for initially populating the buffer
-        var num_points = 64;
         this.positions = [];
         this.colors = [];
         var default_color = hud_colors.dark_purple.slice(0, 3);
@@ -97,6 +96,21 @@ class HUDPoints {
         this.position_buffer = vao_and_buffers.position_buffer;
         this.color_buffer = vao_and_buffers.color_buffer;
         this.num_vertices = 2;
+    }
+
+    reset_points() {
+        this.positions = [];
+        this.colors = [];
+        var default_color = hud_colors.dark_purple.slice(0, 3);
+        for (var i = 0; i < 32; i++) {
+            this.positions.push(0, 0, 0);
+            this.colors.push(...default_color);
+        }
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.position_buffer);
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(this.positions));
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.color_buffer);
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(this.colors));
     }
 
     normalized_loc(obj) {

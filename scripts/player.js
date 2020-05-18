@@ -222,6 +222,12 @@ class Player extends ObjTexture {
     spawn(died) {
         died = died || false;
 
+        // if the player died and is out of lives, go to GAME OVER instead
+        if (died && lives <= 0) {
+            title_screen.start();
+            return;
+        }
+
         //reset current rotation, pitch, and yaw
         this.rotation_matrix = m4.identity();
         this.pitch = 0; this.yaw = 0;

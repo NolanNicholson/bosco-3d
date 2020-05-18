@@ -385,9 +385,14 @@ class TitleScreen {
         this.age = 0;
         game_state = 'title-screen';
         window.addEventListener("keydown", this.handle_keydown);
+        // remove any lingering points from the HUD
+        hudpoints.reset_points();
 
         this.screen_index = 0;
         this.screens[0].start();
+
+        // clear any residual symbols from the HUD
+        ctx_hud.clearRect(0, 0, canv_hud.width, canv_hud.height);
     }
 
     advance() {
