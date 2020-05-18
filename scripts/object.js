@@ -198,6 +198,17 @@ class ObjBase {
         this.model_matrix = m4.scale(this.model_matrix,
             this.scale, this.scale, this.scale);
     }
+
+    remove() {
+        var collider_list = all_colliders;
+        var object_list = objects;
+
+        var collider_index = collider_list.indexOf(this);
+        if (collider_index != -1) collider_list.splice(collider_index, 1);
+
+        var obj_index = object_list.indexOf(this);
+        if (obj_index != -1) object_list.splice(obj_index, 1);
+    }
 }
 
 class ObjColor extends ObjBase {
@@ -259,17 +270,4 @@ class ObjTexture extends ObjBase {
         gl.bindTexture(gl.TEXTURE_2D, this.texture_asset.texture);
         this.model_asset.render(this.model_matrix);
     }
-}
-
-function delete_object(o) {
-    var collider_list = all_colliders;
-    var object_list = objects;
-
-    var collider_index = collider_list.indexOf(o);
-    if (collider_index != -1) collider_list.splice(collider_index, 1);
-
-    var obj_index = object_list.indexOf(o);
-    if (obj_index != -1) object_list.splice(obj_index, 1);
-
-    delete o;
 }

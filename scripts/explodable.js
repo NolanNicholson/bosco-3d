@@ -39,7 +39,7 @@ class Explodable extends ObjTexture {
         if (this.exploded) {
             this.explosion.update(dt);
             if (this.explosion.age > this.explosion.max_age) {
-                delete_object(this);
+                this.remove();
             }
         } else {
             super.update(dt);

@@ -136,12 +136,12 @@ class BaseBullet extends ObjColor {
 
         this.age += dt;
         if (this.age >= this.lifetime) {
-            delete_object(this);
+            this.remove();
         }
     }
 
     collision_event(other) {
-        delete_object(this);
+        this.remove();
     }
 
     render() {

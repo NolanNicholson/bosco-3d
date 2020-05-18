@@ -75,7 +75,7 @@ class FormationFollower extends Enemy {
         );
         if (sq_dist > 800) {
             console.log("despawned formation member");
-            delete_object(this);
+            this.remove();
         }
     }
 

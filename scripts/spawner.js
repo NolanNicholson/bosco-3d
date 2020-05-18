@@ -78,7 +78,7 @@ class RandomEnemySpawner {
                 }
             });
             to_delete.forEach(o => {
-                delete_object(o);
+                o.remove();
             });
         }
     }

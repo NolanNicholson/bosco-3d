@@ -106,7 +106,7 @@ class Enemy extends Explodable {
         if (this.maneuver_completed && dist_sq_player > 800) {
             console.log("enemy despawned");
             spawner.lose_enemy();
-            delete_object(this);
+            this.remove();
         }
 
         this.move(0, 0, -this.drive_speed * dt);
@@ -124,7 +124,7 @@ class Enemy extends Explodable {
         }
         if (this.maneuver_age > 12) {
             spawner.spy_intel();
-            delete_object(this);
+            this.remove();
         }
     }
 
