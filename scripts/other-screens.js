@@ -329,13 +329,14 @@ class HighScoreDisplay extends TitleDisplay {
         text_renderer.render("Name", 6, 0, this.white);
 
         var ranks = ["1st", "2nd", "3rd", "4th", "5th"];
-        var scores = ["20000", "20000", "20000", "20000", "20000"];
-        var names = ["N.N", "A.A", "M.M", "C.C", "O.O"];
+        var scores = hi_scores.scores;
+        var names = hi_scores.names;
 
         for (var i = 0; i < 5; i++) {
             var y = 2 + 2 * i;
+            var score = String(scores[i]);
             text_renderer.render( ranks[i], -10, y, this.cyan);
-            text_renderer.render(scores[i], - 4, y, this.cyan);
+            text_renderer.render(    score, - 4, y, this.cyan);
             text_renderer.render( names[i],   7, y, this.cyan);
         }
     }

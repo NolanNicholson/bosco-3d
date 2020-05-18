@@ -283,7 +283,7 @@ function draw_hud() {
     var x_nums = 56 + x_l;
 
     ctx_hud.drawImage(images.hud_hiscore.img,   x_l,    y_t);
-    draw_number_r(ctx_hud, hiscore,             x_nums, y_t + 8);
+    draw_number_r(ctx_hud, hi_scores.scores[0], x_nums, y_t + 8);
     ctx_hud.drawImage(images.hud_1up.img,       x_l,    y_t + 16);
     if (game_state == 'main-game') {
         draw_number_r(ctx_hud, score,           x_nums, y_t + 24);
