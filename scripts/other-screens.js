@@ -329,6 +329,17 @@ class HighScoreDisplay extends TitleDisplay {
     }
 }
 
+class GameOverDisplay extends TitleDisplay {
+    constructor() {
+        super();
+        this.duration = 3;
+    }
+
+    render() {
+        text_renderer.render("game over", 'center', 0, this.white);
+    }
+}
+
 class SpaceRecordDisplay extends TitleDisplay {
     constructor() {
         super();
@@ -362,7 +373,6 @@ class SpaceRecordDisplay extends TitleDisplay {
 class TitleScreen {
     constructor() {
         this.screens = [
-            new SpaceRecordDisplay(),
             new LogoDisplay(),
             new ControlsDisplay(),
             new ScoreTableDisplay(),
