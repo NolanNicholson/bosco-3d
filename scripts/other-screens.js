@@ -398,14 +398,16 @@ class TitleScreen {
     handle_keydown(e) {
         switch(e.keyCode) {
             case 32: // Spacebar
-                title_screen.end();
+                title_screen.start_game();
                 break;
         }
     }
 
-    end() {
+    start_game() {
         window.removeEventListener("keydown", this.handle_keydown);
         game_state = 'main-game';
+        score = 0;
+        lives = 3;
         load_level();
     }
 }

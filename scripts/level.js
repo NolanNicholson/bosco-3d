@@ -182,5 +182,5 @@ function load_level() {
         place_obj(obj_mine, placed_objs);
     }
 
-    player.spawn();
+    player.spawn(round == 0);
 }
