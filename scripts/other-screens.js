@@ -124,7 +124,7 @@ class ScoreTableObj extends Explodable{
         super(model, texture);
         this.worth = 0;
         this.white = [0.871, 0.871, 0.871, 1];
-        [this.x, this.y, this.z] = display_xyz;
+        [this.x, this.y, this.z] = [NaN, NaN, NaN];
         this.display_xyz = display_xyz;
 
         // parameters for reappearing with text after exploding
@@ -217,13 +217,15 @@ class ScoreTableDisplay extends TitleDisplay {
 
     start() {
         super.start();
+        var x = 10;
+        var z = -6;
         this.enemies = [
-            new ScoreTableAsteroid(    [- 8,  0, -8], 3, "Asteroid", "10 pts"),
-            new ScoreTableCosmoMine(   [  0,  0, -8], 5, "Cosmo-Mine", "20 pts"),
-            new ScoreTableEnemy(  'i', [  8,  0, -8], 7, " I-Type", "50 pts"),
-            new ScoreTableEnemy(  'p', [  8, -8, -8], 9, " P-Type", "60 pts"),
-            new ScoreTableEnemy(  'e', [  0, -8, -8],11, " E-Type", "70 pts"),
-            new ScoreTableEnemy('spy', [- 8, -8, -8],13, " Spy Ship", "Mystery"),
+            new ScoreTableAsteroid(    [- x,  0, z],  3, "Asteroid", "10 pts"),
+            new ScoreTableCosmoMine(   [  0,  0, z],  5, "Cosmo-Mine", "20 pts"),
+            new ScoreTableEnemy(  'i', [  x,  0, z],  7, " I-Type", "50 pts"),
+            new ScoreTableEnemy(  'p', [  x, -8, z],  9, " P-Type", "60 pts"),
+            new ScoreTableEnemy(  'e', [  0, -8, z], 11, " E-Type", "70 pts"),
+            new ScoreTableEnemy('spy', [- x, -8, z], 13, " Spy Ship", "Mystery"),
         ]
         objects = [
             this,
