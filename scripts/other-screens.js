@@ -5,7 +5,7 @@ class TitleDisplay {
         this.white = [0.871, 0.871, 0.871, 1];
         this.cyan = [0, 1, 1, 1];
         this.red = [1, 0, 0, 1];
-        this.max_age = 5;
+        this.max_age = 1;
     }
 
     start() {
@@ -119,18 +119,95 @@ class ControlsDisplay extends TitleDisplay {
     }
 }
 
+class ScoreTableEnemy extends Enemy {
+    constructor(enemy_type, display_xyz, explode_time, txt1, txt2) {
+        super(enemy_type);
+        this.drive_speed = 0;
+        this.display_xyz = display_xyz;
+        this.age = 0;
+        this.explode_time = explode_time;
+        this.worth = 0;
+        this.reborn = false;
+        this.white = [0.871, 0.871, 0.871, 1];
+        this.txt1 = txt1; this.txt2 = txt2;
+    }
+
+    remove() {
+    }
+
+    update(dt) {
+        super.update(dt);
+        this.age += dt;
+
+        if (this.age >= this.explode_time && !this.exploded && !this.reborn) {
+            this.explode();
+        }
+        if (this.age >= this.explode_time + 0.75 && !this.reborn) {
+            this.exploded = false;
+            this.reborn = true;
+        }
+
+        if (!this.exploded) {
+            var spin = (this.age / 3) % 2;
+
+            // rotation matrix is relative to the player's
+            this.rotation_matrix = m4.rotate_y(
+                player.rotation_matrix, Math.PI * spin);
+            this.rotation_matrix = m4.rotate_x(
+                this.rotation_matrix, -Math.PI * 0.1);
+
+            // position is backed out from screen space
+            var z = 0.99;
+            var d_xyz = [
+                this.display_xyz[0], this.display_xyz[1], z
+            ];
+            //d_xyz = [10, 10, 0.9];
+            var xyz = m4.identity();
+            if (viewproj) {
+                xyz = m4.multiply(xyz, m4.inverse(viewproj));
+            }
+            xyz = m4.translate(xyz, ...d_xyz);
+            xyz = xyz.slice(12, 15);
+
+            [this.x, this.y, this.z] = xyz;
+        }
+    }
+
+    render() {
+        if (this.exploded && 
+            this.age >= this.explode_time + this.explosion.max_age)
+            return;
+        super.render();
+
+        if (this.reborn) {
+            var text_x = this.display_xyz[0] - 3;
+            var text_y = -this.display_xyz[1];
+            text_renderer.render(this.txt1, text_x, text_y, this.white);
+            text_renderer.render(this.txt2, text_x, text_y + 2, this.white);
+        }
+    }
+}
+
 class ScoreTableDisplay extends TitleDisplay {
     constructor() {
         super();
-        this.max_age = 3;
+        this.max_age = 15;
     }
 
     start() {
         super.start();
+        this.enemies = [
+            new ScoreTableEnemy(  'i', [- 8,  0, -8], 3, "I-Type", "50 pts"),
+            new ScoreTableEnemy(  'p', [  0,  0, -8], 5, "P-Type", "60 pts"),
+            new ScoreTableEnemy(  'e', [  8,  0, -8], 7, "E-Type", "70 pts"),
+            new ScoreTableEnemy('spy', [  0, -8, -8], 9, "Spy Ship", "Mystery"),
+        ]
         objects = [
             this,
             obj_starfield,
+            ...this.enemies,
         ];
+        all_colliders = [];
     }
 
     render() {
@@ -178,10 +255,10 @@ class TitleScreen {
     constructor() {
         this.age = 0;
         this.screens = [
-            new LogoDisplay(),
-            new ControlsDisplay(),
+            //new LogoDisplay(),
+            //new ControlsDisplay(),
             new ScoreTableDisplay(),
-            new HighScoreDisplay(),
+            //new HighScoreDisplay(),
         ];
     }
 

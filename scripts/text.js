@@ -111,8 +111,10 @@ class TextRenderer {
         }
         else { //special chars
             switch(cc) {
-                case 46:  x = 6; y = 3; break;  // '.'
-                case 169: x = 8; y = 3; break;  // '©'
+                case 33:  x = 7; y = 3; break;  // !
+                case 45:  x = 9; y = 3; break;  // -
+                case 46:  x = 6; y = 3; break;  // .
+                case 169: x = 8; y = 3; break;  // ©
             }
         }
 
