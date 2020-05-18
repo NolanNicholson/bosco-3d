@@ -119,16 +119,18 @@ class ControlsDisplay extends TitleDisplay {
     }
 }
 
-class ScoreTableEnemy extends Enemy {
-    constructor(enemy_type, display_xyz, explode_time, txt1, txt2) {
-        super(enemy_type);
-        this.drive_speed = 0;
-        this.display_xyz = display_xyz;
-        this.age = 0;
-        this.explode_time = explode_time;
+class ScoreTableObj extends Explodable{
+    constructor(model, texture, display_xyz, explode_time, txt1, txt2) {
+        super(model, texture);
         this.worth = 0;
-        this.reborn = false;
         this.white = [0.871, 0.871, 0.871, 1];
+        [this.x, this.y, this.z] = display_xyz;
+        this.display_xyz = display_xyz;
+
+        // parameters for reappearing with text after exploding
+        this.age = 0;
+        this.reborn = false;
+        this.explode_time = explode_time;
         this.txt1 = txt1; this.txt2 = txt2;
     }
 
@@ -156,19 +158,8 @@ class ScoreTableEnemy extends Enemy {
             this.rotation_matrix = m4.rotate_x(
                 this.rotation_matrix, -Math.PI * 0.1);
 
-            // position is backed out from screen space
-            var z = 0.99;
-            var d_xyz = [
-                this.display_xyz[0], this.display_xyz[1], z
-            ];
-            //d_xyz = [10, 10, 0.9];
-            var xyz = m4.identity();
-            if (viewproj) {
-                xyz = m4.multiply(xyz, m4.inverse(viewproj));
-            }
-            xyz = m4.translate(xyz, ...d_xyz);
-            xyz = xyz.slice(12, 15);
-
+            var xyz = this.display_xyz;
+            xyz = m4.apply_transform(xyz, player.rotation_matrix);
             [this.x, this.y, this.z] = xyz;
         }
     }
@@ -180,11 +171,41 @@ class ScoreTableEnemy extends Enemy {
         super.render();
 
         if (this.reborn) {
-            var text_x = this.display_xyz[0] - 3;
+            var text_x = this.display_xyz[0] - 4;
             var text_y = -this.display_xyz[1];
             text_renderer.render(this.txt1, text_x, text_y, this.white);
-            text_renderer.render(this.txt2, text_x, text_y + 2, this.white);
+            text_renderer.render(this.txt2, text_x + 1, text_y + 2, this.white);
         }
+    }
+}
+
+class ScoreTableTemplateObj extends ScoreTableObj {
+    constructor(template, display_xyz, explode_time, txt1, txt2) {
+        super(template.model_asset, template.texture_asset,
+            display_xyz, explode_time, txt1, txt2);
+        this.explode_sound = template.explode_sound;
+        this.explosion_properties = template.explosion_properties;
+    }
+}
+
+class ScoreTableEnemy extends ScoreTableTemplateObj {
+    constructor(enemy_type, display_xyz, explode_time, txt1, txt2) {
+        var template = new Enemy(enemy_type);
+        super(template, display_xyz, explode_time, txt1, txt2);
+    }
+}
+
+class ScoreTableAsteroid extends ScoreTableTemplateObj {
+    constructor(display_xyz, explode_time, txt1, txt2) {
+        var template = new Asteroid();
+        super(template, display_xyz, explode_time, txt1, txt2);
+    }
+}
+
+class ScoreTableCosmoMine extends ScoreTableTemplateObj {
+    constructor(display_xyz, explode_time, txt1, txt2) {
+        var template = new CosmoMine();
+        super(template, display_xyz, explode_time, txt1, txt2);
     }
 }
 
@@ -197,10 +218,12 @@ class ScoreTableDisplay extends TitleDisplay {
     start() {
         super.start();
         this.enemies = [
-            new ScoreTableEnemy(  'i', [- 8,  0, -8], 3, "I-Type", "50 pts"),
-            new ScoreTableEnemy(  'p', [  0,  0, -8], 5, "P-Type", "60 pts"),
-            new ScoreTableEnemy(  'e', [  8,  0, -8], 7, "E-Type", "70 pts"),
-            new ScoreTableEnemy('spy', [  0, -8, -8], 9, "Spy Ship", "Mystery"),
+            new ScoreTableAsteroid(    [- 8,  0, -8], 3, "Asteroid", "10 pts"),
+            new ScoreTableCosmoMine(   [  0,  0, -8], 5, "Cosmo-Mine", "20 pts"),
+            new ScoreTableEnemy(  'i', [  8,  0, -8], 7, " I-Type", "50 pts"),
+            new ScoreTableEnemy(  'p', [  8, -8, -8], 9, " P-Type", "60 pts"),
+            new ScoreTableEnemy(  'e', [  0, -8, -8],11, " E-Type", "70 pts"),
+            new ScoreTableEnemy('spy', [- 8, -8, -8],13, " Spy Ship", "Mystery"),
         ]
         objects = [
             this,
@@ -208,6 +231,11 @@ class ScoreTableDisplay extends TitleDisplay {
             ...this.enemies,
         ];
         all_colliders = [];
+    }
+
+    update(dt) {
+        super.update(dt);
+        [player.x, player.y, player.z] = [0, 0, 0];
     }
 
     render() {
