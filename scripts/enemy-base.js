@@ -120,7 +120,9 @@ class BaseCoreDoor extends Part {
             this.rotation_speed * dt);
         this.rotation_matrix = m4.multiply(this.rel_rotation,
             this.parent_obj.rotation_matrix);
-        this.spawn_missile_check(dt);
+        if (round > 1) {
+            this.spawn_missile_check(dt);
+        }
     }
 
     collision_event(other) {
@@ -325,22 +327,18 @@ class EnemyBase {
         // set up the core crystal
         this.crystal = new BaseCrystal(this);
 
-        this.crystal_guard = new BaseCoreDoor(this);
-
-        this.parts = [
-            ...this.core_sides,
-            ...this.balls,
-            this.crystal,
-            this.crystal_guard,
-        ];
+        this.parts     = [...this.balls, this.crystal, ...this.core_sides];
+        this.colliders = [...this.balls, this.crystal, ...this.core_sides];
 
         this.rotation_matrix = m4.identity();
-
         this.spin_speed = 0.1;
 
-        this.colliders = [...this.balls, this.crystal,
-            ...this.core_sides,
-            this.crystal_guard];
+        if (round > 0) {
+            this.crystal_guard = new BaseCoreDoor(this);
+            this.parts.push(this.crystal_guard);
+            this.colliders.push(this.crystal_guard);
+        }
+
         all_colliders.push(...this.colliders);
 
         this.explosions = false;
