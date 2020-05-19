@@ -381,6 +381,30 @@ class EnterInitialsDisplay extends DisplayScreen {
         this.initials = [0, 0, 0];
         this.alphabet = 'abcdefghijklmnopqrstuvwxyz. ';
         this.complete = false;
+        this.initials_str = "";
+    }
+
+    start() {
+        super.start();
+        // get the list of things to display from the (old) high scores,
+        // with space for this new score spliced in
+        this.new_score_index = hi_scores.get_ranking(score);
+        this.list_names = [];
+        this.list_scores = [];
+        for (var i = 0; i < 5; i++) {
+            if (i < this.new_score_index) {
+                this.list_scores.push(hi_scores.scores[i]);
+                this.list_names.push(hi_scores.names[i]);
+            } else if (i == this.new_score_index) {
+                this.list_scores.push(score);
+                this.list_names.push("");
+            } else {
+                this.list_scores.push(hi_scores.scores[i - 1]);
+                this.list_names.push(hi_scores.names[i - 1]);
+            }
+        }
+
+        console.log(this.list_names, this.list_scores);
     }
 
     left() {
@@ -394,11 +418,24 @@ class EnterInitialsDisplay extends DisplayScreen {
     }
 
     fire() {
-        if (this.initials_index == 2) {
+        // don't do anything if already complete
+        if (this.complete) return;
+
+        this.initials_index++;
+
+        // add the new character to the initials string
+        this.initials_str = "";
+        for (var i = 0; i < this.initials_index; i++) {
+            this.initials_str += this.alphabet[this.initials[i]];
+        }
+
+        if (this.initials_index == 3) {
             this.complete = true;
+            // back up the index so it's still within array bounds
+            this.initials_index = 2;
+            //commit this score to the actual high score list
+            hi_scores.push(this.initials_str, score);
             this.advance_age = this.age + 2;
-        } else {
-            this.initials_index++;
         }
     }
 
@@ -422,6 +459,7 @@ class EnterInitialsDisplay extends DisplayScreen {
             player.rotation_matrix, Math.PI * -0.01 * dt);
 
         if (this.complete && this.age >= this.advance_age) {
+            // save our new score record, then return to title
             this.owner.advance();
         }
     }
@@ -439,8 +477,8 @@ class EnterInitialsDisplay extends DisplayScreen {
 
         text_renderer.render(score_str, -10, -4, this.white);
 
-        // draw the initials
-        for (var i = 0; i <= this.initials_index; i++) {
+        // draw the initials being entered
+        for (var i = 0; i < 3; i++) {
             var ch = this.alphabet[this.initials[i]];
             var color = this.white;
             if (!this.complete
@@ -451,26 +489,17 @@ class EnterInitialsDisplay extends DisplayScreen {
         }
 
         // draw the five ranked scores (including this new score)
-        var new_score_index = hi_scores.get_ranking(score);
         var ranks = ["1st", "2nd", "3rd", "4th", "5th"];
-        for (var i = 0; i < 5; i++) {
-            var color = (i == new_score_index ? this.green : this.cyan);
 
-            // splice the new name and score into the list of high scores
+        for (var i = 0; i < 5; i++) {
+            var color = (i == this.new_score_index ? this.green : this.cyan);
             var line_score; var line_name;
-            if (i < new_score_index) {
-                line_score = hi_scores.scores[i];
-                line_name = hi_scores.names[i];
-            } else if (i == new_score_index) {
-                line_score = score;
-                line_name = "";
-                var initials_length = (this.complete ? 3 : this.initials_index);
-                for (var i2 = 0; i2 < initials_length; i2++) {
-                    line_name += this.alphabet[this.initials[i2]];
-                }
-            } else {
-                line_score = hi_scores.scores[i - 1];
-                line_name = hi_scores.names[i - 1];
+
+            line_score = this.list_scores[i];
+            line_name = this.list_names[i];
+
+            if (i == this.new_score_index) {
+                line_name = this.initials_str;
             }
 
             line_score = String(line_score);

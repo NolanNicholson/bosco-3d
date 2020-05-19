@@ -58,9 +58,7 @@ window.addEventListener("keyup", handle_keyup);
 function finish_loading() {
     gl.disable(gl.SCISSOR_TEST);
     then = 0;
-    score = 200000; // TODO REMOVE
-    game_over_screen.start();
-    //title_screen.start(); // TODO REVERT
+    title_screen.start();
     requestAnimationFrame(drawScene);
 }
 

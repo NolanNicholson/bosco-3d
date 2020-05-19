@@ -66,4 +66,5 @@ class HiScores {
 }
 
 var hi_scores = new HiScores();
+//hi_scores.save(); // this line clears the hi-scores to their default values
 hi_scores.load();
