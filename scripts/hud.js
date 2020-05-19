@@ -16,7 +16,8 @@ function resize_hud() {
         //tall HUD (landscape)
         pixel_ratio = Math.min(
             Math.floor(canv_hud.clientWidth / 64),
-            Math.floor((canv_hud.clientHeight - canv_hud.clientWidth) / 64),
+            Math.floor(
+                (canv_hud.clientHeight - 1.4 * canv_hud.clientWidth) / 64),
         );
     } else {
         //wide HUD (portrait)
@@ -43,13 +44,16 @@ function getHUDViewport(canvas, hud_canvas) {
     var square_size;
     if (hud_canvas.clientWidth < hud_canvas.clientHeight) {
         //tall HUD (landscape)
-        square_size = Math.min(hud_canvas.clientWidth,
-            hud_canvas.clientHeight - 160);
+        square_size = Math.min(hud_canvas.width,
+            hud_canvas.height - 132);
     } else {
         //wide HUD (portrait)
-        square_size = Math.min(hud_canvas.clientHeight,
-            hud_canvas.clientWidth - 160);
+        square_size = Math.min(hud_canvas.height,
+            hud_canvas.width - 132);
     }
+
+    // convert square size to the HUD canvas's client resolution
+    square_size *= hud_canvas.clientWidth / hud_canvas.width;
 
     // apply 3D canvas's pixel ratio to this square
     var pixel_ratio = canvas.width / canvas.clientWidth;
