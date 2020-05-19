@@ -326,6 +326,7 @@ var sounds = {
     spy_ship_sighted:   new Sound('audio/spy-ship-sighted.wav'),
     con_red_voice:      new Sound('audio/condition-red.wav'),
     con_red_loop:       new Sound('audio/condition-red-loop.wav'),
+    game_start:         new Sound('audio/game-start.wav'),
     level_win:          new Sound('audio/level-win.wav'),
     high_score:         new Sound('audio/high-score.wav'),
 };

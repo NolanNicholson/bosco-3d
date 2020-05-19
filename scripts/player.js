@@ -138,7 +138,8 @@ class Player extends ObjTexture {
     update_exploded(dt) {
         this.explosion_time += dt;
         if (this.explosion_time >= this.explosion_timer) {
-            this.spawn(true);
+            player_ready_screen.start(true);
+            this.state = 'absent';
         }
     }
 
@@ -192,12 +193,6 @@ class Player extends ObjTexture {
 
     spawn(died) {
         died = died || false;
-
-        // if the player died and is out of lives, go to GAME OVER instead
-        if (died && lives <= 0) {
-            game_over_screen.start();
-            return;
-        }
 
         //reset current rotation, pitch, and yaw
         this.rotation_matrix = m4.identity();
@@ -273,6 +268,7 @@ class Player extends ObjTexture {
                 this.explosion.render();
                 break;
             case 'exploded':
+            case 'absent':
                 //do nothing
                 break;
             default:

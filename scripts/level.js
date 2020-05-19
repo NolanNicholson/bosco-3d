@@ -135,13 +135,11 @@ function place_obj(obj, placed_objs) {
 }
 
 
-
 function load_level() {
     var level_no = round % LEVELS.length; //TODO: loop through later levels only
     var level_data = LEVELS[level_no];
 
     player_start_position = level_data.player_start;
-    [player.x, player.y, player.z] = player_start_position;
 
     // reset the list of colliders to just the player
     // (subsequent objects will add themselves in their constructors)
@@ -182,5 +180,9 @@ function load_level() {
         place_obj(obj_mine, placed_objs);
     }
 
-    player.spawn(round == 0);
+    if (round == 0) {
+        player_ready_screen.begin_game();
+    } else {
+        player_ready_screen.begin_level();
+    }
 }

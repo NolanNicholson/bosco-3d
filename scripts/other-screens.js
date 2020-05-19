@@ -614,5 +614,71 @@ function handle_keydown_initials(e) {
     game_over_screen.screens.enter_initials.handle_keydown(e);
 }
 
+class PlayerOneReadyScreen {
+    constructor(owner) {
+        this.owner = owner;
+        this.duration = 1;
+    }
+
+    begin_game() {
+        // if it's the first round, pretend the player died
+        // so that the first life appears to be used up
+        var player_died = true;
+        this.start(player_died);
+        sounds.game_start.play();
+    }
+
+    begin_level() {
+        // just start the sequence
+        this.start(false);
+    }
+
+    start(player_died) {
+        // if the player died and is out of lives, go to GAME OVER instead
+        if (player_died && lives <= 0) {
+            game_over_screen.start();
+            return;
+        }
+
+        [player.x, player.y, player.z] = player_start_position;
+        player.rotation_matrix = m4.identity();
+
+        this.age = 0;
+        this.player_died = player_died;
+        objects.push(this);
+    }
+
+    display_timed_line(txt, y, time) {
+        if (this.age >= time) {
+            text_renderer.render(txt, 'center', y, this.white);
+        }
+    }
+
+    update(dt) {
+        this.age += dt;
+
+        if (this.age >= this.duration) {
+            this.advance();
+        }
+    }
+
+    advance() {
+        // remove this from the list of active objects
+        var this_index = objects.indexOf(this);
+        if (this_index != -1) {
+            objects.splice(this_index, 1);
+        }
+
+        // spawn the player
+        player.spawn(this.player_died);
+    }
+
+    render() {
+        text_renderer.render('Player One', 'center', 0, this.white);
+        text_renderer.render('Ready', 'center', 2, this.white);
+    }
+}
+
 var title_screen = new TitleSequence();
 var game_over_screen = new GameOverSequence();
+var player_ready_screen = new PlayerOneReadyScreen();
