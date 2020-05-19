@@ -83,7 +83,7 @@ var then;
 var dt;
 function tick(now) {
     now *= 0.001; // convert ms to seconds
-    dt = now - then;
+    dt = Math.min(now - then, 0.5); // min so it doesn't jump huge amounts
     then = now;
 }
 
