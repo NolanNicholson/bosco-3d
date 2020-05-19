@@ -16,8 +16,9 @@ function resize_hud() {
         //tall HUD (landscape)
         pixel_ratio = Math.min(
             Math.floor(canv_hud.clientWidth / 64),
+            Math.floor(canv_hud.clientHeight / 2.5 / 64),
             Math.floor(
-                (canv_hud.clientHeight - 1.4 * canv_hud.clientWidth) / 64),
+                (canv_hud.clientHeight - canv_hud.clientWidth) / 64),
         );
     } else {
         //wide HUD (portrait)
@@ -54,6 +55,7 @@ function getHUDViewport(canvas, hud_canvas) {
 
     // convert square size to the HUD canvas's client resolution
     square_size *= hud_canvas.clientWidth / hud_canvas.width;
+    if (square_size < 0) square_size = 10;
 
     // apply 3D canvas's pixel ratio to this square
     var pixel_ratio = canvas.width / canvas.clientWidth;
@@ -296,8 +298,9 @@ function draw_hud() {
     var x_l; var x_r; var y_t; var y_b; var x_nums;
 
     if (landscape) {
-        x_l = canv_hud.width / 2 - 32;
-        x_r = canv_hud.width / 2 + 32;
+        var halfwidth = Math.floor(canv_hud.width / 2);
+        x_l = halfwidth - 32;
+        x_r = halfwidth + 32;
         y_t = 4;
         y_b = canv_hud.height - 4;
         x_nums = 56 + x_l;
@@ -307,8 +310,9 @@ function draw_hud() {
     } else {
         x_l = 4;
         x_r = canv_hud.width - 4;
-        y_t = canv_hud.height / 2 - 32;
-        y_b = canv_hud.height / 2 + 32;
+        var halfheight = Math.floor(canv_hud.height / 2);
+        y_t = halfheight - 32;
+        y_b = halfheight + 32;
         x_nums = 56 + x_l;
         if (game_state == 'main-game') draw_lives(x_r - 16, y_b - 32, false);
         draw_word(ctx_hud, 'ROUND', x_r - 64, y_b - 8, '#979797');
