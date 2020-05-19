@@ -243,6 +243,13 @@ class ScoreTableDisplay extends DisplayScreen {
 }
 
 class DemoBase extends EnemyBase {
+    constructor() {
+        super();
+        this.worth = 0;
+        this.balls.forEach(ball => {
+            ball.worth = 0;
+        })
+    }
     report_self_destroyed() {
         // don't report demo base's destruction to the spawner,
         // or it will try to advance the level

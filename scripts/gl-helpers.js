@@ -19,7 +19,6 @@ function resizeCanvasToDisplaySize(canvas, multiplier) {
 
     if (!multiplier) {
         var canv_size = Math.max(canvas.clientWidth, canvas.clientHeight) * dpr;
-        console.log(canv_size);
         multiplier = 1 / Math.max(1, Math.ceil(canv_size / 900));
     }
 

@@ -138,6 +138,7 @@ class BaseCannon extends Part {
         this.explosion = false;
         this.is_corner = is_corner
         this.type = 'base_cannon';
+        this.worth = 200;
 
         this.collider = new ColliderSphere(0, 0, 0, 7);
         this.collider.group = 'base';
@@ -156,7 +157,7 @@ class BaseCannon extends Part {
 
     explode() {
         sounds.base_cannon_hit.play();
-        score += 200;
+        score += this.worth;
         this.exploded = true;
         this.explosion = new Explosion({
             size: 3 * this.parent_obj.scale,
@@ -341,6 +342,7 @@ class EnemyBase {
 
         this.explosions = false;
         this.explosion_min_pct = 0;
+        this.worth = 1500;
     }
 
     update(dt) {
@@ -382,7 +384,7 @@ class EnemyBase {
     }
 
     explode() {
-        score += 1500;
+        score += this.worth;
 
         //first, remove colliders
         this.colliders.forEach(coll => {
