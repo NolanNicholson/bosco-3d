@@ -138,7 +138,7 @@ class Player extends ObjTexture {
     update_exploded(dt) {
         this.explosion_time += dt;
         if (this.explosion_time >= this.explosion_timer) {
-            player_ready_screen.start(true);
+            player_ready_screen.begin_respawn();
             this.state = 'absent';
         }
     }

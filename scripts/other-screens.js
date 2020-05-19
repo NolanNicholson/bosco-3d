@@ -618,19 +618,35 @@ class PlayerOneReadyScreen {
     constructor(owner) {
         this.owner = owner;
         this.duration = 1;
+        this.reveal_time = 1;
+        this.revealed = false;
     }
 
     begin_game() {
+        this.duration = 6.5;
+        this.reveal_time = 1.5;
+
         // if it's the first round, pretend the player died
         // so that the first life appears to be used up
         var player_died = true;
         this.start(player_died);
+
         sounds.game_start.play();
     }
 
     begin_level() {
         // just start the sequence
+        this.duration = 1.5;
+        this.reveal_time = 1.5;
+
         this.start(false);
+    }
+
+    begin_respawn() {
+        this.duration = 1.5;
+        this.reveal_time = 1.5;
+
+        this.start(true);
     }
 
     start(player_died) {
@@ -645,21 +661,38 @@ class PlayerOneReadyScreen {
 
         this.age = 0;
         this.player_died = player_died;
-        objects.push(this);
-    }
 
-    display_timed_line(txt, y, time) {
-        if (this.age >= time) {
-            text_renderer.render(txt, 'center', y, this.white);
-        }
+        // This object temporarily empties the lists of objects
+        // and colliders, and then reinstates them once
+        // the text is done displaying (colliders)
+        // and the sequence is done (objects.)
+        this.stored_obj_list = objects;
+        this.stored_collider_list = all_colliders;
+        objects = [
+            this,
+            obj_starfield
+        ];
+        all_colliders = [];
+
+        this.revealed = false;
     }
 
     update(dt) {
         this.age += dt;
 
+        if (this.age >= this.reveal_time && !this.revealed) {
+            this.reveal_objects();
+        }
         if (this.age >= this.duration) {
             this.advance();
         }
+    }
+
+    reveal_objects() {
+        // restore the original list of objects
+        objects = this.stored_obj_list;
+        objects.push(this);
+        this.revealed = true;
     }
 
     advance() {
@@ -669,13 +702,18 @@ class PlayerOneReadyScreen {
             objects.splice(this_index, 1);
         }
 
+        // restore the original list of colliders
+        all_colliders = this.stored_collider_list;
+
         // spawn the player
         player.spawn(this.player_died);
     }
 
     render() {
-        text_renderer.render('Player One', 'center', 0, this.white);
-        text_renderer.render('Ready', 'center', 2, this.white);
+        if (this.age < this.reveal_time) {
+            text_renderer.render('Player One', 'center', 0, this.white);
+            text_renderer.render('Ready', 'center', 2, this.white);
+        }
     }
 }
 
