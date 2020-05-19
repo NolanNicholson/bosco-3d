@@ -16,7 +16,7 @@ function resize_hud() {
         //tall HUD (landscape)
         pixel_ratio = Math.min(
             Math.floor(canv_hud.clientWidth / 64),
-            Math.floor((canv_hud.clientHeight - canv_hud.clientWidth) / 80),
+            Math.floor((canv_hud.clientHeight - canv_hud.clientWidth) / 64),
         );
     } else {
         //wide HUD (portrait)
@@ -289,29 +289,35 @@ function draw_hud() {
     draw_minimap();
     var landscape = (canv_hud.height > canv_hud.width);
 
-    var x_l = 4;
-    var x_r = canv_hud.width - 4;
-    var y_t = 4;
-    var y_b = canv_hud.height - 4;
+    var x_l; var x_r; var y_t; var y_b; var x_nums;
 
-    var x_nums = 56 + x_l;
+    if (landscape) {
+        x_l = canv_hud.width / 2 - 32;
+        x_r = canv_hud.width / 2 + 32;
+        y_t = 4;
+        y_b = canv_hud.height - 4;
+        x_nums = 56 + x_l;
+        if (game_state == 'main-game') draw_lives(x_l, y_b - 32, true);
+        draw_word(ctx_hud, 'ROUND', x_l, y_b - 8, '#979797');
+        draw_number_r(ctx_hud, round + 1, x_nums, y_b - 8, '#979797');
+    } else {
+        x_l = 4;
+        x_r = canv_hud.width - 4;
+        y_t = canv_hud.height / 2 - 32;
+        y_b = canv_hud.height / 2 + 32;
+        x_nums = 56 + x_l;
+        if (game_state == 'main-game') draw_lives(x_r - 16, y_b - 32, false);
+        draw_word(ctx_hud, 'ROUND', x_r - 64, y_b - 8, '#979797');
+        draw_number_r(ctx_hud, round + 1, x_r - 8, y_b - 8, '#979797');
+    }
 
     ctx_hud.drawImage(images.hud_hiscore.img,   x_l,    y_t);
     var current_hiscore = Math.max(hi_scores.scores[0], score);
     draw_number_r(ctx_hud, current_hiscore, x_nums, y_t + 8);
+
     ctx_hud.drawImage(images.hud_1up.img,       x_l,    y_t + 16);
     if (game_state != 'title-screen') {
         draw_number_r(ctx_hud, score,           x_nums, y_t + 24);
     }
     draw_condition(x_l, y_t + 36);
-
-    if (landscape) {
-        if (game_state == 'main-game') draw_lives(x_l, y_b - 32, true);
-        draw_word(ctx_hud, 'ROUND', x_l, y_b - 8, '#979797');
-        draw_number_r(ctx_hud, round + 1, x_nums, y_b - 8, '#979797');
-    } else {
-        if (game_state == 'main-game') draw_lives(x_r - 16, y_b - 32, false);
-        draw_word(ctx_hud, 'ROUND', x_r - 64, y_b - 8, '#979797');
-        draw_number_r(ctx_hud, round + 1, x_r - 8, y_b - 8, '#979797');
-    }
 }
