@@ -104,7 +104,6 @@ class Enemy extends Explodable {
 
         // if the maneuver is completed, we check if it's time to despawn
         if (this.maneuver_completed && dist_sq_player > 800) {
-            console.log("enemy despawned");
             spawner.lose_enemy();
             this.remove();
         }

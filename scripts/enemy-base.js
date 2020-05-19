@@ -81,14 +81,14 @@ class BaseCoreDoor extends Part {
         var new_enemy = new Enemy('e');
         new_enemy.ai_mode = 'dodge-me';
         new_enemy.collider.group = 'base';
-        new_enemy.drive_speed *= 2;
+        new_enemy.drive_speed *= 1.5;
+        spawner.add_new_enemy(new_enemy);
 
         var rot = this.rotation_matrix;
         rot = m4.rotate_x(rot, -Math.PI / 2 * y_sign);
         new_enemy.rotation_matrix = rot;
 
         [new_enemy.x, new_enemy.y, new_enemy.z] = [this.x, this.y, this.z];
-        objects.push(new_enemy);
         this.spawn_missile_timer = 1.5;
     }
 

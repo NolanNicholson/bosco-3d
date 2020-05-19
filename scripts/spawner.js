@@ -163,6 +163,18 @@ class RandomEnemySpawner {
         this.new_enemy = spy;
         this.num_enemies++;
     }
+
+    add_new_enemy(new_enemy) {
+        objects.push(new_enemy);
+        this.new_enemy = new_enemy;
+
+        if (!this.num_enemies && this.condition != 'red') {
+            this.sound_manager.quiet_player_sound();
+            sounds.enemy_drive_loop.play(true);
+        }
+
+        this.num_enemies++;
+    }
     
     spawn_enemy() {
         //randomly spawn either a P or I-type
@@ -183,16 +195,8 @@ class RandomEnemySpawner {
 
         this.position_enemy_around_player(new_enemy, spawn_z, spawn_radius);
 
-        objects.push(new_enemy);
-        this.new_enemy = new_enemy;
+        this.add_new_enemy(new_enemy);
 
-        if (!this.num_enemies && this.condition != 'red') {
-            this.sound_manager.quiet_player_sound();
-            sounds.enemy_drive_loop.play(true);
-        }
-
-        this.num_enemies++;
-        
         if (this.condition == 'yellow') {
             this.num_in_wave--;
             if (this.num_in_wave > 0) {
@@ -208,6 +212,10 @@ class RandomEnemySpawner {
 
     lose_enemy() {
         this.num_enemies--;
+        console.log("enemy despawned,",
+            this.num_enemies, "left alive,",
+            this.num_in_wave, "left in wave",
+        );
         if (!this.num_enemies 
             && this.condition != 'red'
             && !this.formation_active
