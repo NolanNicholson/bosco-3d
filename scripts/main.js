@@ -91,7 +91,7 @@ function drawLoadingScreen(now) {
     tick(now);
 
     // Resize the canvas and viewport
-    resizeCanvasToDisplaySize(gl.canvas, 0.5);
+    resizeCanvasToDisplaySize(gl.canvas);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
     // clear the canvas
@@ -120,7 +120,7 @@ function drawScene(now) {
 
     if (!paused) {
         // Resize the canvas and viewport
-        resizeCanvasToDisplaySize(gl.canvas, 0.5);
+        resizeCanvasToDisplaySize(gl.canvas);
         gl.viewport(...getMainViewport(gl.canvas, main_view_sizer));
 
         // clear the canvas

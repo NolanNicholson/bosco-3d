@@ -42,7 +42,7 @@ class Player extends ObjTexture {
             max_age: 1.5,
         };
         this.explosion_time = 0;
-        this.explosion_timer = 2;
+        this.explosion_timer = 1;
     }
 
     fire() {

@@ -15,8 +15,14 @@ function createShader(gl, type, source) {
 //modified version of same-named function from webgl-utils.js; see:
 //http://webgl2fundamentals.org/webgl/lessons/webgl-boilerplate.html
 function resizeCanvasToDisplaySize(canvas, multiplier) {
-    multiplier = multiplier || 1;
     const dpr = window.devicePixelRatio;
+
+    if (!multiplier) {
+        var canv_size = Math.max(canvas.clientWidth, canvas.clientHeight) * dpr;
+        console.log(canv_size);
+        multiplier = 1 / Math.max(1, Math.ceil(canv_size / 900));
+    }
+
     const width  = canvas.clientWidth  * dpr * multiplier | 0;
     const height = canvas.clientHeight * dpr * multiplier | 0;
     if (canvas.width !== width ||  canvas.height !== height) {
