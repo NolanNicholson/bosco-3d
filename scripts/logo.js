@@ -1,4 +1,4 @@
-class Logo {
+class LogoGraphic {
     constructor(obj_filename) {
         //fetch the object file
         var me = this;
@@ -42,7 +42,17 @@ class Logo {
             logo_positions.push(-positions[i + 2] * 0.5);
         }
         [this.logo_vao, this.logo_nv] = this.vao_from_2d_pos(logo_positions)
+    }
+}
 
+class LogoBG extends LogoGraphic {
+}
+
+class Logo extends LogoGraphic{
+    load_data(positions) {
+        super.load_data(positions);
+
+        // also, load a big rectangle (we'll need it for stencilling)
         var bg_positions = [
             -1, 1, -1, -1, 1, -1, 1, -1, 1, 1, -1, 1];
         [this.bg_vao, this.bg_nv] = this.vao_from_2d_pos(bg_positions);
@@ -58,7 +68,6 @@ class Logo {
     }
 
     render(age) {
-        gl.enable(gl.STENCIL_TEST);
         var viewport = getMainViewport(gl.canvas, main_view_sizer);
         var w; var h; [w, h] = [viewport[2], viewport[3]];
         var r_sq = this.get_rsq(viewport, age);
@@ -85,6 +94,7 @@ class Logo {
             gl.uniform1f(ph.locations.uYCenterLoc, h / 2 + viewport[1]);
         });
 
+        gl.enable(gl.STENCIL_TEST);
         gl.disable(gl.CULL_FACE);
         gl.useProgram(program_holder_logo.program);
 
@@ -100,6 +110,7 @@ class Logo {
         gl.drawArrays(gl.TRIANGLES, 0, this.logo_nv);
 
         // Reset the transformation matrix
+        var old_mat = mat;
         mat = m4.identity();
         [program_holder_logo, program_holder_logo_inv].forEach(ph => {
             gl.useProgram(ph.program);
@@ -129,7 +140,12 @@ class Logo {
         gl.enable(gl.CULL_FACE);
         gl.disable(gl.STENCIL_TEST);
 
+        if (age > 4) {
+            mat = old_mat;
+            gl.uniformMatrix4fv(
+                program_holder_logo.locations.uMatrixLoc, false, mat);
+            gl.bindVertexArray(models.logobg.logo_vao);
+            gl.drawArrays(gl.TRIANGLES, 0, models.logobg.logo_nv);
+        }
     }
 }
-
-

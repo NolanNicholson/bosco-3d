@@ -291,6 +291,7 @@ var models = {
     asteroid2:      new Model("models/asteroid2.obj"),
     cube:           new Model_SolidColor("models/cube.obj"),
     logo:           new Logo("models/logo.obj"),
+    logobg:         new LogoBG("models/logo2.obj"),
 }
 
 // Manual adjustments to some models
