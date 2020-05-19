@@ -376,6 +376,54 @@ class EnterInitialsDisplay extends DisplayScreen {
         super(owner);
         this.duration = 3;
         this.green = [0, 0xBF/255, 0, 1];
+
+        this.initials_index = 0;
+        this.initials = [0, 0, 0];
+        this.alphabet = 'abcdefghijklmnopqrstuvwxyz. ';
+        this.complete = false;
+    }
+
+    left() {
+        this.initials[this.initials_index] += this.alphabet.length - 1;
+        this.initials[this.initials_index] %= this.alphabet.length;
+    }
+
+    right() {
+        this.initials[this.initials_index] += 1;
+        this.initials[this.initials_index] %= this.alphabet.length;
+    }
+
+    fire() {
+        if (this.initials_index == 2) {
+            this.complete = true;
+            this.advance_age = this.age + 2;
+        } else {
+            this.initials_index++;
+        }
+    }
+
+    handle_keydown(e) {
+        //short-circuit if we're done entering the initials
+        if (this.complete) return;
+
+        switch(e.keyCode) {
+            case 65: this.left(); break;
+            case 68: this.right(); break;
+            case 32: this.fire(); break;
+        }
+    }
+
+    update(dt) {
+        // same as the original, but waits for player to enter initials
+        this.age += dt;
+        player.rotation_matrix = m4.rotate_x(
+            player.rotation_matrix, Math.PI * -0.02 * dt);
+        player.rotation_matrix = m4.rotate_y(
+            player.rotation_matrix, Math.PI * -0.01 * dt);
+
+        if (this.complete && this.age >= this.advance_age) {
+            this.owner.advance();
+        }
     }
 
     render() {
@@ -386,10 +434,25 @@ class EnterInitialsDisplay extends DisplayScreen {
         text_renderer.render("Score", -4, 1, this.white);
         text_renderer.render("Name", 5, 1, this.white);
 
+        var score_str = String(score);
+        while(score_str.length < 7) score_str = " " + score_str;
+
+        text_renderer.render(score_str, -10, -4, this.white);
+
+        // draw the initials
+        for (var i = 0; i <= this.initials_index; i++) {
+            var ch = this.alphabet[this.initials[i]];
+            var color = this.white;
+            if (!this.complete
+                && i == this.initials_index && this.age % 0.5 > 0.25) {
+                color = this.red;
+            }
+            text_renderer.render(ch, 4 + i, -4, color);
+        }
+
+        // draw the five ranked scores (including this new score)
         var new_score_index = hi_scores.get_ranking(score);
         var ranks = ["1st", "2nd", "3rd", "4th", "5th"];
-
-        // draw the five ranked scores
         for (var i = 0; i < 5; i++) {
             var color = (i == new_score_index ? this.green : this.cyan);
 
@@ -400,7 +463,11 @@ class EnterInitialsDisplay extends DisplayScreen {
                 line_name = hi_scores.names[i];
             } else if (i == new_score_index) {
                 line_score = score;
-                line_name = "aaa";
+                line_name = "";
+                var initials_length = (this.complete ? 3 : this.initials_index);
+                for (var i2 = 0; i2 < initials_length; i2++) {
+                    line_name += this.alphabet[this.initials[i2]];
+                }
             } else {
                 line_score = hi_scores.scores[i - 1];
                 line_name = hi_scores.names[i - 1];
@@ -421,7 +488,6 @@ class EnterInitialsDisplay extends DisplayScreen {
 class TitleSequence {
     constructor() {
         this.screens = [
-            new EnterInitialsDisplay(this), //TODO remove this
             new LogoDisplay(this),
             new ControlsDisplay(this),
             new ScoreTableDisplay(this),
@@ -494,17 +560,23 @@ class GameOverSequence {
             case 1:
                 if (score > hi_scores.scores[4]) {
                     this.screens.enter_initials.start();
+                    window.addEventListener('keydown', handle_keydown_initials);
                 } else {
                     title_screen.start();
                 }
                 break;
             case 2:
                 title_screen.start();
+                window.removeEventListener('keydown', handle_keydown_initials);
         }
     }
 
     end() {
     }
+}
+
+function handle_keydown_initials(e) {
+    game_over_screen.screens.enter_initials.handle_keydown(e);
 }
 
 var title_screen = new TitleSequence();
