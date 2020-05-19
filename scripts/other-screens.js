@@ -403,8 +403,6 @@ class EnterInitialsDisplay extends DisplayScreen {
                 this.list_names.push(hi_scores.names[i - 1]);
             }
         }
-
-        console.log(this.list_names, this.list_scores);
     }
 
     left() {
@@ -557,6 +555,7 @@ class TitleSequence {
         game_state = 'main-game';
         score = 0;
         lives = 3;
+        round = 0;
         load_level();
     }
 }
