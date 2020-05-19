@@ -77,7 +77,14 @@ class ColliderPrism extends Collider {
         this.r_max = distance([0, 0, 0], [this.r_x, this.r_y, this.r_z]);
         this.r_min = Math.min(this.r_x, this.r_y, this.r_z);
 
-        this.inv_rot = m4.inverse(this.rotation_matrix);
+        this.inv_rot = false;
+    }
+
+    get_inv_rot() {
+        if (!this.inv_rot) {
+            this.inv_rot = m4.inverse(this.rotation_matrix);
+        }
+        return this.inv_rot;
     }
 
     get_relative_point(other_pos) {
@@ -85,7 +92,7 @@ class ColliderPrism extends Collider {
         //frame of reference, relative to its center
 
         var point_relative = v3.minus(other_pos, this.pos);
-        point_relative = m4.apply_transform(point_relative, this.inv_rot);
+        point_relative = m4.apply_transform(point_relative, this.get_inv_rot());
         return point_relative;
     }
 
@@ -156,7 +163,7 @@ class ColliderPrism extends Collider {
                         other.rotation_matrix);
                     point_other = v3.plus(point_other, relative_pos);
                     point_other = m4.apply_transform(point_other,
-                        this.inv_rot);
+                        this.get_inv_rot());
 
                     // Update the observed max/mins
                     x_min = Math.min(point_other[0], x_min);

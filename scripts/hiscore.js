@@ -9,7 +9,10 @@ class HiScores {
 
     load() {
         // Load the high scores from a cookie
-        // (if no cookie is present, the defaults in the constructor get used)
+
+        // If no cookie is present, the defaults in the constructor get used.
+        if (!document.cookie.length) return;
+
         var cookies = unescape(document.cookie).split(';');
         for (var i = 0; i < cookies.length; i++) {
             // decode the individual cookies
