@@ -93,6 +93,9 @@ class BaseCoreDoor extends Part {
     }
 
     spawn_missile_check(dt) {
+        // don't do anything if the player isn't driving
+        if (player.state != 'driving') return;
+
         // minimum delay between missile launches
         if (this.spawn_missile_timer > 0) {
             this.spawn_missile_timer -= dt;
