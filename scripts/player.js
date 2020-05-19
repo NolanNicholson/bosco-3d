@@ -1,5 +1,3 @@
-const PLAYER_DRIVE_SPEED = 20;
-
 class Player extends ObjTexture {
     constructor() {
         super(models.player, textures.player);
@@ -14,11 +12,9 @@ class Player extends ObjTexture {
         //movement flags
         this.yawing_left = false;       this.yawing_right = false;
         this.pitching_up = false;         this.pitching_down = false;
-        this.strafing = false;
 
         //ship speed
-        this.drive_speed = PLAYER_DRIVE_SPEED;
-        this.strafe_speed = 10;
+        this.drive_speed = 20;
 
         //direction and adjustment speed
         this.tack_anim_speed = 0.1;
@@ -77,15 +73,6 @@ class Player extends ObjTexture {
             case 32: // Spacebar
                 this.fire();
                 break;
-            case 16: // Shift
-                this.strafing = true;
-                break;
-            case 79: // O
-                if (this.drive_speed) this.drive_speed = 0;
-                else this.drive_speed = PLAYER_DRIVE_SPEED;
-                break;
-            default:
-                console.log("Key Down:", e.keyCode);
         }
     }
 
@@ -105,11 +92,6 @@ class Player extends ObjTexture {
                 break;
             case 32: // Spacebar
                 break;
-            case 16: // Shift
-                this.strafing = false;
-                break;
-            default:
-                console.log("Key Up:", e.keyCode);
         }
     }
 
@@ -180,25 +162,14 @@ class Player extends ObjTexture {
                 this.pitch_target - this.pitch, this.tack_anim_speed);
         }
 
-        // If the ship is NOT strafing,
-        // update rotation matrix using pitch and yaw.
-        if (!this.strafing) {
-            this.rotation_matrix = m4.rotate_x(this.rotation_matrix,
-                this.pitch * this.pitch_speed * dt);
-            this.rotation_matrix = m4.rotate_y(this.rotation_matrix,
-                this.yaw * this.yaw_speed * dt);
-        }
+        // Update rotation matrix using pitch and yaw.
+        this.rotation_matrix = m4.rotate_x(this.rotation_matrix,
+            this.pitch * this.pitch_speed * dt);
+        this.rotation_matrix = m4.rotate_y(this.rotation_matrix,
+            this.yaw * this.yaw_speed * dt);
 
-        // Determine local motion, then move.
-        if (this.strafing) {
-            var ss = this.strafe_speed * dt;
-            var dx = ss * (this.yawing_right - this.yawing_left);
-            var dy = ss * (this.pitching_up - this.pitching_down);
-        } else {
-            var dx = 0; var dy = 0;
-        }
         var dz = -this.drive_speed * dt;
-        this.move(dx, dy, dz);
+        this.move(0, 0, dz);
 
         //update active bullets
         this.bullets.forEach(b => {
