@@ -158,6 +158,9 @@ function load_level() {
         if (base_params.rz)
             new_b.rotation_matrix = m4.rotation_z(Math.PI * base_params.rz);
         bases.push(new_b);
+
+        // initial sync of base's parts
+        new_b.update(0);
     });
 
     objects = [
