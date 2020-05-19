@@ -127,11 +127,27 @@ class RandomEnemySpawner {
         this.condition = 'green';
         player.victory();
 
+        // stop all sounds
         sounds.enemy_drive_loop.stop();
         sounds.formation_loop.stop();
         sounds.con_red_voice.stop();
         sounds.con_red_loop.stop();
         this.sound_manager.quiet_player_sound();
+
+        // delete all enemies and base bullets
+        var deletions = [];
+        objects.forEach(obj => {
+            switch (obj.type) {
+                case 'enemy':
+                case 'base-bullet':
+                    deletions.push(obj);
+                    break;
+            }
+        });
+        deletions.forEach(obj => {
+            console.log(obj);
+            obj.remove();
+        });
 
         this.won_level = true;
         this.level_win_sound_timer = 1.5;
