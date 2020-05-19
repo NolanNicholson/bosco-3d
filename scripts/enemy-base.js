@@ -157,7 +157,7 @@ class BaseCannon extends Part {
 
     explode() {
         sounds.base_cannon_hit.play();
-        score += this.worth;
+        add_to_score(this.worth);
         this.exploded = true;
         this.explosion = new Explosion({
             size: 3 * this.parent_obj.scale,
@@ -384,7 +384,7 @@ class EnemyBase {
     }
 
     explode() {
-        score += this.worth;
+        add_to_score(this.worth);
 
         //first, remove colliders
         this.colliders.forEach(coll => {

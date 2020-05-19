@@ -31,7 +31,7 @@ class Explodable extends ObjTexture {
         }
 
         if (this.worth) {
-            score += this.worth;
+            add_to_score(this.worth);
         }
     }
 

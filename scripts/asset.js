@@ -328,6 +328,7 @@ var sounds = {
     con_red_loop:       new Sound('audio/condition-red-loop.wav'),
     game_start:         new Sound('audio/game-start.wav'),
     level_win:          new Sound('audio/level-win.wav'),
+    extra_life:         new Sound('audio/extra-life.wav'),
     high_score:         new Sound('audio/high-score.wav'),
 };
 

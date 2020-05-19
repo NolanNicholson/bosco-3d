@@ -1,5 +1,22 @@
-// manage high scores with cookies
+function add_to_score(amt) {
+    var new_score = score + amt;
 
+    var got_life = (
+        (new_score >= 10000 && score < 10000) ||
+        (Math.floor(new_score / 50000) - Math.floor(score / 50000))
+    );
+
+    if (got_life) {
+        if (lives < 4) {
+            sounds.extra_life.play();
+            lives++;
+        }
+    }
+
+    score += amt;
+}
+
+// manage high scores with cookies
 class HiScores {
     constructor() {
         // default names and high scores
