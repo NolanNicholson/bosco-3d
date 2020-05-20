@@ -57,6 +57,7 @@ class Enemy extends Explodable {
         this.follow_angle = 0;
         this.follow_wobble = 6;
         this.drive_speed = 19.5;
+        this.age = 0;
     }
 
     explode() {
@@ -111,6 +112,18 @@ class Enemy extends Explodable {
         this.move(0, 0, -this.drive_speed * dt);
     }
 
+    straight(dt) {
+        // just move forward in a straight line - no rotation changes
+        this.move(0, 0, -this.drive_speed * dt);
+
+        var rel_to_player = this.get_rel_to_player();
+        var dist_sq_player = v3.len_sq(rel_to_player);
+        if (dist_sq_player > 1000) {
+            spawner.lose_enemy();
+            this.remove();
+        }
+    }
+
     spy_maneuver(dt) {
         // the spy just moves forward in a straight line - no rotation changes
         this.move(0, 0, -this.drive_speed * dt);
@@ -129,12 +142,8 @@ class Enemy extends Explodable {
 
     follow_player_with_wobble(dt) {
         var rel_to_player = this.get_rel_to_player();
+        var dist_sq_player = v3.len_sq(rel_to_player);
 
-        var dist_sq_player = (
-              rel_to_player[0] * rel_to_player[0]
-            + rel_to_player[1] * rel_to_player[1]
-            + rel_to_player[2] * rel_to_player[2]
-        );
         // only wobble if close to the player
         var wobble = dist_sq_player < 100 ? this.follow_wobble : 0;
 
@@ -181,7 +190,13 @@ class Enemy extends Explodable {
     }
 
     update(dt) {
+        this.age += dt;
         switch(this.ai_mode) {
+            case 'missile':
+                this.straight(dt);
+                //if (this.age > 1) this.hone_then_straight(dt);
+                //else this.straight(dt);
+                break;
             case 'close-in':
                 this.close_in(dt);
                 break;

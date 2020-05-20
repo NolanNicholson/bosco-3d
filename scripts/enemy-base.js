@@ -54,6 +54,7 @@ class BaseCoreDoor extends Part {
         ];
         this.collider.group = 'base';
         this.type = 'base_core_door';
+        this.angle = 0;
 
         // 0.01, not 0, so that missiles don't fire on level load
         this.spawn_missile_timer = 0.01;
@@ -79,17 +80,19 @@ class BaseCoreDoor extends Part {
 
     spawn_missile(y_sign) {
         var new_enemy = new Enemy('e');
-        new_enemy.ai_mode = 'dodge-me';
+        new_enemy.ai_mode = 'missile';
         new_enemy.collider.group = 'base';
         new_enemy.drive_speed *= 1.5;
         spawner.add_new_enemy(new_enemy);
 
-        var rot = this.rotation_matrix;
-        rot = m4.rotate_x(rot, -Math.PI / 2 * y_sign);
+        var rot = m4.identity();
+        rot = m4.multiply(rot, this.parent_obj.rotation_matrix);
+        rot = m4.rotate_x(rot, this.angle - Math.PI / 2 * y_sign);
         new_enemy.rotation_matrix = rot;
 
         [new_enemy.x, new_enemy.y, new_enemy.z] = [this.x, this.y, this.z];
-        this.spawn_missile_timer = 1.5;
+        console.log(new_enemy.x, new_enemy.y, new_enemy.z);
+        this.spawn_missile_timer = 0.7;
     }
 
     spawn_missile_check(dt) {
@@ -103,23 +106,19 @@ class BaseCoreDoor extends Part {
         } else {
             var rel_to_player = this.get_rel_to_player();
             // quit if the player is too far away
-            if (v3.len_sq(rel_to_player) > 3000) return;
+            if (v3.len_sq(rel_to_player) > 30000) return;
 
             var inv_rot = m4.inverse(this.rotation_matrix);
             var rel_coord = m4.apply_transform(rel_to_player, inv_rot);
-            // quit if the player is off to either side
-            if (Math.abs(rel_coord[0]) > 4 * this.scale) return;
-            if (Math.abs(rel_coord[2]) > 4 * this.scale) return;
             this.spawn_missile(Math.sign(rel_coord[1]));
         }
     }
 
     update(dt) {
         super.update(dt);
-        this.rel_rotation = m4.rotate_x(this.rel_rotation,
-            this.rotation_speed * dt);
-        this.rotation_matrix = m4.multiply(this.rel_rotation,
-            this.parent_obj.rotation_matrix);
+        this.angle += this.rotation_speed * dt;
+        this.angle %= Math.PI;
+        this.rel_rotation = m4.rotation_x(this.angle);
         if (round > 1) {
             this.spawn_missile_check(dt);
         }
@@ -230,7 +229,7 @@ class BaseCannon extends Part {
     update_cannon(dt) {
         this.shoot_timer -= dt;
         if (this.shoot_timer <= 0) {
-            this.shoot_timer = Math.random() * 1.5 + 0.5;
+            this.shoot_timer = Math.random() * 1.5 + 1;
 
             var base_bullet = new BaseBullet(this.x, this.y, this.z);
         }
