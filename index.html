@@ -46,7 +46,11 @@
         </style>
     </head>
     <body>
-        <canvas id="c"></canvas>
+        <canvas id="c">
+            Error: Your device does not support WebGL2.
+            Please play again from a WebGL2-compatible device.
+            (Note: A keyboard is also required to play.)
+        </canvas>
         <canvas class="hud" id="hud-landscape"></canvas>
         <span class="main-screen" id="main-screen-landscape"></span>
         <script src="scripts/init-gl.js"></script>
