@@ -54,14 +54,14 @@ const LEVELS = [
     { // ROUND 4: Orion
         player_start: [0, 50, -50],
         bases: [
-            { x: -200, y:  190, z: -110, rx: 0.75  },
-            { x: -170, y: -216, z:  125, rz: 0.3   },
-            { x:  150, y:  129, z: - 75, rx: 0.125 },
-            { x:  170, y: -190, z:  110, rz: 0.3   },
-            { x:   30, y: - 26, z:   15, rz: 0.3   },
-            { x: - 20, y: - 43, z:   25, rz: 0.3   },
-            { x: - 70, y: - 60, z:   35, rz: 0.3   },
-            { x: - 20, y: -121, z:   70, rx: 0.75  },
+            { x: -200, y:  250, z:  100, rx: 0.75  }, // TL / Betelg./ 643 ly
+            { x: -170, y: -280, z:   50, rz: 0.3   }, // BL / Saiph  / 724 ly
+            { x:  150, y:  200, z:  200, rx: 0.125 }, // TR / Belatx./ 243 ly
+            { x:  170, y: -240, z: - 50, rz: 0.3   }, // BR / Rigel  / 860 ly
+            { x:   70, y: - 26, z: - 50, rz: 0.3   }, // MR / Mntaka./ 900 ly
+            { x:    0, y: - 43, z: -150, rz: 0.3   }, // MM / Alnilm./ 1359 ly
+            { x: - 50, y: - 60, z: -  0, rz: 0.3   }, // ML / Alnitk./ 800 ly
+            { x:    0, y: -150, z: -250, rx: 0.75  }, // SW / Nebula / 1600 ly
         ],
     },
     { // ROUND 5: Spiral (was circle in the original)
