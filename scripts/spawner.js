@@ -282,15 +282,14 @@ class RandomEnemySpawner {
         // never do anything special on the first yellow
         if (this.num_yellows <= 1) return;
 
-        var round_no = 1;
         // odds are calculated based on the round number,
         // and on the number of Condition Yellows triggered so far
-        var odds = (this.num_yellows - 3 + round_no / 2) * 0.2;
+        var odds = (this.num_yellows + round / 2) * 0.2;
         if (odds > 0.75) odds = 0.75;
         if (odds < 0) odds = 0;
 
         if (Math.random() < odds) {
-            if (Math.random() > 0.5) {
+            if (Math.random() > 0.4) {
                 this.spawn_formation();
             } else {
                 this.spawn_spy();

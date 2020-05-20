@@ -252,7 +252,9 @@ function collision_check(c1, c2) {
     if (c1.collider.collides(c2.collider)) {
         c1.collider.has_collided = true;
         c2.collider.has_collided = true;
-        console.log("collision:", c1.type, c2.type);
+        console.log("collision:",
+            c1.type, c1.collider.pos,
+            c2.type, c2.collider.pos);
         c1.collision_event(c2);
         c2.collision_event(c1);
     }

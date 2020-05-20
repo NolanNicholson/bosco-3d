@@ -91,7 +91,8 @@ class BaseCoreDoor extends Part {
         new_enemy.rotation_matrix = rot;
 
         [new_enemy.x, new_enemy.y, new_enemy.z] = [this.x, this.y, this.z];
-        console.log(new_enemy.x, new_enemy.y, new_enemy.z);
+        new_enemy.sync_collider();
+
         this.spawn_missile_timer = 0.7;
     }
 
@@ -107,7 +108,7 @@ class BaseCoreDoor extends Part {
         } else {
             var rel_to_player = this.get_rel_to_player();
             // quit if the player is too far away
-            if (v3.len_sq(rel_to_player) > 30000) return;
+            if (v3.len_sq(rel_to_player) > 10000) return;
 
             var inv_rot = m4.inverse(this.rotation_matrix);
             var rel_coord = m4.apply_transform(rel_to_player, inv_rot);
