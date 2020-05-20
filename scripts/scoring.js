@@ -79,7 +79,7 @@ class HiScores {
         var d = new Date();
         d.setDate(d.getDate() + 30); // cookie expires after 30 days
         var expires = "; expires=" + d.toUTCString();
-        console.log("hiscorenames=" + this.names.join(',') + expires);
+        //console.log("hiscorenames=" + this.names.join(',') + expires);
 
         document.cookie = "hiscorenames=" + this.names.join(',') + expires;
         document.cookie = "hiscores=" + this.scores.join(',') + expires;
@@ -87,5 +87,4 @@ class HiScores {
 }
 
 var hi_scores = new HiScores();
-hi_scores.save(); // this line clears the hi-scores to their default values
 hi_scores.load();
