@@ -145,7 +145,6 @@ class RandomEnemySpawner {
             }
         });
         deletions.forEach(obj => {
-            console.log(obj);
             obj.remove();
         });
 

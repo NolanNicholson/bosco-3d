@@ -20,25 +20,6 @@ function random_loc_in_level() {
     return loc;
 }
 
-// TODO REMOVE - level working script
-
-/*
-var rotmat = m4.identity();
-rotmat = m4.rotate_x(rotmat, -Math.PI / 6);
-*/
-
-for (var i = 0; i < 8; i++) {
-    var angle = 2 * Math.PI * i / 8;
-    var r = 200;
-    var x = Math.floor(r * Math.cos(angle));
-    var y = Math.floor(r * Math.sin(angle));
-    var rx= Math.floor(Math.random() * 10) / 10;
-    var z = i * 600 / 8 - 300 + 25;
-    console.log({x: x, y: y, z: z, rx: rx});
-}
-
-// end level working script
-
 const LEVELS = [
     { // ROUND 1: Close triangle
         player_start: [0, 0, 100],
@@ -122,6 +103,98 @@ const LEVELS = [
             { x:  250, y:    0, z:    0, rx: 0.5, rz: 0.5 },
         ],
     },
+    { // ROUND 8: Tight cluster
+        player_start: [0, 0, 0],
+        bases: [
+            { x:   20, y:   20, z: - 20, rz: 0.2 },
+            { x:   30, y:   30, z: - 70, rz: 0.2 },
+            { x: - 40, y:   20, z: - 60, rx: 0.8 },
+            { x: - 50, y:   30, z: - 70, rx: 0.8 },
+            { x: - 50, y:  -30, z:   70, rx: 0.3 },
+            { x: - 10, y:  -30, z:   40, rx: 0.6 },
+            { x:   30, y:  -30, z:   70, rx: 0.6 },
+            { x: - 20, y:  -30, z: - 40, rx: 0.5 },
+        ],
+    },
+    { // ROUND 9: Sector X
+        player_start: [0, 0, 0],
+        bases: [
+            { x:    0, y:   75, z:   75, rx: 0.1  },
+            { x:    0, y:  200, z:  200, rx: 0.2  },
+            { x:    0, y: - 75, z:   75, rx: 0.3  },
+            { x:    0, y: -200, z:  200, rx: 0.4  },
+            { x:    0, y:   75, z: - 75, rx: 0.5  },
+            { x:    0, y:  200, z: -200, rx: 0.6  },
+            { x:    0, y: - 75, z: - 75, rx: 0.7  },
+            { x:    0, y: -200, z: -200, rx: 0.8  },
+        ],
+    },
+    { // ROUND 10: Sector Y
+        player_start: [0, 0, 200],
+        bases: [
+            { x:    0, y:    0, z:  160, rx: 0.5 },
+            { x:    0, y:    0, z:  110, rx: 0.0 },
+            { x:    0, y:    0, z:   60, rx: 0.5 },
+            { x:    0, y:    0, z:   10, rx: 0.0 },
+            { x: - 75, y:    0, z: - 65, rx: 0.25, rz: -0.5 },
+            { x:   75, y:    0, z: - 65, rx: 0.25, rz:  0.5 },
+            { x: -150, y:    0, z: -140, rx: 0.25, rz: -0.5 },
+            { x:  150, y:    0, z: -140, rx: 0.25, rz:  0.5 },
+        ],
+    },
+    { // ROUND 11: Sector Z
+        player_start: [0, 0, 0],
+        bases: [
+            { x:   50, y:   50, z:    0, rx: 0.75  },
+            { x: - 50, y: - 50, z:    0, rx: 0.75  },
+            { x:  150, y:  150, z:    0, rx: 0.75  },
+            { x:    0, y:  150, z:    0, rx: 0.75  },
+            { x: -150, y:  150, z:    0, rx: 0.75  },
+            { x:  150, y: -150, z:    0, rx: 0.75  },
+            { x:    0, y: -150, z:    0, rx: 0.75  },
+            { x: -150, y: -150, z:    0, rx: 0.75  },
+        ],
+    },
+    { // ROUND 14: Clusters
+        player_start: [0, 0, 250],
+        bases: [
+            { x: -200, y: -100, z:  200, rx: 0.75 },
+            { x: - 50, y:    0, z:  100, rx: 0 },
+            { x: - 50, y:   30, z:  100, rx: 1 },
+            { x:   50, y: - 50, z:   50, rx: 0.5, rz:  0.5  },
+            { x:   80, y: - 50, z:   50, rx: 0.5, rz: -0.5  },
+            { x:  140, y:  180, z:  -50, rx: 0.5, rz:  0.5  },
+            { x:  110, y:  180, z:  -50, rx: 0.5, rz: -0.5  },
+            { x:  140, y:  150, z:  -50, rx: 0 },
+        ],
+    },
+    { // ROUND 15: "A" shape
+        player_start: [0, 0, 200],
+        bases: [
+            { x: -250, y:   40, z:  100, rx: 0.3   },
+            { x:   50, y:    0, z:    0, rz: 0.125 },
+            { x: -150, y: -150, z: - 20, rz: 0.125 },
+            { x: - 50, y: -100, z: -120, rx: 0.3 },
+            { x:    0, y: - 50, z: -220, rz: 0.125 },
+
+            { x:  200, y:  200, z:  200, rx: 0.75  },
+            { x: - 20, y:  150, z: - 50, rx: 0.75  },
+            { x:  100, y:   50, z: -100, rx: 0.75  },
+        ],
+    },
+    { // ROUND 17: Question mark
+        player_start: [0, -250, 250],
+        bases: [
+            { x: - 75, y:  200, z:    0, rx: 0.75  },
+            { x:   50, y:  230, z: -200, rx: 0.75  },
+            { x: -150, y:  125, z:    0, rx: 0.75  },
+            { x:  125, y:  125, z:    0, rx: 0.75  },
+            { x:  100, y:   25, z:    0, rx: 0.75  },
+            { x:   50, y: - 50, z:    0, rx: 0.75  },
+            { x:    0, y: -150, z: -200, rx: 0.75  },
+            { x:    0, y: -200, z:    0, rx: 0.75  },
+        ],
+    },
 ]
 
 var player_start_position;
@@ -173,7 +246,13 @@ function place_obj(obj, placed_objs) {
 
 
 function load_level() {
-    var level_no = round % LEVELS.length; //TODO: loop through later levels only
+    var level_no;
+
+    // sequence by which levels repeat starting when round = 11
+    const repeating_seq = [2, 3, 11, 12, 4, 13];
+
+    if (round < 11) level_no = round;
+    else level_no = repeating_seq[(round - 11) % 6];
     var level_data = LEVELS[level_no];
 
     player_start_position = level_data.player_start;
