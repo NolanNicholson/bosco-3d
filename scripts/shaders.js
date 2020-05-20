@@ -338,6 +338,7 @@ var program_holder_shrapnel = new ProgramHolder(
     gl, src_vs_shrapnel, src_fs_color,
     {
         attribs: {
+            vertexIDLoc: "a_vertex_id",
         },
         uniforms: {
             uTimeLoc: "u_t",
