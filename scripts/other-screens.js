@@ -112,6 +112,7 @@ class ControlsDisplay extends DisplayScreen {
 
     render() {
         this.display_typed_header("Controls");
+        this.display_timed_line("Keyboard required!",-6, 2);
         this.display_timed_line("W.A.S.D.        Move", 0, 3);
         this.display_timed_line("Space Bar       Fire", 2, 4);
         this.display_timed_line("P              Pause", 4, 5);
