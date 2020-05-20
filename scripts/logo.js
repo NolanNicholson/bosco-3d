@@ -14,8 +14,8 @@ class LogoGraphic {
 
     vao_from_2d_pos(positions) {
         //create and bind a VAO
-        var vao = gl.createVertexArray();
-        gl.bindVertexArray(vao);
+        var vao = vao_ext.createVertexArrayOES();
+        vao_ext.bindVertexArrayOES(vao);
 
         //supply position data to a new buffer
         var positionBuffer = gl.createBuffer();
@@ -106,7 +106,7 @@ class Logo extends LogoGraphic{
         // Draw the logo geometry to the stencil buffer as 0xff
         gl.stencilFunc(gl.ALWAYS, 0xff, 0xff);
         gl.stencilOp(gl.REPLACE, gl.REPLACE, gl.REPLACE);
-        gl.bindVertexArray(this.logo_vao);
+        vao_ext.bindVertexArrayOES(this.logo_vao);
         gl.drawArrays(gl.TRIANGLES, 0, this.logo_nv);
 
         // Reset the transformation matrix
@@ -121,7 +121,7 @@ class Logo extends LogoGraphic{
         gl.useProgram(program_holder_logo_inv.program);
         gl.stencilFunc(gl.ALWAYS, 1, 0xff);
         gl.stencilOp(gl.INVERT, gl.INVERT, gl.INVERT);
-        gl.bindVertexArray(this.bg_vao);
+        vao_ext.bindVertexArrayOES(this.bg_vao);
         gl.drawArrays(gl.TRIANGLES, 0, this.bg_nv);
 
         // Disable stencil writing, enable depth/color writing
@@ -134,7 +134,7 @@ class Logo extends LogoGraphic{
         // with the desired colors
         gl.stencilFunc(gl.EQUAL, 0, 0xff);
 
-        gl.bindVertexArray(this.bg_vao);
+        vao_ext.bindVertexArrayOES(this.bg_vao);
         gl.drawArrays(gl.TRIANGLES, 0, this.bg_nv);
         gl.flush();
         gl.enable(gl.CULL_FACE);
@@ -144,7 +144,7 @@ class Logo extends LogoGraphic{
             mat = old_mat;
             gl.uniformMatrix4fv(
                 program_holder_logo.locations.uMatrixLoc, false, mat);
-            gl.bindVertexArray(models.logobg.logo_vao);
+            vao_ext.bindVertexArrayOES(models.logobg.logo_vao);
             gl.drawArrays(gl.TRIANGLES, 0, models.logobg.logo_nv);
         }
     }

@@ -70,7 +70,7 @@ class Model {
             this.base_transform);
 
         gl.useProgram(this.program_holder.program);
-        gl.bindVertexArray(this.vao);
+        vao_ext.bindVertexArrayOES(this.vao);
         var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;
         gl.uniformMatrix4fv(uModelMatrixLoc, false, model_matrix);
         gl.drawArrays(gl.TRIANGLES, 0, this.num_vertices);
@@ -106,7 +106,7 @@ class Model_SolidColor {
         color = color || [1, 1, 0.5, 1];
 
         gl.useProgram(this.program_holder.program);
-        gl.bindVertexArray(this.vao);
+        vao_ext.bindVertexArrayOES(this.vao);
 
         // load object-specific uniforms
         var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;
@@ -149,7 +149,7 @@ class Model_Wireframe {
         color = color || [1, 1, 0.5, 1];
 
         gl.useProgram(this.program_holder.program);
-        gl.bindVertexArray(this.vao);
+        vao_ext.bindVertexArrayOES(this.vao);
 
         // load object-specific uniforms
         var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;

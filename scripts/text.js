@@ -1,13 +1,12 @@
 // text renderer
 
-var src_vs_text = `#version 300 es
-
-in vec2 a_position;
-in vec2 a_texcoord;
+var src_vs_text = `
+attribute vec2 a_position;
+attribute vec2 a_texcoord;
 
 uniform mat4 u_matrix;
 
-out vec2 v_texcoord;
+varying vec2 v_texcoord;
 
 void main() {
     gl_Position = u_matrix * vec4(a_position, 0.0, 1.0);
@@ -15,20 +14,17 @@ void main() {
 }
 `;
 
-var src_fs_text = `#version 300 es
-
+var src_fs_text = `
 precision mediump float;
 
-in vec2 v_texcoord;
+varying vec2 v_texcoord;
 uniform sampler2D u_texture;
 uniform vec4 u_color;
 
-out vec4 outColor;
-
 void main() {
-    vec4 tex = texture(u_texture, v_texcoord);
+    vec4 tex = texture2D(u_texture, v_texcoord);
     if (tex.x == 0.0) discard;
-    outColor = u_color * tex;
+    gl_FragColor = u_color * tex;
 
 }
 `;
@@ -51,8 +47,8 @@ class TextRenderer {
     constructor() {
         // program holder and VAO
         this.ph = program_holder_text;
-        this.vao = gl.createVertexArray();
-        gl.bindVertexArray(this.vao);
+        this.vao = vao_ext.createVertexArrayOES();
+        vao_ext.bindVertexArrayOES(this.vao);
 
         //set the attributes up to receive buffer data
         var pos_loc = this.ph.locations.positionAttributeLocation;
@@ -152,7 +148,7 @@ class TextRenderer {
         // set up
         gl.bindTexture(gl.TEXTURE_2D, textures.text_atlas.texture);
         gl.useProgram(this.ph.program);
-        gl.bindVertexArray(this.vao);
+        vao_ext.bindVertexArrayOES(this.vao);
 
         // change texture coordinates
         var st = this.get_tex_coords(str, ind);

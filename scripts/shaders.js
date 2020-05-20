@@ -2,64 +2,63 @@
 gl.enable(gl.CULL_FACE);
 gl.enable(gl.DEPTH_TEST);
 
-var src_vs_color = `#version 300 es
+var src_vs_color = `
 
-in vec4 a_position;
-in vec4 a_color;
+attribute vec4 a_position;
+attribute vec4 a_color;
 
 uniform mat4 u_matrix_model;
 uniform mat4 u_matrix_viewproj;
 
-out vec4 v_color;
+varying vec4 v_color;
 
 void main() {
     gl_Position = u_matrix_viewproj * u_matrix_model * a_position;
-    gl_PointSize = 2.0f;
+    gl_PointSize = 2.0;
     v_color = a_color;
 }
 `;
 
-var src_fs_color = `#version 300 es
+var src_fs_color = `
 
 precision mediump float;
 
-in vec4 v_color;
-out vec4 outColor;
+varying vec4 v_color;
 
 void main() {
-    outColor = v_color;
+    gl_FragColor = v_color;
 }
 `;
 
-var src_vs_single_color = `#version 300 es
+var src_vs_single_color = `
 
-in vec4 a_position;
+attribute vec4 a_position;
 
 uniform mat4 u_matrix_model;
 uniform mat4 u_matrix_viewproj;
 
 void main() {
     gl_Position = u_matrix_viewproj * u_matrix_model * a_position;
-    gl_PointSize = 2.0f;
+    gl_PointSize = 2.0;
 }
 `;
 
-var src_fs_single_color = `#version 300 es
+var src_fs_single_color = `
 
 precision mediump float;
 
 uniform vec4 u_color;
-in vec4 v_color;
-out vec4 outColor;
 
 void main() {
-    outColor = u_color;
+    gl_FragColor = u_color;
 }
 `;
 
-var src_vs_explosion = `#version 300 es
+var src_vs_explosion = `
 
-out vec4 v_color;
+attribute float a_vertex_id;
+
+varying vec4 v_color;
 
 uniform int u_num_clouds;
 uniform float u_t;
@@ -83,17 +82,16 @@ vec3 rotate(vec4 q, vec3 v) {
 }
 
 void main() {
-    int tri_index = gl_VertexID / 3;
+    int tri_index = int(a_vertex_id / 3.0);
     float u = float(tri_index) / float(u_num_clouds);
     float angle = hash(u) * PI * 2.0;
     float z = hash(u * 0.5) * 2.0 - 1.0;
     float radius = 1.0;
     float tri_radius = 0.4 * (1.0 - (u_t * u_t));
-    vec3 triangle[3] = vec3[](
-        vec3(-1, -1, 0) * tri_radius,
-        vec3( 1, -1, 0) * tri_radius,
-        vec3( 0,  1, 0) * tri_radius
-    );
+    vec3 triangle[3];
+    triangle[0] = vec3(-1, -1, 0) * tri_radius;
+    triangle[1] = vec3( 1, -1, 0) * tri_radius;
+    triangle[2] = vec3( 0,  1, 0) * tri_radius;
 
     //Prepare a quaternion representing a random rotation
     float c = cos(angle / 2.0);
@@ -110,24 +108,30 @@ void main() {
         triangle[i] = rotate(q, (triangle[i] + vec3(0.0, 0.0, 1.0))) * radius;
     }
 
-    vec3 pos = triangle[gl_VertexID % 3];
+    vec3 pos;
+    int pos_index = int(mod(a_vertex_id, 3.0));
+    if (pos_index == 2) pos = triangle[2];
+    else if (pos_index == 1) pos = triangle[1];
+    else pos = triangle[0];
 
     gl_Position = u_matrix_viewproj * u_matrix_model * vec4(pos, 1);
-    gl_PointSize = 6.0f;
+    gl_PointSize = 6.0;
 
     float tri_0_1 = float(tri_index) / float(u_num_clouds);
     float cval = u_t * sqrt(tri_0_1) + 0.1 * hash(u * 0.7);
     int color_index = (cval > 0.5 ? 2 : (cval > 0.3 ? 1 : 0));
-    v_color = vec4(u_palette[color_index], 1.0f);
+    v_color = vec4(u_palette[color_index], 1.0);
 }
 `;
 
 //src_fs_explosion doesn't exist; the explosion program
 //uses src_fs_color for its fragment shader
 
-var src_vs_shrapnel = `#version 300 es
+var src_vs_shrapnel = `
 
-out vec4 v_color;
+attribute float a_vertex_id;
+
+varying vec4 v_color;
 
 uniform int u_num_shrapnel;
 uniform float u_t;
@@ -146,36 +150,35 @@ float hash(float p) {
 }
 
 void main() {
-    float u = float(gl_VertexID) / float(u_num_shrapnel);
+    float u = a_vertex_id / float(u_num_shrapnel);
     float angle = hash(u) * PI * 2.0;
     float z = hash(hash(u)) * 2.0 - 1.0;
     float radius = 1.1;
 
     vec3 pos = vec3(cos(angle), sin(angle), z) * radius;
     gl_Position = u_matrix_viewproj * u_matrix_model * vec4(pos, 1);
-    gl_PointSize = 3.0f;
+    gl_PointSize = 3.0;
 
     int color_index = int((sqrt(u_t) * hash(u_t * u)) * 3.0);
-    v_color = vec4(u_palette[color_index], 1.0f);
+    v_color = vec4(u_palette[color_index], 1.0);
 }
 `;
 
 //src_fs_shrapnel doesn't exist; the explosion program
 //uses src_fs_color for its fragment shader
 
-var src_vs_texture = `#version 300 es
+var src_vs_texture = `
 
-in vec4 a_position;
-in vec2 a_texcoord;
-
-out float fog_depth;
+attribute vec4 a_position;
+attribute vec2 a_texcoord;
 
 uniform mat4 u_matrix_model;
 uniform mat4 u_matrix_view;
 uniform mat4 u_matrix_projection;
 uniform mat4 u_matrix_viewproj;
 
-out vec2 v_texcoord;
+varying float fog_depth;
+varying vec2 v_texcoord;
 
 void main() {
     vec4 view_position = u_matrix_view * u_matrix_model * a_position;
@@ -185,28 +188,27 @@ void main() {
 }
 `;
 
-var src_fs_texture = `#version 300 es
+var src_fs_texture = `
 
 precision mediump float;
 
-in vec2 v_texcoord;
-in float fog_depth;
 uniform sampler2D u_texture;
 
-out vec4 outColor;
+varying float fog_depth;
+varying vec2 v_texcoord;
 
 void main() {
 
     if (fog_depth > 200.0)
-        outColor = vec4(0.1, 0.2, 0.2, 1);
+        gl_FragColor = vec4(0.1, 0.2, 0.2, 1);
     else
-        outColor = texture(u_texture, v_texcoord);
+        gl_FragColor = texture2D(u_texture, v_texcoord);
 }
 `;
 
-var src_vs_logo = `#version 300 es
+var src_vs_logo = `
 
-in vec2 a_position;
+attribute vec2 a_position;
 uniform mat4 u_transform;
 
 void main() {
@@ -214,12 +216,11 @@ void main() {
 }
 `;
 
-var src_fs_logo = `#version 300 es
+var src_fs_logo = `
 
 precision mediump float;
 
 uniform float u_t, u_rsq, u_xc, u_yc;
-out vec4 outColor;
 
 bool circ() {
     float x_c = gl_FragCoord.x - u_xc;
@@ -233,21 +234,21 @@ void main() {
     vec4 white = vec4(0.871, 0.871, 0.871, 1);
     vec4 gray = vec4(0.592, 0.592, 0.592, 1);
 
-    if (circ()) outColor = gray;
-    else if (u_t < 5.5 || u_t > 9.45) outColor = red;
+    if (circ()) gl_FragColor = gray;
+    else if (u_t < 5.5 || u_t > 9.45) gl_FragColor = red;
     else {
         float x_loc = (gl_FragCoord.x - u_xc) / (2.0 * u_xc);
         float x_t = x_loc - ((u_t - 6.0) * 3.0);
         x_t = mod(x_t, 1.0);
 
-        if (x_t < 0.08) outColor = purple;
-        else if (x_t < 0.16) outColor = white;
-        else outColor = red;
+        if (x_t < 0.08) gl_FragColor = purple;
+        else if (x_t < 0.16) gl_FragColor = white;
+        else gl_FragColor = red;
     }
 }
 `;
 
-var src_fs_logo_inv = `#version 300 es
+var src_fs_logo_inv = `
 
 precision mediump float;
 
@@ -320,6 +321,7 @@ var program_holder_explosion = new ProgramHolder(
     gl, src_vs_explosion, src_fs_color,
     {
         attribs: {
+            vertexIDLoc: "a_vertex_id",
         },
         uniforms: {
             uTimeLoc: "u_t",

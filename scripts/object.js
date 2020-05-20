@@ -11,8 +11,8 @@ function setup_color_object(positions, colors, draw_type) {
     }
 
     //create and bind a VAO
-    var vao = gl.createVertexArray();
-    gl.bindVertexArray(vao);
+    var vao = vao_ext.createVertexArrayOES();
+    vao_ext.bindVertexArrayOES(vao);
 
     var num_vertices = positions.length / 3;
 
@@ -58,8 +58,8 @@ function setup_color_object(positions, colors, draw_type) {
 
 function setup_textured_object(program_holder, positions, texcoords) {
     //create and bind a VAO
-    var vao = gl.createVertexArray();
-    gl.bindVertexArray(vao);
+    var vao = vao_ext.createVertexArrayOES();
+    vao_ext.bindVertexArrayOES(vao);
 
     var num_vertices = positions.length / 3;
 
@@ -226,7 +226,7 @@ class ObjColor extends ObjBase {
     render() {
         super.prep_model_matrix();
         gl.useProgram(this.program_holder.program);
-        gl.bindVertexArray(this.vao);
+        vao_ext.bindVertexArrayOES(this.vao);
         var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;
         gl.uniformMatrix4fv(uModelMatrixLoc, false, this.model_matrix);
         gl.drawArrays(gl.TRIANGLES, 0, this.num_vertices);

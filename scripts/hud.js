@@ -167,7 +167,7 @@ class HUDPoints {
             this.update_points();
         }
         gl.useProgram(this.program_holder.program);
-        gl.bindVertexArray(this.vao);
+        vao_ext.bindVertexArrayOES(this.vao);
         var uModelMatrixLoc = this.program_holder.locations.uModelMatrixLoc;
         gl.uniformMatrix4fv(uModelMatrixLoc, false, model_matrix);
         gl.drawArrays(gl.POINTS, 0, this.num_vertices);
