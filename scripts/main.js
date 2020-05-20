@@ -127,17 +127,21 @@ function drawScene(now) {
         gl.clearColor(0, 0, 0, 1);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+        var dt_round;
+        if (player.state != 'driving') dt_round = dt;
+        else dt_round = dt * (1 + (Math.min(round, 10) * 0.03));
+
         // potentially add an enemy
-        spawner.update(dt);
+        spawner.update(dt_round);
 
         // update objects and resolve collisions
         objects.forEach(obj => {
-            obj.update(dt);
+            obj.update(dt_round);
         });
         resolve_collisions(all_colliders);
 
         // Update position of camera and starfield
-        camera.follow_player(dt, player);
+        camera.follow_player(player);
         obj_starfield.x = camera.x;
         obj_starfield.y = camera.y;
         obj_starfield.z = camera.z;

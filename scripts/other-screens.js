@@ -582,6 +582,7 @@ class GameOverSequence {
     }
 
     start() {
+        player.state = "none";
         this.phase = 0;
         if (score > hi_scores.scores[0]) {
             this.screens.record.start();

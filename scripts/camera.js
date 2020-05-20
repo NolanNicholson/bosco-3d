@@ -103,7 +103,7 @@ class Camera {
         }
     }
 
-    follow_player(dt, player) {
+    follow_player(player) {
         this.x = player.x + CAMERA_VANTAGE[0];
         this.y = player.y + CAMERA_VANTAGE[1];
         this.z = player.z + CAMERA_VANTAGE[2];
