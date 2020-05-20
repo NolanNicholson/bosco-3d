@@ -20,26 +20,24 @@ function random_loc_in_level() {
     return loc;
 }
 
+// TODO REMOVE - level working script
+
 /*
 var rotmat = m4.identity();
 rotmat = m4.rotate_x(rotmat, -Math.PI / 6);
-
-orion = [
-    [ -200, 220, 0 ],
-    [ -170, -250, 0 ],
-    [ 150,  150, 0 ],
-    [ 170, -220, 0 ],
-    [ 30, -30, 0 ],
-    [ -20, -50, 0 ],
-    [ -70, -70, 0 ],
-    [ -20, -140, 0 ],
-];
-
-for (var i = 0; i < orion.length; i++) {
-    coord = orion[i];
-    coord = m4.apply_transform(coord, rotmat);
-}
 */
+
+for (var i = 0; i < 8; i++) {
+    var angle = 2 * Math.PI * i / 8;
+    var r = 200;
+    var x = Math.floor(r * Math.cos(angle));
+    var y = Math.floor(r * Math.sin(angle));
+    var rx= Math.floor(Math.random() * 10) / 10;
+    var z = i * 600 / 8 - 300 + 25;
+    console.log({x: x, y: y, z: z, rx: rx});
+}
+
+// end level working script
 
 const LEVELS = [
     { // ROUND 1: Close triangle
@@ -83,6 +81,45 @@ const LEVELS = [
             { x: - 20, y: - 43, z:   25, rz: 0.3   },
             { x: - 70, y: - 60, z:   35, rz: 0.3   },
             { x: - 20, y: -121, z:   70, rx: 0.75  },
+        ],
+    },
+    { // ROUND 5: Spiral (was circle in the original)
+        player_start: [0, 0, 0],
+        bases: [
+            { x: 200,  y: 0,    z: -275, rx: 0.1 },
+            { x: 141,  y: 141,  z: -200, rx: 0.1 },
+            { x: 0,    y: 200,  z: -125, rx: 0.1 },
+            { x: -142, y: 141,  z: -50,  rx: 0.4 },
+            { x: -200, y: 0,    z: 25,   rx: 0.5 },
+            { x: -142, y: -142, z: 100,  rx: 0 },
+            { x: -1,   y: -200, z: 175,  rx: 0.9 },
+            { x: 141,  y: -142, z: 250,  rx: 0.4 },
+        ]
+    },
+    { // ROUND 6: Big squiggle
+        player_start: [0, 0, 0],
+        bases: [
+            { x: -250, y:  250, z: -200, rx: 0.4 },
+            { x:   50, y:  200, z: -100, rz: 0.7 },
+            { x:  200, y:  170, z:    0, rx: 0.4 },
+            { x:  200, y:  100, z:  100, rz: 0.2 },
+            { x:  100, y:   50, z:  200, rx: 0.1 },
+            { x:    0, y:  -50, z:   50, rz: 0.9 },
+            { x: -100, y: -150, z: -100, rx: 0.8 },
+            { x:    0, y: -250, z:    0, rz: 0.4 },
+        ],
+    },
+    { // ROUND 7: Straight line
+        player_start: [0, -100, 200],
+        bases: [
+            { x: -275, y:    0, z:    0, rx: 0.5, rz: 0.5 },
+            { x: -200, y:    0, z:    0, rx: 0.5, rz: 0.5 },
+            { x: -125, y:    0, z:    0, rx: 0.5, rz: 0.5 },
+            { x: - 50, y:    0, z:    0, rx: 0.5, rz: 0.5 },
+            { x:   25, y:    0, z:    0, rx: 0.5, rz: 0.5 },
+            { x:  100, y:    0, z:    0, rx: 0.5, rz: 0.5 },
+            { x:  175, y:    0, z:    0, rx: 0.5, rz: 0.5 },
+            { x:  250, y:    0, z:    0, rx: 0.5, rz: 0.5 },
         ],
     },
 ]
