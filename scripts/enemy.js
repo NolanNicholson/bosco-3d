@@ -79,7 +79,7 @@ class Enemy extends Explodable {
 
         if (!this.maneuver_completed) {
             //get the location of a point in front of the player
-            var in_front_of_player = [0, 0, -15];
+            var in_front_of_player = [0, 0, -Math.min(15, round * 3)];
             in_front_of_player = m4.apply_transform(
                 in_front_of_player, player.rotation_matrix);
             in_front_of_player = v3.plus(in_front_of_player,
