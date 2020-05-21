@@ -224,13 +224,11 @@ class Sound {
                 this.source.connect(this.pan_node);
                 this.pan_node.connect(audio_context.destination);
             }
-
             this.pan_node.pan.value = pan_value;
         }
     }
 
     stop() {
-        console.error("stopped sound", this.path);
         if (this.source) {
             this.source.stop();
         }

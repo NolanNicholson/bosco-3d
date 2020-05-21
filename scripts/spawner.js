@@ -257,10 +257,12 @@ class RandomEnemySpawner {
 
     lose_enemy() {
         this.num_enemies--;
+        /*
         console.log("enemy despawned,",
             this.num_enemies, "left alive,",
             this.num_in_wave, "left in wave",
         );
+        */
         if (this.condition == 'yellow'
             && !this.num_enemies
             && this.num_in_wave <= 0) {
@@ -350,8 +352,11 @@ class RandomEnemySpawner {
 
     update_main(dt) {
         this.timer += dt;
-        this.sound_manager.update_pan();
         this.sound_manager.update();
+        if (this.sound_manager.active_sound >= 2
+            && this.sound_manager.active_sound <= 3 ) {
+            this.sound_manager.update_pan();
+        }
 
         //don't spawn unless the player is driving
         //and we have less than the maximum number of enemies
