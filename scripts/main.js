@@ -100,10 +100,10 @@ function drawLoadingScreen(now) {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // draw a loading bar using SCISSOR_TEST
-    var bar_height = gl.canvas.height * 0.015;
+    var bar_height = gl.canvas.height * 0.1;
     var bar_width = gl.canvas.width * assets_loaded / total_assets;
     gl.scissor(0, 0, bar_width, bar_height);
-    gl.clearColor(1, 1, 1, 1);
+    gl.clearColor(1, 0, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     // queue up next frame, unless loading is done
