@@ -1,4 +1,15 @@
 class SoundManager {
+    constructor() {
+        this.sound_index = [
+            [],
+            [sounds.con_red_loop, sounds.con_red_voice],
+            [sounds.formation_loop],
+            [sounds.enemy_drive_loop],
+            [sounds.player_drive_loop],
+        ]
+        this.active_sound = 0;
+    }
+
     quiet_player_sound() {
         sounds.player_drive_start.stop();
         sounds.player_drive_loop.stop();
@@ -12,13 +23,38 @@ class SoundManager {
         if (player.state == 'driving') {
             spawner.sound_manager.quiet_player_sound();
         }
-        sounds.con_red_loop.play(true);
-        sounds.con_red_voice.play(true);
     }
 
-    end_condition_red() {
-        sounds.con_red_loop.stop();
-        sounds.con_red_voice.stop();
+    update() {
+        var previous_sound = this.active_sound;
+        if (player.state != 'driving') {
+            this.active_sound = 0; // no sound - when player isn't driving
+        } else if (spawner.condition == 'red') {
+            this.active_sound = 1; // condition red
+        } else if (spawner.formation_active) {
+            this.active_sound = 2; // formation attack
+        } else if (spawner.num_enemies) {
+            this.active_sound = 3; // enemy attack
+        } else {
+            this.active_sound = 4; // player driving, no enemies
+        }
+
+        if (previous_sound != this.active_sound) {
+            if (previous_sound == 4) {
+                this.quiet_player_sound(); // need to also prevent loop start
+            } else {
+                this.sound_index[previous_sound].forEach(snd => {
+                    snd.stop();
+                });
+            }
+            if (previous_sound == 0 && this.active_sound == 4) {
+                // don't do anything - the player has special startup noise
+            } else {
+                this.sound_index[this.active_sound].forEach(snd => {
+                    snd.play(true);
+                });
+            }
+        }
     }
 
     update_pan() {
@@ -182,12 +218,6 @@ class RandomEnemySpawner {
     add_new_enemy(new_enemy) {
         objects.push(new_enemy);
         this.new_enemy = new_enemy;
-
-        if (!this.num_enemies && this.condition != 'red') {
-            this.sound_manager.quiet_player_sound();
-            sounds.enemy_drive_loop.play(true);
-        }
-
         this.num_enemies++;
     }
     
@@ -231,13 +261,6 @@ class RandomEnemySpawner {
             this.num_enemies, "left alive,",
             this.num_in_wave, "left in wave",
         );
-        if (!this.num_enemies 
-            && this.condition != 'red'
-            && !this.formation_active
-            && player.state == 'driving') {
-            sounds.enemy_drive_loop.stop();
-            sounds.player_drive_loop.play(true);
-        }
         if (this.condition == 'yellow'
             && !this.num_enemies
             && this.num_in_wave <= 0) {
@@ -250,9 +273,6 @@ class RandomEnemySpawner {
         if (!bases.length) return;
 
         sounds.battle_stations.play();
-        sounds.formation_loop.play(true);
-        this.sound_manager.quiet_player_sound();
-        sounds.enemy_drive_loop.stop();
 
         var f_base = bases[Math.floor(Math.random() * bases.length)];
         this.formation = new Formation(f_base.x, f_base.y, f_base.z);
@@ -261,20 +281,11 @@ class RandomEnemySpawner {
 
     end_formation() {
         this.formation_active = false;
-        sounds.formation_loop.stop();
 
         // If enough formations are defeated, Condition Red is triggered.
         this.defeated_formations++;
         if (this.defeated_formations == 4) {
             this.set_condition('red');
-        } else {
-            if (player.state == 'driving') {
-                if (this.num_enemies) {
-                    sounds.enemy_drive_loop.play(true);
-                } else {
-                    sounds.player_drive_loop.play(true);
-                }
-            }
         }
     }
 
@@ -324,18 +335,10 @@ class RandomEnemySpawner {
                             sounds.alert_alert.play();
                         }
                         break;
-                    case 'red':
-                        this.sound_manager.end_condition_red();
-                        break;
                 }
                 break;
             case 'green':
                 this.con_yellow_start_timer = this.get_yellow_start_timer();
-                switch (old_con) {
-                    case 'red':
-                        this.sound_manager.end_condition_red();
-                        break;
-                }
                 break;
         }
     }
@@ -348,6 +351,7 @@ class RandomEnemySpawner {
     update_main(dt) {
         this.timer += dt;
         this.sound_manager.update_pan();
+        this.sound_manager.update();
 
         //don't spawn unless the player is driving
         //and we have less than the maximum number of enemies

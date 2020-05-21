@@ -208,10 +208,6 @@ class Sound {
         if (!this.loaded) {
             console.error('Error: Attempting to play unloaded sound');
         } else {
-            if (loop) {
-                //looping sounds can only have one active source at a time
-                this.stop();
-            }
             this.source = audio_context.createBufferSource();
             this.source.loop = loop;
             this.source.buffer = this.audio_buffer;
@@ -234,6 +230,7 @@ class Sound {
     }
 
     stop() {
+        console.error("stopped sound", this.path);
         if (this.source) {
             this.source.stop();
         }
