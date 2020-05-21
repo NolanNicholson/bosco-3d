@@ -118,7 +118,7 @@ class Enemy extends Explodable {
 
         var rel_to_player = this.get_rel_to_player();
         var dist_sq_player = v3.len_sq(rel_to_player);
-        if (dist_sq_player > 1000) {
+        if (dist_sq_player > 2000) {
             spawner.lose_enemy();
             this.remove();
         }
@@ -194,8 +194,6 @@ class Enemy extends Explodable {
         switch(this.ai_mode) {
             case 'missile':
                 this.straight(dt);
-                //if (this.age > 1) this.hone_then_straight(dt);
-                //else this.straight(dt);
                 break;
             case 'close-in':
                 this.close_in(dt);

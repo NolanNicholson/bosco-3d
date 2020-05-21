@@ -39,6 +39,7 @@ class SoundManager {
             this.active_sound = 4; // player driving, no enemies
         }
 
+        // change the sound if needed
         if (previous_sound != this.active_sound) {
             if (previous_sound == 4) {
                 this.quiet_player_sound(); // need to also prevent loop start
@@ -54,6 +55,11 @@ class SoundManager {
                     snd.play(true);
                 });
             }
+        }
+
+        // pan if needed
+        if (this.active_sound >= 2 && this.active_sound <= 3) {
+            this.update_pan();
         }
     }
 
@@ -73,7 +79,7 @@ class SoundManager {
             m4.inverse(player.rotation_matrix));
 
         var x = sound_xyz[0]; var z = sound_xyz[2];
-        var pan = (x / Math.sqrt(x*x + z*z));
+        var pan = (x / Math.sqrt(x*x + z*z)) * 0.8;
 
         if (this.formation_active) {
             sounds.formation_loop.pan(pan);
@@ -353,10 +359,6 @@ class RandomEnemySpawner {
     update_main(dt) {
         this.timer += dt;
         this.sound_manager.update();
-        if (this.sound_manager.active_sound >= 2
-            && this.sound_manager.active_sound <= 3 ) {
-            this.sound_manager.update_pan();
-        }
 
         //don't spawn unless the player is driving
         //and we have less than the maximum number of enemies
