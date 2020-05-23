@@ -17,9 +17,6 @@ class Explosion extends ObjBase {
         this.num_clouds = params.num_clouds || 30;
         this.scale = 0;
 
-        //test coords - TODO: remove
-        this.x = 2; this.y = 2; this.z = 2;
-
         var me = this;
 
         //"base" transformation matrix

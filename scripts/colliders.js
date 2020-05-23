@@ -225,7 +225,7 @@ class ColliderMulti {
 
 function collider_rmax(c) {
     switch (c.collider_type) {
-        case 'multi':   return 10; //TODO: this is a hack
+        case 'multi':   return 10; //a hack - only works for small colliders!
         case 'point':   return 0;
         case 'prism':   return c.r_max;
         case 'sphere':  return c.radius;

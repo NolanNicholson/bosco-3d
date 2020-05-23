@@ -79,7 +79,6 @@ class BaseCoreDoor extends Part {
     }
 
     spawn_missile(y_sign) {
-        console.log("spawned missile");
         var new_enemy = new Enemy('e');
         new_enemy.ai_mode = 'missile';
         new_enemy.collider.group = 'base';

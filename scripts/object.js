@@ -238,9 +238,6 @@ class ObjTexture extends ObjBase {
         super();
         var me = this;
 
-        //test coords - TODO: remove
-        this.x = 2; this.y = 2; this.z = 2;
-
         this.texture_asset = texture_asset;
         this.model_asset = model_asset;
     }

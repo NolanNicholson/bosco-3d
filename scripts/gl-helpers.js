@@ -64,7 +64,7 @@ function createProgram(gl, vertexShader, fragmentShader) {
     if (success) {
         return program;
     } else {
-        console.log(gl.getProgramInfoLog(program));
+        console.error(gl.getProgramInfoLog(program));
         gl.deleteProgram(program);
     }
 }

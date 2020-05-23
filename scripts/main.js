@@ -28,18 +28,6 @@ function handle_keydown(e) {
         case 80: // P key
             pause_unpause();
             break;
-        case 73: // I key TODO: debug
-            spawner.spawn_formation();
-            break;
-        case 85: // U key TODO: debug
-            spawner.set_condition('red');
-            break;
-        case 89: // Y key TODO: debug
-            spawner.spawn_spy();
-            break;
-        case 57: // 9 key TODO: debug
-            spawner.win_level();
-            break;
         default: {
             if (!paused) {
                 player.handle_keydown(e);

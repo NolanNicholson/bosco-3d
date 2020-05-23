@@ -41,8 +41,10 @@ class SoundManager {
 
         // change the sound if needed
         if (previous_sound != this.active_sound) {
+            /*
             console.log("enemies", spawner.num_enemies,
                 "state", this.active_sound);
+            */
             if (previous_sound == 4) {
                 this.quiet_player_sound(); // need to also prevent loop start
             } else {

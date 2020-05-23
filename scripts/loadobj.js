@@ -30,7 +30,7 @@ function loadOBJFromString(string, load_as_wireframe) {
                     break;
                 // 'vt': texture coordinates
                 case 'vt': tex_positions.push(
-                    //TODO: why is the '1 - ' part necessary?
+                    // T-coords are inverted between Blender and WebGL, I guess
                     [
                         parseFloat(parts[1]),
                         1 - parseFloat(parts[2])
