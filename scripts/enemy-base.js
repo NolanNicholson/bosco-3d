@@ -110,7 +110,6 @@ class BaseCoreDoor extends Part {
             var rel_to_player = this.get_rel_to_player();
             // quit if the player is too far away
             if (v3.len_sq(rel_to_player) > 2000) return;
-            console.log(v3.len_sq(rel_to_player));
 
             var inv_rot = m4.inverse(this.rotation_matrix);
             var rel_coord = m4.apply_transform(rel_to_player, inv_rot);
