@@ -59,15 +59,19 @@ class Player extends ObjTexture {
     handle_keydown(e) {
         switch(e.keyCode) {
             case 65: // A
+            case 37: // left arrow
                 this.yawing_left = true;
                 break;
             case 68: // D
+            case 39: // right arrow
                 this.yawing_right = true;
                 break;
             case 87: // W
+            case 38: // up arrow
                 this.pitching_down = true;
                 break;
             case 83: // S
+            case 40: // down arrow
                 this.pitching_up = true;
                 break;
             case 32: // Spacebar
@@ -79,15 +83,19 @@ class Player extends ObjTexture {
     handle_keyup(e) {
         switch(e.keyCode) {
             case 65: // A
+            case 37: // left arrow
                 this.yawing_left = false;
                 break;
             case 68: // D
+            case 39: // right arrow
                 this.yawing_right = false;
                 break;
             case 87: // W
+            case 38: // up arrow
                 this.pitching_down = false;
                 break;
             case 83: // S
+            case 40: // down arrow
                 this.pitching_up = false;
                 break;
             case 32: // Spacebar
