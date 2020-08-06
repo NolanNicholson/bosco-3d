@@ -237,7 +237,7 @@ class Player extends ObjTexture {
     }
 
     collision_event(other) {
-        if (this.state == 'driving') {
+        if (this.state == 'driving' && other.type != 'player_bullet') {
             this.explode();
         }
     }
